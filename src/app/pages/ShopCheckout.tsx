@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { formatMoney, startPayment, submitCheckout } from '../shop/api';
+import { formatMoney, ORDER_EMAIL_KEY, startPayment, submitCheckout } from '../shop/api';
 import { useCart } from '../shop/CartContext';
 import { useResolvedCart } from './ShopCart';
 
@@ -63,6 +63,7 @@ export function ShopCheckout() {
         items: lines.map((l) => ({ variant_id: l.variantId, quantity: l.quantity })),
       });
       clear();
+      sessionStorage.setItem(ORDER_EMAIL_KEY, form.email);
       try {
         const payment = await startPayment(order.reference);
         window.location.assign(payment.url);

@@ -9,7 +9,7 @@ export function PrivacyPolicy() {
           <h1 className="text-4xl md:text-5xl font-black mb-4" style={{ fontFamily: baloo }}>
             Privacy Policy
           </h1>
-          <p className="text-lg text-white/80">Last updated: February 3, 2026</p>
+          <p className="text-lg text-white/80">Last updated: July 17, 2026</p>
         </div>
       </section>
 
@@ -27,8 +27,14 @@ export function PrivacyPolicy() {
                 <li>✅ We do NOT collect personal information from children</li>
                 <li>✅ We do NOT use advertising or tracking</li>
                 <li>✅ We do NOT share your child's information with third parties</li>
-                <li>✅ Purchase information is handled securely by Google Play</li>
+                <li>✅ In-app purchase information is handled securely by Google Play</li>
               </ul>
+              <p className="text-gray-700 leading-relaxed mt-3">
+                Our <strong>online shop</strong> (merchandise, toys, and books) is designed for <strong>adult
+                purchasers only</strong>. When an adult places an order we collect the information described in
+                section 3 below. We never knowingly collect personal information from children, in the app or in
+                the shop.
+              </p>
             </div>
 
             <section>
@@ -75,16 +81,35 @@ export function PrivacyPolicy() {
 
             <section>
               <h2 className="text-2xl font-black text-[#2D0A6B] mt-12 mb-4" style={{ fontFamily: baloo }}>
-                3. Purchase Information (Handled by Google Play Only)
+                3. Purchase Information (App and Online Shop)
               </h2>
               <p className="text-gray-700 leading-relaxed mb-4">
-                When a parent or guardian makes a purchase, we collect payment information processed securely through third-party payment processors. We do not store payment card information.
+                <strong>App purchases:</strong> in-app purchases are processed securely by Google Play. We do not
+                receive or store payment card information from app purchases.
+              </p>
+              <p className="text-gray-700 leading-relaxed mb-4">
+                <strong>Online shop orders:</strong> when an adult places an order for physical merchandise at our
+                shop, we collect the information needed to fulfil that order:
               </p>
               <ul className="list-disc pl-6 space-y-2 text-gray-700">
-                <li>
-                  <strong>Payment Processors:</strong> We use Google Play for secure transaction handling.
-                </li>
+                <li>Your name and email address (for order confirmation and tracking)</li>
+                <li>Your shipping address and, optionally, a phone number (for delivery)</li>
+                <li>Your order details (items, amounts, currency, and order status)</li>
               </ul>
+              <p className="text-gray-700 leading-relaxed mt-4">
+                <strong>We never see or store your card details.</strong> Payment is completed on the secure hosted
+                pages of our payment processors — <strong>Stripe</strong> (GBP/USD) and <strong>Paystack</strong>{' '}
+                (NGN/ZAR). Order data is stored with <strong>Supabase</strong> (our database provider) and processed
+                on <strong>Railway</strong> (our hosting provider); order confirmation emails are sent via{' '}
+                <strong>Resend</strong>. These processors act on our instructions and are bound by data-processing
+                agreements.
+              </p>
+              <p className="text-gray-700 leading-relaxed mt-4">
+                Order lookups require both your order number and your email address, so your order details cannot be
+                viewed by someone who only has one of them. We retain order records for as long as required for tax,
+                accounting, and consumer-law purposes, then delete or anonymise them. You can exercise your UK GDPR
+                / POPIA rights (access, correction, deletion, objection) by emailing privacyafro@deomedia.net.
+              </p>
             </section>
 
             <section>
@@ -136,7 +161,11 @@ export function PrivacyPolicy() {
                 We use carefully selected third-party service providers who are also COPPA compliant:
               </p>
               <ul className="list-disc pl-6 space-y-2 text-gray-700">
-                <li>Payment processors for secure transaction handling</li>
+                <li>Google Play — in-app purchase handling</li>
+                <li>Stripe and Paystack — shop payment processing (card details never reach our servers)</li>
+                <li>Supabase — database hosting for shop orders</li>
+                <li>Railway — application hosting for the shop backend</li>
+                <li>Resend — transactional order emails</li>
                 <li>Cloud storage providers for content delivery</li>
                 <li>Analytics services for app performance monitoring (anonymized data only)</li>
               </ul>

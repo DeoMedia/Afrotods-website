@@ -21,9 +21,19 @@ function productPriceLabel(product: Product, currency: ReturnType<typeof useCart
     : formatMoney(min, currency);
 }
 
+const CATEGORY_LABELS: Record<string, string> = {
+  all: 'All',
+  plush: 'Plush Toys',
+  book: 'Books',
+  apparel: 'Clothing',
+  music: 'Music',
+  other: 'More',
+};
+
 export function Shop() {
   const [products, setProducts] = useState<Product[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [category, setCategory] = useState('all');
   const { currency } = useCart();
   useCurrencyDetection();
 
@@ -76,8 +86,25 @@ export function Shop() {
             />
           )}
           {!error && products !== null && products.length > 0 && (
+            <>
+            <div className="flex gap-2 flex-wrap justify-center mb-10">
+              {['all', ...new Set(products.map((p) => p.category))].map((c) => (
+                <button
+                  key={c}
+                  onClick={() => setCategory(c)}
+                  className={`px-5 py-2 rounded-full font-bold text-sm border-2 transition-colors ${
+                    category === c
+                      ? 'bg-[#2D0A6B] text-white border-[#2D0A6B]'
+                      : 'border-gray-200 text-gray-600 hover:border-[#2D0A6B]'
+                  }`}
+                  style={{ fontFamily: baloo }}
+                >
+                  {CATEGORY_LABELS[c] ?? c}
+                </button>
+              ))}
+            </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {products.map((product) => {
+              {products.filter((p) => category === 'all' || p.category === category).map((product) => {
                 const price = productPriceLabel(product, currency);
                 const cover = product.images[0];
                 return (
@@ -112,6 +139,7 @@ export function Shop() {
                 );
               })}
             </div>
+            </>
           )}
         </div>
       </section>

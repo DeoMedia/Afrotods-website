@@ -143,6 +143,7 @@ export function Layout() {
               <Link to="/" className="block text-sm text-white/60 mb-2.5 font-semibold hover:text-white transition-colors">Home</Link>
               <Link to="/about" className="block text-sm text-white/60 mb-2.5 font-semibold hover:text-white transition-colors">About</Link>
               <Link to="/shop" className="block text-sm text-white/60 mb-2.5 font-semibold hover:text-white transition-colors">Shop</Link>
+              <Link to="/track" className="block text-sm text-white/60 mb-2.5 font-semibold hover:text-white transition-colors">Track Order</Link>
               <Link to="/contact" className="block text-sm text-white/60 mb-2.5 font-semibold hover:text-white transition-colors">Contact Us</Link>
             </div>
             <div>
@@ -152,6 +153,8 @@ export function Layout() {
               </a>
               <Link to="/privacy" className="block text-sm text-white/60 mb-2.5 font-semibold hover:text-white transition-colors">Privacy Policy</Link>
               <Link to="/terms" className="block text-sm text-white/60 mb-2.5 font-semibold hover:text-white transition-colors">Terms & Conditions</Link>
+              <Link to="/returns" className="block text-sm text-white/60 mb-2.5 font-semibold hover:text-white transition-colors">Returns & Refunds</Link>
+              <Link to="/shipping" className="block text-sm text-white/60 mb-2.5 font-semibold hover:text-white transition-colors">Shipping & Delivery</Link>
             </div>
           </div>
           <div className="border-t border-white/[0.08] pt-7 flex flex-col md:flex-row justify-between items-center gap-3 text-xs text-white/40">

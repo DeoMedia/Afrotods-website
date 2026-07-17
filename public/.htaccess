@@ -1,0 +1,10 @@
+# SPA rewrite for Bluehost/Apache — route all non-file requests to index.html
+# so /shop, /track, /admin, etc. don't 404 on refresh or direct visit.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>

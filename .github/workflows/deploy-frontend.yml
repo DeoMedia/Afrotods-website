@@ -1,0 +1,42 @@
+# Auto-deploy the built site to Bluehost on every push to main.
+#
+# Required GitHub Actions secrets (Settings → Secrets and variables → Actions):
+#   VITE_API_URL   — the Railway backend URL, e.g. https://afrotods-backend.up.railway.app
+#   FTP_SERVER     — Bluehost FTP host (e.g. ftp.afrotods.com)
+#   FTP_USERNAME   — Bluehost FTP account username
+#   FTP_PASSWORD   — Bluehost FTP account password
+name: Deploy frontend to Bluehost
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+
+      - name: Deploy to Bluehost over FTPS
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          local-dir: ./dist/
+          server-dir: ./public_html/

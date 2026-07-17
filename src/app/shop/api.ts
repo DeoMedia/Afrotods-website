@@ -28,6 +28,8 @@ export interface Product {
   name: string;
   description: string;
   category: string;
+  vat_rate: number;
+  active: boolean;
   images: ProductImage[];
   variants: Variant[];
 }
@@ -40,17 +42,30 @@ export interface OrderItem {
   quantity: number;
 }
 
+export type OrderStatus = 'pending_payment' | 'paid' | 'fulfilled' | 'delivered' | 'cancelled';
+
+export interface OrderHistoryEntry {
+  status: OrderStatus;
+  note: string;
+  created_at: string;
+}
+
 export interface Order {
   reference: string;
-  status: 'pending_payment' | 'paid' | 'fulfilled' | 'delivered' | 'cancelled';
+  status: OrderStatus;
   currency: Currency;
   subtotal_minor: number;
   shipping_minor: number;
+  tax_minor: number;
   total_minor: number;
   customer_name: string;
   customer_email: string;
   ship_country: string;
+  carrier: string;
+  tracking_number: string;
+  tracking_url: string;
   items: OrderItem[];
+  history: OrderHistoryEntry[];
   created_at: string;
 }
 
@@ -67,8 +82,13 @@ export const fetchProducts = () => fetch(`${API_URL}/api/catalog/products`).then
 export const fetchProduct = (slug: string) =>
   fetch(`${API_URL}/api/catalog/products/${slug}`).then((r) => json<Product>(r));
 
-export const fetchOrder = (reference: string) =>
-  fetch(`${API_URL}/api/orders/${reference}`).then((r) => json<Order>(r));
+// Orders are only returned on an exact reference + email match (anti-enumeration)
+export const fetchOrder = (reference: string, email: string) =>
+  fetch(`${API_URL}/api/orders/${encodeURIComponent(reference)}?email=${encodeURIComponent(email)}`).then((r) =>
+    json<Order>(r),
+  );
+
+export const ORDER_EMAIL_KEY = 'afrotods_order_email';
 
 export interface CheckoutPayload {
   currency: Currency;

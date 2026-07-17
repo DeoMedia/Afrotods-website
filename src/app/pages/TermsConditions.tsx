@@ -9,7 +9,7 @@ export function TermsConditions() {
           <h1 className="text-4xl md:text-5xl font-black mb-4" style={{ fontFamily: baloo }}>
             Terms of Service
           </h1>
-          <p className="text-lg text-white/80">Last updated: February 3, 2026</p>
+          <p className="text-lg text-white/80">Last updated: July 17, 2026</p>
         </div>
       </section>
 
@@ -65,6 +65,39 @@ export function TermsConditions() {
               </ul>
               <p className="text-gray-700 leading-relaxed mt-4">
                 Prices are subject to change, but changes will not affect purchases already completed.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-black text-[#2D0A6B] mt-12 mb-4" style={{ fontFamily: baloo }}>Online Shop — Physical Goods</h2>
+              <p className="text-gray-700 leading-relaxed mb-4">
+                These terms apply to purchases of physical merchandise (toys, apparel, and books) from our online
+                shop, which is intended for <strong>adult purchasers (18+)</strong>. Displayed prices are inclusive
+                of VAT where applicable. Payment is taken on the secure hosted pages of Stripe (GBP/USD) or Paystack
+                (NGN/ZAR); we never see your card details.
+              </p>
+              <p className="text-gray-700 leading-relaxed mb-4">
+                <strong>Your right to cancel (UK):</strong> under the Consumer Contracts Regulations 2013, if you
+                are a UK consumer you may cancel your order for any reason within <strong>14 days</strong> of
+                receiving your goods and receive a full refund, including standard delivery costs. To cancel, email
+                Supportafro@deomedia.net with your order number within the 14-day period, then return the goods to
+                us within 14 days of telling us. Return postage is your responsibility unless the item is faulty.
+                Items should be unused and in their original packaging where possible; we may reduce the refund to
+                reflect any diminished value from handling beyond what is necessary to inspect the goods.
+              </p>
+              <p className="text-gray-700 leading-relaxed mb-4">
+                <strong>Faulty or misdescribed goods:</strong> under the Consumer Rights Act 2015, goods must be of
+                satisfactory quality, fit for purpose, and as described. If they are not, you are entitled to a
+                repair, replacement, or refund. Nothing in these Terms affects your statutory rights.
+              </p>
+              <p className="text-gray-700 leading-relaxed mb-4">
+                <strong>South African consumers:</strong> where the Consumer Protection Act 2008 or the Electronic
+                Communications and Transactions Act 2002 applies, you may have a 7-day cooling-off right for
+                electronic purchases and remedies for defective goods. We honour these rights in full.
+              </p>
+              <p className="text-gray-700 leading-relaxed">
+                Full details are in our <a href="/returns" className="text-[#F97316] font-bold hover:underline">Returns &amp; Refunds Policy</a> and{' '}
+                <a href="/shipping" className="text-[#F97316] font-bold hover:underline">Shipping &amp; Delivery Policy</a>.
               </p>
             </section>
 
