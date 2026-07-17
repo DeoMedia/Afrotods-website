@@ -1,7 +1,9 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { formatMoney, ORDER_EMAIL_KEY, startPayment, submitCheckout } from '../shop/api';
 import { useCart } from '../shop/CartContext';
+import { useAuth } from '../shop/AuthContext';
+import { SignInForm } from '../shop/SignInForm';
 import { useResolvedCart } from './ShopCart';
 
 const baloo = "'Baloo 2', cursive";
@@ -23,13 +25,13 @@ const inputCls =
 export function ShopCheckout() {
   const navigate = useNavigate();
   const { currency, lines, clear } = useCart();
+  const { customer, loading: authLoading } = useAuth();
   const { resolved, subtotal, error: cartError } = useResolvedCart();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const [form, setForm] = useState({
     name: '',
-    email: '',
     phone: '',
     line1: '',
     line2: '',
@@ -42,6 +44,10 @@ export function ShopCheckout() {
   const set = (key: keyof typeof form) => (e: { target: { value: string } }) =>
     setForm((f) => ({ ...f, [key]: e.target.value }));
 
+  useEffect(() => {
+    if (customer?.name) setForm((f) => (f.name ? f : { ...f, name: customer.name }));
+  }, [customer]);
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -50,7 +56,6 @@ export function ShopCheckout() {
       const order = await submitCheckout({
         currency,
         customer_name: form.name,
-        customer_email: form.email,
         customer_phone: form.phone,
         shipping_address: {
           line1: form.line1,
@@ -63,7 +68,7 @@ export function ShopCheckout() {
         items: lines.map((l) => ({ variant_id: l.variantId, quantity: l.quantity })),
       });
       clear();
-      sessionStorage.setItem(ORDER_EMAIL_KEY, form.email);
+      if (customer) sessionStorage.setItem(ORDER_EMAIL_KEY, customer.email);
       try {
         const payment = await startPayment(order.reference);
         window.location.assign(payment.url);
@@ -76,6 +81,22 @@ export function ShopCheckout() {
       setSubmitting(false);
     }
   };
+
+  if (!authLoading && !customer) {
+    return (
+      <div className="pt-32 pb-24 bg-white min-h-screen">
+        <div className="max-w-[440px] mx-auto px-6">
+          <h1 className="text-4xl font-black text-[#2D0A6B] mb-3 text-center" style={{ fontFamily: baloo }}>
+            Almost there!
+          </h1>
+          <p className="text-gray-600 font-semibold text-center mb-8">
+            Sign in with your email to complete your order — it takes 30 seconds.
+          </p>
+          <SignInForm />
+        </div>
+      </div>
+    );
+  }
 
   if (!cartError && resolved !== null && resolved.length === 0) {
     return (
@@ -100,15 +121,11 @@ export function ShopCheckout() {
             <h2 className="text-xl font-black text-[#2D0A6B]" style={{ fontFamily: baloo }}>
               Your details
             </h2>
+            <div className="text-sm font-semibold text-gray-500 bg-[#FFF8F0] rounded-xl px-4 py-3">
+              Signed in as <strong className="text-[#2D0A6B]">{customer?.email}</strong> — your order confirmation
+              goes there.
+            </div>
             <input required placeholder="Full name" value={form.name} onChange={set('name')} className={inputCls} />
-            <input
-              required
-              type="email"
-              placeholder="Email address"
-              value={form.email}
-              onChange={set('email')}
-              className={inputCls}
-            />
             <input placeholder="Phone (optional)" value={form.phone} onChange={set('phone')} className={inputCls} />
 
             <h2 className="text-xl font-black text-[#2D0A6B] pt-4" style={{ fontFamily: baloo }}>

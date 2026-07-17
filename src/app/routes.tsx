@@ -18,6 +18,8 @@ import { ShippingDelivery } from "./pages/ShippingDelivery";
 
 import TrackingProvider from "./TrackingProvider";
 import { CartProvider } from "./shop/CartContext";
+import { AuthProvider } from "./shop/AuthContext";
+import { Account } from "./pages/Account";
 import AdminApp from "./admin/AdminApp";
 
 export const router = createBrowserRouter([
@@ -26,10 +28,12 @@ export const router = createBrowserRouter([
   {
     path: "/",
     element: (
-      <CartProvider>
-        <TrackingProvider />
-        <Layout />
-      </CartProvider>
+      <AuthProvider>
+        <CartProvider>
+          <TrackingProvider />
+          <Layout />
+        </CartProvider>
+      </AuthProvider>
     ),
     children: [
       { index: true, Component: Home },
@@ -39,6 +43,7 @@ export const router = createBrowserRouter([
       { path: "shop/checkout", Component: ShopCheckout },
       { path: "shop/order/:reference", Component: ShopOrder },
       { path: "track", Component: TrackOrder },
+      { path: "account", Component: Account },
       { path: "shop/:slug", Component: ShopProduct },
       { path: "contact", Component: ContactUs },
 

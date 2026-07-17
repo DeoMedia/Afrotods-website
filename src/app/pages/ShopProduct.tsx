@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
 import { ArrowLeft, Minus, Plus, ShoppingBag } from 'lucide-react';
-import { fetchProduct, formatMoney, priceFor, type Product, type Variant } from '../shop/api';
+import { fetchProduct, fetchProducts, formatMoney, priceFor, type Product, type Variant } from '../shop/api';
 import { useCart } from '../shop/CartContext';
 
 const baloo = "'Baloo 2', cursive";
@@ -10,6 +10,7 @@ export function ShopProduct() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [product, setProduct] = useState<Product | null>(null);
+  const [related, setRelated] = useState<Product[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [variant, setVariant] = useState<Variant | null>(null);
   const [qty, setQty] = useState(1);
@@ -18,10 +19,23 @@ export function ShopProduct() {
 
   useEffect(() => {
     if (!slug) return;
+    setProduct(null);
+    setRelated([]);
+    setError(null);
+    setQty(1);
     fetchProduct(slug)
       .then((p) => {
         setProduct(p);
         setVariant(p.variants.find((v) => v.active) ?? null);
+        // Related: same category first, then anything else, excluding this product
+        fetchProducts()
+          .then((all) => {
+            const others = all.filter((o) => o.slug !== p.slug);
+            const sameCategory = others.filter((o) => o.category === p.category);
+            const rest = others.filter((o) => o.category !== p.category);
+            setRelated([...sameCategory, ...rest].slice(0, 3));
+          })
+          .catch(() => setRelated([]));
       })
       .catch((e: Error) => setError(e.message));
   }, [slug]);
@@ -143,6 +157,56 @@ export function ShopProduct() {
             </div>
           </div>
         </div>
+
+        {/* Related products */}
+        {related.length > 0 && (
+          <div className="mt-20">
+            <h2 className="text-3xl font-black text-[#2D0A6B] mb-8" style={{ fontFamily: baloo }}>
+              You might also love…
+            </h2>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {related.map((rel) => {
+                const prices = rel.variants
+                  .filter((v) => v.active)
+                  .map((v) => priceFor(v, currency))
+                  .filter((pr): pr is NonNullable<typeof pr> => pr != null)
+                  .map((pr) => pr.amount_minor);
+                const min = prices.length ? Math.min(...prices) : null;
+                const cover = rel.images[0];
+                return (
+                  <Link
+                    key={rel.id}
+                    to={`/shop/${rel.slug}`}
+                    className="group rounded-3xl bg-[#FFF8F0] overflow-hidden shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+                  >
+                    <div className="aspect-square bg-white flex items-center justify-center overflow-hidden">
+                      {cover ? (
+                        <img
+                          src={cover.url}
+                          alt={cover.alt || rel.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      ) : (
+                        <span className="text-7xl">🧸</span>
+                      )}
+                    </div>
+                    <div className="p-5">
+                      <div className="text-xs font-extrabold uppercase tracking-wide text-[#F97316] mb-1">
+                        {rel.category}
+                      </div>
+                      <h3 className="text-lg font-black text-[#2D0A6B] mb-1" style={{ fontFamily: baloo }}>
+                        {rel.name}
+                      </h3>
+                      <div className="font-extrabold text-gray-800 text-sm">
+                        {min !== null ? formatMoney(min, currency) : ''}
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

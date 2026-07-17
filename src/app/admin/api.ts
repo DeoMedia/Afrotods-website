@@ -1,17 +1,38 @@
 import { API_URL, type Currency, type Order, type Product } from '../shop/api';
 
 export const ADMIN_KEY_STORAGE = 'afrotods_admin_key';
+export const ADMIN_TOKEN_STORAGE = 'afrotods_admin_token';
+export const ADMIN_ROLE_STORAGE = 'afrotods_admin_role';
 
 export const getAdminKey = () => sessionStorage.getItem(ADMIN_KEY_STORAGE) ?? '';
 export const setAdminKey = (key: string) => sessionStorage.setItem(ADMIN_KEY_STORAGE, key);
-export const clearAdminKey = () => sessionStorage.removeItem(ADMIN_KEY_STORAGE);
+export const getAdminToken = () => sessionStorage.getItem(ADMIN_TOKEN_STORAGE) ?? '';
+export const setAdminToken = (token: string, role: string) => {
+  sessionStorage.setItem(ADMIN_TOKEN_STORAGE, token);
+  sessionStorage.setItem(ADMIN_ROLE_STORAGE, role);
+};
+export const getAdminRole = () => sessionStorage.getItem(ADMIN_ROLE_STORAGE) ?? '';
+export const clearAdminKey = () => {
+  sessionStorage.removeItem(ADMIN_KEY_STORAGE);
+  sessionStorage.removeItem(ADMIN_TOKEN_STORAGE);
+  sessionStorage.removeItem(ADMIN_ROLE_STORAGE);
+};
+
+/** The bootstrap X-Admin-Key counts as a super admin on the backend. */
+export const isSuperAdmin = () => Boolean(getAdminKey()) || getAdminRole() === 'super';
+
+function authHeaders(): Record<string, string> {
+  const token = getAdminToken();
+  if (token) return { Authorization: `Bearer ${token}` };
+  return { 'X-Admin-Key': getAdminKey() };
+}
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${API_URL}${path}`, {
     ...init,
     headers: {
       'Content-Type': 'application/json',
-      'X-Admin-Key': getAdminKey(),
+      ...authHeaders(),
       ...init?.headers,
     },
   });
@@ -62,7 +83,32 @@ export interface ProductCreate {
 
 export type AdminOrder = Order & { source: string };
 
+export interface StaffMember {
+  id: number;
+  email: string;
+  role: 'super' | 'staff';
+  active: boolean;
+  created_at: string;
+}
+
 export const adminApi = {
+  login: async (email: string, password: string) => {
+    const res = await fetch(`${API_URL}/api/admin/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+    if (!res.ok) {
+      const body = await res.json().catch(() => null);
+      throw new Error(body?.detail ?? 'Login failed');
+    }
+    return res.json() as Promise<{ token: string; email: string; role: 'super' | 'staff' }>;
+  },
+  listStaff: () => request<StaffMember[]>('/api/admin/auth/staff'),
+  createStaff: (email: string, password: string, role: 'super' | 'staff' = 'staff') =>
+    request<StaffMember>('/api/admin/auth/staff', { method: 'POST', body: JSON.stringify({ email, password, role }) }),
+  setStaffActive: (id: number, active: boolean) =>
+    request<StaffMember>(`/api/admin/auth/staff/${id}/active?active=${active}`, { method: 'PATCH' }),
   stats: () => request<Stats>('/api/admin/orders/stats'),
   listProducts: () => request<Product[]>('/api/admin/catalog/products'),
   createProduct: (p: ProductCreate) =>

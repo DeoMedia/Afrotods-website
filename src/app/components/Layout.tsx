@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation } from 'react-router';
-import { ShoppingBag } from 'lucide-react';
+import { ShoppingBag, User } from 'lucide-react';
 import afrotodLogo from '../../imports/afro-logo-1_(2).png';
 import { useCart } from '../shop/CartContext';
+import { useAuth } from '../shop/AuthContext';
 
 export function Layout() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
   const { count } = useCart();
+  const { customer } = useAuth();
   const baloo = "'Baloo 2', cursive";
   const nunito = "'Nunito', sans-serif";
 
@@ -46,6 +48,17 @@ export function Layout() {
 
           {/* CTA Buttons */}
           <div className="flex gap-3 items-center">
+            <Link
+              to="/account"
+              className="relative text-white p-2 hover:text-[#FBBF24] transition-colors"
+              aria-label="Account"
+              title={customer ? customer.email : 'Sign in'}
+            >
+              <User className="w-6 h-6" />
+              {customer && (
+                <span className="absolute -top-0.5 -right-0.5 bg-green-400 rounded-full w-2.5 h-2.5" />
+              )}
+            </Link>
             <Link
               to="/shop/cart"
               className="relative text-white p-2 hover:text-[#FBBF24] transition-colors"

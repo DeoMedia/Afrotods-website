@@ -53,6 +53,19 @@ export function ProductsTab({ onUnauthorized }: { onUnauthorized: () => void }) 
     load();
   };
 
+  const markVariantOutOfStock = async (variantId: number) => {
+    await adminApi.setStock(variantId, 0);
+    load();
+  };
+
+  const markProductOutOfStock = async (p: Product) => {
+    if (!window.confirm(`Mark every variant of "${p.name}" out of stock?`)) return;
+    for (const v of p.variants) {
+      if (v.stock_qty > 0) await adminApi.setStock(v.id, 0);
+    }
+    load();
+  };
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
@@ -99,16 +112,26 @@ export function ProductsTab({ onUnauthorized }: { onUnauthorized: () => void }) 
                     </div>
                   </div>
                 </div>
-                <button
-                  onClick={() => toggleActive(p)}
-                  className={`px-4 py-1.5 rounded-full text-xs font-extrabold border-2 ${
-                    active
-                      ? 'border-gray-200 text-gray-500 hover:border-red-300 hover:text-red-500'
-                      : 'border-green-300 text-green-600'
-                  }`}
-                >
-                  {active ? 'Hide from shop' : 'Show in shop'}
-                </button>
+                <div className="flex gap-2">
+                  {p.variants.some((v) => v.stock_qty > 0) && (
+                    <button
+                      onClick={() => markProductOutOfStock(p)}
+                      className="px-4 py-1.5 rounded-full text-xs font-extrabold border-2 border-orange-200 text-orange-500 hover:bg-orange-50"
+                    >
+                      Mark out of stock
+                    </button>
+                  )}
+                  <button
+                    onClick={() => toggleActive(p)}
+                    className={`px-4 py-1.5 rounded-full text-xs font-extrabold border-2 ${
+                      active
+                        ? 'border-gray-200 text-gray-500 hover:border-red-300 hover:text-red-500'
+                        : 'border-green-300 text-green-600'
+                    }`}
+                  >
+                    {active ? 'Hide from shop' : 'Show in shop'}
+                  </button>
+                </div>
               </div>
               <table className="w-full text-sm mt-4">
                 <thead>
@@ -130,8 +153,17 @@ export function ProductsTab({ onUnauthorized }: { onUnauthorized: () => void }) 
                           className={`underline decoration-dotted ${v.stock_qty === 0 ? 'text-red-500' : ''}`}
                           title="Click to change stock"
                         >
-                          {v.stock_qty}
+                          {v.stock_qty === 0 ? 'Out of stock' : v.stock_qty}
                         </button>
+                        {v.stock_qty > 0 && (
+                          <button
+                            onClick={() => markVariantOutOfStock(v.id)}
+                            className="ml-3 text-xs font-bold text-orange-400 hover:text-orange-600"
+                            title="Set stock to 0"
+                          >
+                            zero
+                          </button>
+                        )}
                       </td>
                       <td className="py-2 text-xs">
                         {v.prices.map((pr) => formatMoney(pr.amount_minor, pr.currency)).join(' · ')}

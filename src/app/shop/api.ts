@@ -93,7 +93,6 @@ export const ORDER_EMAIL_KEY = 'afrotods_order_email';
 export interface CheckoutPayload {
   currency: Currency;
   customer_name: string;
-  customer_email: string;
   customer_phone: string;
   shipping_address: {
     line1: string;
@@ -106,10 +105,45 @@ export interface CheckoutPayload {
   items: { variant_id: number; quantity: number }[];
 }
 
+// --- Customer auth (passwordless email codes) ---------------------------------
+
+export const CUSTOMER_TOKEN_KEY = 'afrotods_customer_token';
+
+export const getCustomerToken = () => localStorage.getItem(CUSTOMER_TOKEN_KEY) ?? '';
+
+export interface CustomerInfo {
+  email: string;
+  name: string;
+}
+
+export const requestLoginCode = (email: string) =>
+  fetch(`${API_URL}/api/auth/request-code`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  }).then((r) => json<{ sent: boolean; dev_code?: string }>(r));
+
+export const verifyLoginCode = (email: string, code: string, name = '') =>
+  fetch(`${API_URL}/api/auth/verify`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, code, name }),
+  }).then((r) => json<{ token: string; customer: CustomerInfo }>(r));
+
+export const fetchMe = () =>
+  fetch(`${API_URL}/api/account/me`, {
+    headers: { Authorization: `Bearer ${getCustomerToken()}` },
+  }).then((r) => json<CustomerInfo>(r));
+
+export const fetchMyOrders = () =>
+  fetch(`${API_URL}/api/account/orders`, {
+    headers: { Authorization: `Bearer ${getCustomerToken()}` },
+  }).then((r) => json<Order[]>(r));
+
 export const submitCheckout = (payload: CheckoutPayload) =>
   fetch(`${API_URL}/api/checkout`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getCustomerToken()}` },
     body: JSON.stringify(payload),
   }).then((r) => json<Order>(r));
 
