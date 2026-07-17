@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation } from 'react-router';
+import { ShoppingBag } from 'lucide-react';
 import afrotodLogo from '../../imports/afro-logo-1_(2).png';
+import { useCart } from '../shop/CartContext';
 
 export function Layout() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { count } = useCart();
   const baloo = "'Baloo 2', cursive";
   const nunito = "'Nunito', sans-serif";
 
@@ -43,6 +46,18 @@ export function Layout() {
 
           {/* CTA Buttons */}
           <div className="flex gap-3 items-center">
+            <Link
+              to="/shop/cart"
+              className="relative text-white p-2 hover:text-[#FBBF24] transition-colors"
+              aria-label="Cart"
+            >
+              <ShoppingBag className="w-6 h-6" />
+              {count > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 bg-[#F97316] text-white text-[10px] font-extrabold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
+                  {count}
+                </span>
+              )}
+            </Link>
             <a
               href="https://play.google.com/store/apps/details?id=com.afrotods.app"
               target="_blank"
