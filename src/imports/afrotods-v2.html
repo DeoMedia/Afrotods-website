@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Afrotods — Fun Animated Stories Kids Love</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   DESIGN TOKENS
+============================================================ */
+:root {
+  --purple-900: #2D0A6B;
+  --purple-800: #3D1080;
+  --purple-700: #5A1F9F;
+  --purple-600: #7B2FBE;
+  --purple-400: #A855F7;
+  --purple-200: #E9D5FF;
+  --orange-500: #F97316;
+  --orange-400: #FB923C;
+  --yellow-400: #FBBF24;
+  --yellow-300: #FDE68A;
+  --pink-500: #EC4899;
+  --green-400: #34D399;
+  --blue-400: #60A5FA;
+  --white: #FFFFFF;
+  --off-white: #FFF8F0;
+  --text-dark: #1E0A3C;
+  --text-muted: #6B46A0;
+  --r-sm: 12px;
+  --r-md: 20px;
+  --r-lg: 32px;
+  --r-xl: 48px;
+  --r-full: 9999px;
+  --shadow-soft: 0 8px 32px rgba(91,33,182,0.18);
+  --shadow-card: 0 4px 24px rgba(91,33,182,0.12);
+  --shadow-glow: 0 0 60px rgba(168,85,247,0.35);
+}
+
+/* ============================================================
+   RESET + BASE
+============================================================ */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--off-white);
+  color: var(--text-dark);
+  overflow-x: hidden;
+}
+
+img { max-width: 100%; display: block; }
+a { text-decoration: none; }
+
+/* ============================================================
+   TYPOGRAPHY
+============================================================ */
+.display-font { font-family: 'Baloo 2', cursive; }
+
+h1, h2, h3 { font-family: 'Baloo 2', cursive; line-height: 1.1; }
+
+/* ============================================================
+   UTILITY
+============================================================ */
+.container { max-width: 1140px; margin: 0 auto; padding: 0 24px; }
+.text-center { text-align: center; }
+.section-tag {
+  display: inline-block;
+  background: rgba(168,85,247,0.12);
+  color: var(--purple-600);
+  font-weight: 800;
+  font-size: 0.72rem;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  padding: 6px 16px;
+  border-radius: var(--r-full);
+  border: 1.5px solid rgba(168,85,247,0.25);
+  margin-bottom: 14px;
+}
+
+/* ============================================================
+   BUTTONS
+============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Baloo 2', cursive;
+  font-weight: 800;
+  border-radius: var(--r-full);
+  border: none;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.34,1.56,0.64,1);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn:hover { transform: translateY(-3px) scale(1.04); }
+.btn:active { transform: scale(0.97); }
+
+.btn-hero-primary {
+  background: linear-gradient(135deg, var(--orange-500), var(--yellow-400));
+  color: var(--purple-900);
+  font-size: 1.1rem;
+  padding: 16px 36px;
+  box-shadow: 0 8px 32px rgba(249,115,22,0.45);
+}
+.btn-hero-primary:hover { box-shadow: 0 12px 44px rgba(249,115,22,0.65); }
+
+.btn-hero-secondary {
+  background: rgba(255,255,255,0.18);
+  color: white;
+  border: 2px solid rgba(255,255,255,0.4);
+  font-size: 1rem;
+  padding: 14px 28px;
+  backdrop-filter: blur(8px);
+}
+.btn-hero-secondary:hover { background: rgba(255,255,255,0.28); }
+
+.btn-cta-main {
+  background: linear-gradient(135deg, var(--yellow-400), var(--orange-500));
+  color: var(--purple-900);
+  font-size: 1.2rem;
+  padding: 20px 48px;
+  box-shadow: 0 10px 40px rgba(251,191,36,0.5);
+}
+.btn-cta-main:hover { box-shadow: 0 16px 56px rgba(251,191,36,0.7); }
+
+.btn-gplay {
+  background: #1A1A2E;
+  color: white;
+  font-size: 0.95rem;
+  padding: 14px 28px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+/* ============================================================
+   SCROLL REVEAL
+============================================================ */
+.sr {
+  opacity: 0;
+  transform: translateY(36px);
+  transition: opacity 0.65s ease, transform 0.65s ease;
+}
+.sr.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+.sr-delay-1 { transition-delay: 0.1s; }
+.sr-delay-2 { transition-delay: 0.2s; }
+.sr-delay-3 { transition-delay: 0.3s; }
+.sr-delay-4 { transition-delay: 0.4s; }
+.sr-delay-5 { transition-delay: 0.5s; }
+.sr-delay-6 { transition-delay: 0.6s; }
+.sr-delay-7 { transition-delay: 0.7s; }
+.sr-delay-8 { transition-delay: 0.8s; }
+
+/* ============================================================
+   NAV
+============================================================ */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  padding: 14px 0;
+  transition: background 0.3s, box-shadow 0.3s;
+}
+.nav.scrolled {
+  background: rgba(45, 10, 107, 0.95);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 2px 24px rgba(0,0,0,0.25);
+}
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.nav-logo {
+  font-family: 'Baloo 2', cursive;
+  font-weight: 900;
+  font-size: 1.5rem;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.nav-logo-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--yellow-400);
+  box-shadow: 0 0 10px var(--yellow-400);
+}
+.nav-actions { display: flex; gap: 12px; align-items: center; }
+
+/* ============================================================
+   SECTION 1 — HERO
+============================================================ */
+.hero {
+  min-height: 100vh;
+  background: linear-gradient(145deg, var(--purple-900) 0%, var(--purple-700) 45%, #9333EA 75%, #C026D3 100%);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  padding-top: 80px;
+}
+
+/* Animated background blobs */
+.hero-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.3;
+  animation: blobFloat 8s ease-in-out infinite alternate;
+}
+.hero-blob-1 {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, #F97316, #FBBF24);
+  top: -150px; right: -100px;
+  animation-delay: 0s;
+}
+.hero-blob-2 {
+  width: 350px; height: 350px;
+  background: radial-gradient(circle, #EC4899, #A855F7);
+  bottom: -100px; left: -80px;
+  animation-delay: 2s;
+}
+.hero-blob-3 {
+  width: 250px; height: 250px;
+  background: radial-gradient(circle, #60A5FA, #34D399);
+  top: 40%; left: 30%;
+  animation-delay: 4s;
+}
+
+@keyframes blobFloat {
+  from { transform: translate(0, 0) scale(1); }
+  to { transform: translate(30px, -20px) scale(1.08); }
+}
+
+/* Wavy bottom divider */
+.hero-wave {
+  position: absolute;
+  bottom: -2px; left: 0; right: 0;
+}
+
+/* Floating stars */
+.star {
+  position: absolute;
+  background: rgba(255,255,255,0.7);
+  border-radius: 50%;
+  animation: twinkle 3s ease-in-out infinite alternate;
+}
+@keyframes twinkle {
+  from { opacity: 0.3; transform: scale(1); }
+  to { opacity: 1; transform: scale(1.4); }
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 60px 24px 100px;
+  width: 100%;
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.12);
+  border: 1.5px solid rgba(255,255,255,0.25);
+  color: var(--yellow-300);
+  font-weight: 800;
+  font-size: 0.8rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 7px 18px;
+  border-radius: var(--r-full);
+  backdrop-filter: blur(8px);
+  margin-bottom: 20px;
+}
+.hero-eyebrow .pulse {
+  width: 7px; height: 7px;
+  background: var(--green-400);
+  border-radius: 50%;
+  animation: pulse 1.8s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(52,211,153,0.7); }
+  50% { box-shadow: 0 0 0 6px rgba(52,211,153,0); }
+}
+
+.hero h1 {
+  font-size: clamp(2.4rem, 5vw, 3.8rem);
+  color: white;
+  margin-bottom: 20px;
+  line-height: 1.08;
+}
+.hero h1 .accent { color: var(--yellow-400); }
+.hero h1 .accent-pink { color: #F9A8D4; }
+
+.hero-sub {
+  font-size: 1.08rem;
+  color: rgba(255,255,255,0.78);
+  line-height: 1.72;
+  margin-bottom: 36px;
+  max-width: 480px;
+}
+
+.hero-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 40px; }
+
+.hero-trust {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.hero-trust-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: rgba(255,255,255,0.7);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.hero-trust-item span { font-size: 1rem; }
+
+/* Phone mockup */
+.hero-phone-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+.phone-glow {
+  position: absolute;
+  width: 280px; height: 280px;
+  background: radial-gradient(circle, rgba(251,191,36,0.4) 0%, transparent 70%);
+  animation: blobFloat 5s ease-in-out infinite alternate;
+}
+.phone-mockup {
+  position: relative;
+  z-index: 2;
+  width: 260px;
+  animation: phoneFloat 5s ease-in-out infinite;
+}
+@keyframes phoneFloat {
+  0%, 100% { transform: translateY(0px) rotate(-2deg); }
+  50% { transform: translateY(-18px) rotate(2deg); }
+}
+
+.phone-shell {
+  background: #0F0520;
+  border-radius: 42px;
+  padding: 12px;
+  box-shadow: 
+    0 0 0 2px rgba(255,255,255,0.12),
+    0 40px 80px rgba(0,0,0,0.6),
+    inset 0 0 0 1px rgba(255,255,255,0.06);
+  position: relative;
+}
+.phone-notch {
+  position: absolute;
+  top: 22px; left: 50%;
+  transform: translateX(-50%);
+  width: 90px; height: 20px;
+  background: #0F0520;
+  border-radius: var(--r-full);
+  z-index: 10;
+}
+.phone-screen {
+  background: linear-gradient(160deg, #5B21B6, #7C3AED, #9333EA);
+  border-radius: 32px;
+  padding: 50px 20px 28px;
+  text-align: center;
+  overflow: hidden;
+  position: relative;
+  min-height: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.phone-skip {
+  position: absolute;
+  top: 50px; right: 16px;
+  color: rgba(255,255,255,0.6);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.phone-logo-text {
+  font-family: 'Baloo 2', cursive;
+  font-weight: 900;
+  font-size: 1.35rem;
+  color: white;
+  margin-bottom: 4px;
+}
+.phone-logo-small {
+  font-size: 0.6rem;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 1px;
+  margin-bottom: 24px;
+}
+.phone-chars-row {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+}
+.phone-headline {
+  font-family: 'Baloo 2', cursive;
+  font-weight: 900;
+  color: var(--yellow-400);
+  font-size: 1.25rem;
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+.phone-body {
+  color: rgba(255,255,255,0.7);
+  font-size: 0.72rem;
+  line-height: 1.6;
+  margin-bottom: 24px;
+  padding: 0 8px;
+}
+.phone-btn {
+  background: white;
+  color: #5B21B6;
+  font-family: 'Baloo 2', cursive;
+  font-weight: 800;
+  font-size: 0.9rem;
+  padding: 12px 32px;
+  border-radius: var(--r-full);
+  border: none;
+  cursor: pointer;
+  width: 88%;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+}
+
+/* Floating badges around phone */
+.float-badge {
+  position: absolute;
+  background: white;
+  border-radius: var(--r-md);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: var(--shadow-soft);
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--text-dark);
+  z-index: 3;
+  animation: badgeFloat 4s ease-in-out infinite alternate;
+}
+@keyframes badgeFloat {
+  from { transform: translateY(0); }
+  to { transform: translateY(-10px); }
+}
+.float-badge-1 { top: 40px; left: -60px; animation-delay: 0s; }
+.float-badge-2 { bottom: 100px; left: -70px; animation-delay: 1.5s; }
+.float-badge-3 { top: 120px; right: -60px; animation-delay: 0.8s; }
+.float-badge-icon { font-size: 1.2rem; }
+
+/* ============================================================
+   SECTION 2 — SOCIAL PROOF
+============================================================ */
+.social-proof {
+  padding: 64px 0;
+  background: white;
+  border-bottom: 1px solid rgba(168,85,247,0.1);
+}
+.proof-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 48px;
+  flex-wrap: wrap;
+}
+.proof-divider {
+  width: 1px; height: 48px;
+  background: rgba(168,85,247,0.2);
+}
+.proof-stars {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.stars-row { display: flex; gap: 4px; }
+.star-icon { color: #FBBF24; font-size: 1.3rem; }
+.proof-stars p { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); }
+
+.proof-love { text-align: center; }
+.proof-love p { font-size: 0.95rem; font-weight: 800; color: var(--text-dark); max-width: 300px; line-height: 1.5; }
+.proof-love .flags { font-size: 1.4rem; letter-spacing: 2px; margin-bottom: 6px; }
+
+.proof-badges { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.proof-badge {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(168,85,247,0.07);
+  border: 1.5px solid rgba(168,85,247,0.2);
+  color: var(--purple-700);
+  font-weight: 800;
+  font-size: 0.8rem;
+  padding: 8px 16px;
+  border-radius: var(--r-full);
+}
+.proof-badge span { font-size: 1rem; }
+
+/* ============================================================
+   SECTION 3 — FEATURES
+============================================================ */
+.features {
+  padding: 100px 0;
+  background: linear-gradient(180deg, white 0%, var(--off-white) 100%);
+  position: relative;
+  overflow: hidden;
+}
+.features-bg-pattern {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(168,85,247,0.06) 1px, transparent 0);
+  background-size: 32px 32px;
+  pointer-events: none;
+}
+.features-header {
+  text-align: center;
+  margin-bottom: 64px;
+}
+.features-header h2 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  color: var(--text-dark);
+  margin-bottom: 12px;
+}
+.features-header h2 .accent { color: var(--purple-600); }
+.features-header p { font-size: 1.05rem; color: var(--text-muted); max-width: 500px; margin: 0 auto; }
+
+.features-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+.features-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.feature-card {
+  background: white;
+  border-radius: var(--r-lg);
+  padding: 28px 24px;
+  box-shadow: var(--shadow-card);
+  border: 1.5px solid rgba(168,85,247,0.1);
+  transition: all 0.28s cubic-bezier(0.34,1.56,0.64,1);
+  position: relative;
+  overflow: hidden;
+}
+.feature-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.feature-card:hover { transform: translateY(-8px); box-shadow: 0 20px 48px rgba(91,33,182,0.18); }
+.feature-card:hover::before { opacity: 1; }
+
+.feature-card.c1::before { background: linear-gradient(135deg, rgba(236,72,153,0.06), transparent); }
+.feature-card.c2::before { background: linear-gradient(135deg, rgba(249,115,22,0.06), transparent); }
+.feature-card.c3::before { background: linear-gradient(135deg, rgba(52,211,153,0.06), transparent); }
+.feature-card.c4::before { background: linear-gradient(135deg, rgba(96,165,250,0.06), transparent); }
+
+.feature-icon-wrap {
+  width: 52px; height: 52px;
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem;
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 1;
+}
+.feature-card h3 { font-family: 'Baloo 2', cursive; font-size: 1.1rem; margin-bottom: 6px; position: relative; z-index: 1; }
+.feature-card p { font-size: 0.87rem; color: var(--text-muted); line-height: 1.6; position: relative; z-index: 1; }
+
+.features-visual {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.lifestyle-phone {
+  width: 300px;
+  background: linear-gradient(145deg, var(--purple-800), #9333EA);
+  border-radius: 36px;
+  padding: 24px;
+  box-shadow: 0 32px 80px rgba(91,33,182,0.4);
+  text-align: center;
+  color: white;
+  position: relative;
+}
+.lifestyle-app-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  font-size: 0.75rem;
+}
+.lifestyle-logo { font-family: 'Baloo 2', cursive; font-weight: 900; color: var(--yellow-400); font-size: 1rem; }
+.lifestyle-video {
+  background: rgba(0,0,0,0.35);
+  border-radius: 20px;
+  height: 160px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.play-btn {
+  width: 52px; height: 52px;
+  background: rgba(255,255,255,0.9);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem;
+  cursor: pointer;
+  z-index: 2;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+.lifestyle-title {
+  font-family: 'Baloo 2', cursive;
+  font-weight: 800;
+  font-size: 0.95rem;
+  margin-bottom: 12px;
+}
+.lifestyle-thumbs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.lifestyle-thumb {
+  background: rgba(255,255,255,0.1);
+  border-radius: 12px;
+  height: 60px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem;
+}
+
+.visual-blob-bg {
+  position: absolute;
+  width: 380px; height: 380px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(168,85,247,0.2) 0%, transparent 70%);
+  z-index: -1;
+}
+
+/* ============================================================
+   SECTION 4 — CHARACTERS
+============================================================ */
+.characters {
+  padding: 100px 0;
+  background: linear-gradient(160deg, var(--purple-900) 0%, var(--purple-800) 60%, #4C1D95 100%);
+  position: relative;
+  overflow: hidden;
+}
+.chars-bg-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+.chars-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+.chars-header h2 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  color: white;
+  margin-bottom: 12px;
+}
+.chars-header h2 .accent { color: var(--yellow-400); }
+.chars-header p { font-size: 1.05rem; color: rgba(255,255,255,0.65); max-width: 520px; margin: 0 auto; }
+
+.chars-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.char-card {
+  background: rgba(255,255,255,0.07);
+  border: 1.5px solid rgba(255,255,255,0.12);
+  border-radius: var(--r-xl);
+  padding: 28px 20px 24px;
+  text-align: center;
+  transition: all 0.28s cubic-bezier(0.34,1.56,0.64,1);
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  position: relative;
+  overflow: hidden;
+}
+.char-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.08), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.char-card:hover { transform: translateY(-12px) scale(1.05); border-color: rgba(255,255,255,0.35); }
+.char-card:hover::after { opacity: 1; }
+
+.char-emoji-wrap {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.6rem;
+  margin: 0 auto 14px;
+  position: relative;
+  z-index: 1;
+}
+.char-name {
+  font-family: 'Baloo 2', cursive;
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: white;
+  margin-bottom: 2px;
+  position: relative;
+  z-index: 1;
+}
+.char-role {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.5);
+  font-weight: 700;
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================================
+   SECTION 5+6 — PRICING + GEO
+============================================================ */
+.pricing {
+  padding: 100px 0;
+  background: white;
+  position: relative;
+  overflow: hidden;
+}
+.pricing-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.12;
+}
+.pricing-blob-1 { width: 400px; height: 400px; background: var(--purple-600); top: -100px; left: -100px; }
+.pricing-blob-2 { width: 300px; height: 300px; background: var(--orange-500); bottom: -80px; right: -80px; }
+
+.pricing-header { text-align: center; margin-bottom: 16px; }
+.pricing-header h2 { font-size: clamp(1.9rem, 3.5vw, 2.8rem); color: var(--text-dark); margin-bottom: 10px; }
+.pricing-header h2 .accent { color: var(--purple-600); }
+.pricing-header p { font-size: 1rem; color: var(--text-muted); }
+
+/* Currency detector */
+.currency-ui {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 56px;
+  flex-wrap: wrap;
+}
+.currency-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(52,211,153,0.1);
+  border: 1.5px solid rgba(52,211,153,0.3);
+  color: #059669;
+  font-size: 0.82rem;
+  font-weight: 800;
+  padding: 7px 16px;
+  border-radius: var(--r-full);
+}
+.live-dot {
+  width: 7px; height: 7px;
+  background: var(--green-400);
+  border-radius: 50%;
+  animation: pulse 1.8s ease-in-out infinite;
+}
+.currency-select-wrap {
+  position: relative;
+  display: inline-block;
+}
+.currency-select-wrap::after {
+  content: '▾';
+  position: absolute;
+  right: 14px; top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--purple-600);
+  font-size: 0.9rem;
+}
+#currency-selector {
+  appearance: none;
+  background: rgba(168,85,247,0.08);
+  border: 1.5px solid rgba(168,85,247,0.25);
+  color: var(--purple-700);
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 0.85rem;
+  padding: 8px 36px 8px 16px;
+  border-radius: var(--r-full);
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+}
+#currency-selector:focus { border-color: var(--purple-600); }
+
+.pricing-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  max-width: 800px;
+  margin: 0 auto 40px;
+}
+
+.pricing-card {
+  border-radius: 28px;
+  padding: 40px 36px;
+  position: relative;
+  transition: transform 0.28s ease, box-shadow 0.28s ease;
+}
+.pricing-card:hover { transform: translateY(-8px); }
+
+.pricing-card.standard {
+  background: var(--off-white);
+  border: 2px solid rgba(168,85,247,0.15);
+}
+.pricing-card.standard:hover { box-shadow: 0 20px 48px rgba(91,33,182,0.12); }
+
+.pricing-card.featured {
+  background: linear-gradient(145deg, var(--purple-800), #7C3AED, #9333EA);
+  color: white;
+  box-shadow: 0 20px 60px rgba(91,33,182,0.4);
+}
+.pricing-card.featured:hover { box-shadow: 0 28px 72px rgba(91,33,182,0.55); }
+
+.pricing-badge {
+  position: absolute;
+  top: -16px;
+  left: 50%; transform: translateX(-50%);
+  background: linear-gradient(135deg, var(--yellow-400), var(--orange-500));
+  color: var(--purple-900);
+  font-family: 'Baloo 2', cursive;
+  font-weight: 900;
+  font-size: 0.8rem;
+  padding: 7px 22px;
+  border-radius: var(--r-full);
+  white-space: nowrap;
+  box-shadow: 0 4px 20px rgba(249,115,22,0.5);
+  letter-spacing: 0.5px;
+}
+
+.plan-label {
+  font-weight: 800;
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  opacity: 0.65;
+  margin-bottom: 6px;
+}
+.plan-name {
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.5rem;
+  font-weight: 900;
+  margin-bottom: 20px;
+}
+.pricing-card.featured .plan-name { color: white; }
+.pricing-card.standard .plan-name { color: var(--text-dark); }
+
+.plan-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+.price-sym { font-family: 'Baloo 2', cursive; font-weight: 900; font-size: 1.8rem; }
+.price-val { font-family: 'Baloo 2', cursive; font-weight: 900; font-size: 3.8rem; line-height: 1; }
+.pricing-card.featured .price-sym,
+.pricing-card.featured .price-val { color: var(--yellow-400); }
+.pricing-card.standard .price-sym,
+.pricing-card.standard .price-val { color: var(--purple-700); }
+
+.plan-period {
+  font-size: 0.85rem;
+  font-weight: 700;
+  opacity: 0.7;
+  margin-bottom: 28px;
+}
+
+.plan-features {
+  list-style: none;
+  margin-bottom: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.plan-features li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+.pricing-card.featured .plan-features li { color: rgba(255,255,255,0.85); }
+.pricing-card.standard .plan-features li { color: var(--text-muted); }
+.check { font-size: 1rem; }
+.pricing-card.featured .check { color: var(--green-400); }
+.pricing-card.standard .check { color: var(--purple-600); }
+
+.plan-btn {
+  display: block;
+  text-align: center;
+  padding: 15px;
+  border-radius: var(--r-full);
+  font-family: 'Baloo 2', cursive;
+  font-weight: 900;
+  font-size: 1.05rem;
+  transition: all 0.22s ease;
+  cursor: pointer;
+  border: none;
+  width: 100%;
+}
+.pricing-card.featured .plan-btn {
+  background: linear-gradient(135deg, var(--yellow-400), var(--orange-500));
+  color: var(--purple-900);
+  box-shadow: 0 6px 24px rgba(249,115,22,0.4);
+}
+.pricing-card.featured .plan-btn:hover { transform: scale(1.04); box-shadow: 0 10px 36px rgba(249,115,22,0.65); }
+.pricing-card.standard .plan-btn {
+  background: rgba(168,85,247,0.1);
+  border: 2px solid rgba(168,85,247,0.3);
+  color: var(--purple-700);
+}
+.pricing-card.standard .plan-btn:hover { background: rgba(168,85,247,0.18); }
+
+.pricing-disclaimer {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+  font-size: 0.82rem;
+  color: #9CA3AF;
+  line-height: 1.7;
+  padding: 16px 20px;
+  background: rgba(168,85,247,0.04);
+  border-radius: var(--r-md);
+  border: 1px solid rgba(168,85,247,0.1);
+}
+.pricing-disclaimer strong { color: var(--text-muted); }
+
+/* ============================================================
+   SECTION 7 — CTA STRIP
+============================================================ */
+.cta-strip {
+  padding: 100px 0;
+  background: linear-gradient(135deg, #4C1D95 0%, #7C3AED 35%, #DB2777 70%, #EA580C 100%);
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+.cta-strip-pattern {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.08) 1px, transparent 0);
+  background-size: 28px 28px;
+  pointer-events: none;
+}
+.cta-strip-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.25;
+  animation: blobFloat 7s ease-in-out infinite alternate;
+}
+.cta-blob-1 { width: 400px; height: 400px; background: #FBBF24; top: -150px; left: -100px; }
+.cta-blob-2 { width: 300px; height: 300px; background: #EC4899; bottom: -120px; right: -80px; animation-delay: 2s; }
+
+.cta-strip-inner { position: relative; z-index: 2; }
+.cta-strip h2 {
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  color: white;
+  margin-bottom: 16px;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.cta-strip h2 .accent { color: var(--yellow-300); }
+.cta-strip p {
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.8);
+  margin-bottom: 44px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.cta-strip-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+.cta-parent-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 32px;
+  color: rgba(255,255,255,0.6);
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+.avatars-mini { display: flex; }
+.avatar-mini {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.4);
+  margin-left: -8px;
+  font-size: 0.85rem;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,0.15);
+}
+.avatar-mini:first-child { margin-left: 0; }
+
+/* ============================================================
+   SECTION 8 — FOOTER
+============================================================ */
+footer {
+  background: var(--purple-900);
+  color: white;
+  padding: 60px 0 32px;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 48px;
+  margin-bottom: 48px;
+}
+.footer-brand-name {
+  font-family: 'Baloo 2', cursive;
+  font-weight: 900;
+  font-size: 1.5rem;
+  color: var(--yellow-400);
+  margin-bottom: 10px;
+}
+.footer-brand-tagline {
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.7;
+  max-width: 300px;
+  margin-bottom: 24px;
+}
+.footer-social { display: flex; gap: 10px; flex-wrap: wrap; }
+.social-link {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.8);
+  padding: 7px 14px;
+  border-radius: var(--r-full);
+  font-size: 0.8rem;
+  font-weight: 800;
+  transition: all 0.2s;
+}
+.social-link:hover { background: rgba(255,255,255,0.15); color: white; }
+
+.footer-col h4 {
+  font-family: 'Baloo 2', cursive;
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--yellow-400);
+  margin-bottom: 18px;
+}
+.footer-col a {
+  display: block;
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 10px;
+  transition: color 0.2s;
+  font-weight: 600;
+}
+.footer-col a:hover { color: white; }
+
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding-top: 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.4);
+}
+.footer-bottom a { color: rgba(255,255,255,0.5); }
+.footer-bottom a:hover { color: rgba(255,255,255,0.9); }
+.footer-legal { display: flex; gap: 20px; }
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+@media (max-width: 1024px) {
+  .hero-inner { grid-template-columns: 1fr; text-align: center; }
+  .hero-sub { margin-left: auto; margin-right: auto; }
+  .hero-actions { justify-content: center; }
+  .hero-trust { justify-content: center; }
+  .hero-phone-wrap { order: -1; }
+  .phone-mockup { width: 220px; }
+  .float-badge { display: none; }
+  .features-layout { grid-template-columns: 1fr; }
+  .features-visual { order: -1; }
+  .chars-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .proof-divider { display: none; }
+  .proof-inner { gap: 32px; }
+  .chars-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .pricing-cards { grid-template-columns: 1fr; max-width: 420px; }
+  .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+  .footer-bottom { flex-direction: column; text-align: center; }
+  .nav-actions .btn-hero-secondary { display: none; }
+}
+
+@media (max-width: 480px) {
+  .features-cards { grid-template-columns: 1fr; }
+  .chars-grid { grid-template-columns: repeat(2, 1fr); }
+  .hero h1 { font-size: 2.2rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===================== NAV ===================== -->
+<nav class="nav" id="main-nav">
+  <div class="nav-inner">
+    <div class="nav-logo">
+      <div class="nav-logo-dot"></div>
+      The Afrotods™
+    </div>
+    <div class="nav-actions">
+      <a href="#pricing" class="btn btn-hero-secondary" style="padding:10px 22px; font-size:0.9rem;">See Pricing</a>
+      <a href="https://play.google.com/store/apps/details?id=com.afrotods.app" target="_blank" class="btn btn-hero-primary" style="padding:10px 24px; font-size:0.9rem;">Download Free</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ===================== HERO ===================== -->
+<section class="hero">
+  <!-- Background elements -->
+  <div class="hero-blob hero-blob-1"></div>
+  <div class="hero-blob hero-blob-2"></div>
+  <div class="hero-blob hero-blob-3"></div>
+
+  <!-- Twinkling stars -->
+  <div class="star" style="width:3px;height:3px;top:12%;left:8%;animation-delay:0s;animation-duration:2.5s;"></div>
+  <div class="star" style="width:2px;height:2px;top:28%;left:15%;animation-delay:0.7s;animation-duration:3s;"></div>
+  <div class="star" style="width:4px;height:4px;top:8%;left:55%;animation-delay:1.2s;animation-duration:2s;"></div>
+  <div class="star" style="width:2px;height:2px;top:45%;left:88%;animation-delay:0.4s;animation-duration:3.5s;"></div>
+  <div class="star" style="width:3px;height:3px;top:72%;left:5%;animation-delay:1.8s;animation-duration:2.8s;"></div>
+  <div class="star" style="width:2px;height:2px;top:62%;left:76%;animation-delay:0.9s;animation-duration:3.2s;"></div>
+
+  <div class="hero-inner">
+    <!-- Left column: copy -->
+    <div class="hero-copy">
+      <div class="hero-eyebrow sr">
+        <div class="pulse"></div>
+        Afrocentric · Educational · Safe for Kids
+      </div>
+
+      <h1 class="sr sr-delay-1">
+        Fun Animated Stories<br>
+        Kids <span class="accent">Love</span> —<br>
+        Rooted in <span class="accent-pink">Culture</span>
+      </h1>
+
+      <p class="hero-sub sr sr-delay-2">
+        Watch colourful, music-filled stories with lovable Afrocentric characters — designed to educate, entertain, and inspire children aged 5–12.
+      </p>
+
+      <div class="hero-actions sr sr-delay-3">
+        <a href="https://play.google.com/store/apps/details?id=com.afrotods.app" target="_blank" class="btn btn-hero-primary">
+          ▶&nbsp; Start Watching Free
+        </a>
+        <a href="https://play.google.com/store/apps/details?id=com.afrotods.app" target="_blank" class="btn btn-hero-secondary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M3.18 23.76a2 2 0 0 0 2.08-.18L19 14.48l-3.82-3.82-12 13.1zM22.37 9.74a1.94 1.94 0 0 0 0-3.48L19.5 4.6l-4.32 4.32 4.32 4.32 2.87-3.5zM1.55.47A1.94 1.94 0 0 0 1 1.73v20.54c0 .5.2.96.55 1.26L2 23l11.5-11.5v-.27L2 0l-.45.47z"/></svg>
+          Google Play
+        </a>
+      </div>
+
+      <div class="hero-trust sr sr-delay-4">
+        <div class="hero-trust-item"><span>⭐</span> 4.8 Rating</div>
+        <div class="hero-trust-item" style="color:rgba(255,255,255,0.35)">•</div>
+        <div class="hero-trust-item"><span>🔒</span> Safe for Kids</div>
+        <div class="hero-trust-item" style="color:rgba(255,255,255,0.35)">•</div>
+        <div class="hero-trust-item"><span>🚫</span> No Ads</div>
+      </div>
+    </div>
+
+    <!-- Right column: phone mockup -->
+    <div class="hero-phone-wrap sr sr-delay-2">
+      <div class="phone-glow"></div>
+
+      <!-- Floating badges -->
+      <div class="float-badge float-badge-1">
+        <div class="float-badge-icon">🎬</div>
+        <div>
+          <div style="font-size:0.7rem; font-weight:900; color:#374151;">Stories</div>
+          <div style="font-size:0.65rem; color:#9CA3AF; font-weight:700;">Now playing</div>
+        </div>
+      </div>
+      <div class="float-badge float-badge-2">
+        <div class="float-badge-icon">🏆</div>
+        <div>
+          <div style="font-size:0.7rem; font-weight:900; color:#374151;">Top Rated</div>
+          <div style="font-size:0.65rem; color:#9CA3AF; font-weight:700;">Kids App</div>
+        </div>
+      </div>
+      <div class="float-badge float-badge-3">
+        <div class="float-badge-icon">✨</div>
+        <div>
+          <div style="font-size:0.7rem; font-weight:900; color:#374151;">Cultural</div>
+          <div style="font-size:0.65rem; color:#9CA3AF; font-weight:700;">Learning</div>
+        </div>
+      </div>
+
+      <div class="phone-mockup">
+        <div class="phone-shell">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="phone-skip">Skip</div>
+            <div class="phone-logo-text">The Afrotods™</div>
+            <div class="phone-logo-small">KIDS APP</div>
+            <div class="phone-chars-row">🎧👧🐶👨👩👵👴🧢</div>
+            <div class="phone-headline">Fun Animated<br>Stories Kids Love</div>
+            <div class="phone-body">Watch colourful stories with music, playful characters, and gentle learning built in.</div>
+            <button class="phone-btn">Start Watching</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wave divider -->
+  <svg class="hero-wave" viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+    <path d="M0 80L60 68C120 56 240 32 360 26.7C480 21.3 600 34.7 720 42.7C840 50.7 960 53.3 1080 48C1200 42.7 1320 29.3 1380 22.7L1440 16V80H0Z" fill="white"/>
+  </svg>
+</section>
+
+<!-- ===================== SOCIAL PROOF ===================== -->
+<section class="social-proof">
+  <div class="container">
+    <div class="proof-inner">
+      <div class="proof-stars sr">
+        <div class="stars-row">
+          <span class="star-icon">★</span>
+          <span class="star-icon">★</span>
+          <span class="star-icon">★</span>
+          <span class="star-icon">★</span>
+          <span class="star-icon">★</span>
+        </div>
+        <p>4.8 · 500+ Reviews</p>
+      </div>
+
+      <div class="proof-divider"></div>
+
+      <div class="proof-love sr sr-delay-1">
+        <div class="flags">🇬🇧 🇺🇸 🇳🇬 🇿🇦</div>
+        <p>Loved by families across the UK, USA, Nigeria & South Africa</p>
+      </div>
+
+      <div class="proof-divider"></div>
+
+      <div class="proof-badges sr sr-delay-2">
+        <div class="proof-badge"><span>📚</span> Educational</div>
+        <div class="proof-badge"><span>🌍</span> Cultural Learning</div>
+        <div class="proof-badge"><span>🔒</span> Safe for Kids</div>
+        <div class="proof-badge"><span>🚫</span> No Ads</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FEATURES ===================== -->
+<section class="features">
+  <div class="features-bg-pattern"></div>
+  <div class="container">
+    <div class="features-header sr">
+      <div class="section-tag">Product Experience</div>
+      <h2>Everything Your Child Needs to <span class="accent">Thrive</span></h2>
+      <p>Educate, entertain, and build early cultural pride — all in one beautifully designed app.</p>
+    </div>
+
+    <div class="features-layout">
+      <div class="features-cards">
+        <div class="feature-card c1 sr sr-delay-1">
+          <div class="feature-icon-wrap" style="background: linear-gradient(135deg, rgba(236,72,153,0.15), rgba(236,72,153,0.05));">🎬</div>
+          <h3>Animated Story Videos</h3>
+          <p>Vibrant, music-filled episodes featuring the Afrotods family on exciting cultural adventures.</p>
+        </div>
+        <div class="feature-card c2 sr sr-delay-2">
+          <div class="feature-icon-wrap" style="background: linear-gradient(135deg, rgba(249,115,22,0.15), rgba(249,115,22,0.05));">📚</div>
+          <h3>Interactive Books</h3>
+          <p>Story books that come alive with sound, animation, and gentle questions that spark curiosity.</p>
+        </div>
+        <div class="feature-card c3 sr sr-delay-3">
+          <div class="feature-icon-wrap" style="background: linear-gradient(135deg, rgba(52,211,153,0.15), rgba(52,211,153,0.05));">🎮</div>
+          <h3>Games for Kids</h3>
+          <p>Age-appropriate games that build problem-solving, creativity, and cultural knowledge through play.</p>
+        </div>
+        <div class="feature-card c4 sr sr-delay-4">
+          <div class="feature-icon-wrap" style="background: linear-gradient(135deg, rgba(96,165,250,0.15), rgba(96,165,250,0.05));">🎵</div>
+          <h3>Music + Learning</h3>
+          <p>Original songs and soundscapes woven into every experience — because kids learn best through rhythm.</p>
+        </div>
+      </div>
+
+      <div class="features-visual sr sr-delay-2">
+        <div class="visual-blob-bg"></div>
+        <div class="lifestyle-phone">
+          <div class="lifestyle-app-bar">
+            <div class="lifestyle-logo">The Afrotods™</div>
+            <div style="opacity:0.5; font-size:0.72rem;">Now Playing ▸</div>
+          </div>
+          <div class="lifestyle-video">
+            <div class="play-btn">▶</div>
+            <div style="position:absolute; bottom:12px; left:12px; right:12px;">
+              <div style="background:rgba(255,255,255,0.15); border-radius:4px; height:3px; overflow:hidden;">
+                <div style="background:var(--yellow-400); height:100%; width:45%; border-radius:4px;"></div>
+              </div>
+            </div>
+            <div style="position:absolute; top:12px; left:12px; background:rgba(255,77,0,0.9); border-radius:6px; padding:3px 8px; font-size:0.6rem; font-weight:800; color:white;">LIVE</div>
+          </div>
+          <div class="lifestyle-title">Festival Time — Ep. 3</div>
+          <div class="lifestyle-thumbs">
+            <div class="lifestyle-thumb">🎬</div>
+            <div class="lifestyle-thumb">📚</div>
+            <div class="lifestyle-thumb">🎮</div>
+            <div class="lifestyle-thumb">🎨</div>
+          </div>
+          <div style="margin-top:16px; background:rgba(255,255,255,0.1); border-radius:14px; padding:12px 16px; display:flex; align-items:center; justify-content:space-between;">
+            <div style="font-size:0.75rem; font-weight:800;">Next: Ajad's Big Day</div>
+            <div style="font-size:0.7rem; background:rgba(255,255,255,0.15); padding:4px 10px; border-radius:20px;">▶ Play</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CHARACTERS ===================== -->
+<section class="characters">
+  <div class="chars-bg-grid"></div>
+  <div class="container">
+    <div class="chars-header sr">
+      <div class="section-tag" style="background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.2); color:rgba(255,255,255,0.85);">Meet the Family</div>
+      <h2>Meet The <span class="accent">Afrotods</span> Family</h2>
+      <p>A vibrant world where music, culture, and storytelling come to life — one character at a time.</p>
+    </div>
+
+    <div class="chars-grid">
+      <div class="char-card sr sr-delay-1">
+        <div class="char-emoji-wrap" style="background:linear-gradient(135deg,rgba(249,115,22,0.3),rgba(251,191,36,0.15));">🎧</div>
+        <div class="char-name">Kelani</div>
+        <div class="char-role">The Music Kid</div>
+      </div>
+      <div class="char-card sr sr-delay-2">
+        <div class="char-emoji-wrap" style="background:linear-gradient(135deg,rgba(236,72,153,0.3),rgba(251,191,36,0.15));">👧</div>
+        <div class="char-name">Fola</div>
+        <div class="char-role">The Explorer</div>
+      </div>
+      <div class="char-card sr sr-delay-3">
+        <div class="char-emoji-wrap" style="background:linear-gradient(135deg,rgba(96,165,250,0.3),rgba(52,211,153,0.15));">🐶</div>
+        <div class="char-name">Ajad</div>
+        <div class="char-role">The Loyal Pup</div>
+      </div>
+      <div class="char-card sr sr-delay-4">
+        <div class="char-emoji-wrap" style="background:linear-gradient(135deg,rgba(168,85,247,0.3),rgba(236,72,153,0.15));">🧢</div>
+        <div class="char-name">Mobio</div>
+        <div class="char-role">The Cool One</div>
+      </div>
+      <div class="char-card sr sr-delay-1">
+        <div class="char-emoji-wrap" style="background:linear-gradient(135deg,rgba(52,211,153,0.3),rgba(96,165,250,0.15));">👨</div>
+        <div class="char-name">Papa</div>
+        <div class="char-role">The Storyteller</div>
+      </div>
+      <div class="char-card sr sr-delay-2">
+        <div class="char-emoji-wrap" style="background:linear-gradient(135deg,rgba(34,197,94,0.3),rgba(52,211,153,0.15));">👩</div>
+        <div class="char-name">Mama</div>
+        <div class="char-role">The Wise Heart</div>
+      </div>
+      <div class="char-card sr sr-delay-3">
+        <div class="char-emoji-wrap" style="background:linear-gradient(135deg,rgba(251,191,36,0.3),rgba(249,115,22,0.15));">👵</div>
+        <div class="char-name">Grandma</div>
+        <div class="char-role">Keeper of Roots</div>
+      </div>
+      <div class="char-card sr sr-delay-4">
+        <div class="char-emoji-wrap" style="background:linear-gradient(135deg,rgba(34,197,94,0.3),rgba(251,191,36,0.15));">👴</div>
+        <div class="char-name">Grandpa</div>
+        <div class="char-role">Elder & Guide</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PRICING + GEO ===================== -->
+<section class="pricing" id="pricing">
+  <div class="pricing-blob pricing-blob-1"></div>
+  <div class="pricing-blob pricing-blob-2"></div>
+  <div class="container">
+    <div class="pricing-header sr">
+      <div class="section-tag">Simple, Fair Pricing</div>
+      <h2>One Subscription. <span class="accent">Unlimited Stories.</span></h2>
+      <p>Start at an introductory rate. Cancel anytime. No hidden fees.</p>
+    </div>
+
+    <div class="currency-ui sr sr-delay-1">
+      <div class="currency-live">
+        <div class="live-dot"></div>
+        <span id="currency-status">Auto-detecting your location…</span>
+      </div>
+      <div class="currency-select-wrap">
+        <select id="currency-selector" onchange="setCurrency(this.value)">
+          <option value="GBP">🇬🇧 GBP (£)</option>
+          <option value="NGN">🇳🇬 NGN (₦)</option>
+          <option value="ZAR">🇿🇦 ZAR (R)</option>
+          <option value="USD">🌍 USD ($)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="pricing-cards sr sr-delay-2">
+      <!-- FEATURED: Intro Offer -->
+      <div class="pricing-card featured">
+        <div class="pricing-badge">🎉 Intro Offer — First 45 Days</div>
+        <div class="plan-label">Limited Time</div>
+        <div class="plan-name">Starter Adventure</div>
+        <div class="plan-price-row">
+          <span class="price-sym" id="intro-sym">£</span>
+          <span class="price-val" id="intro-val">9.90</span>
+        </div>
+        <div class="plan-period" id="intro-period">for your first 45 days</div>
+        <ul class="plan-features">
+          <li><span class="check">✓</span> All animated story videos</li>
+          <li><span class="check">✓</span> Interactive books & quizzes</li>
+          <li><span class="check">✓</span> Kids games & colouring</li>
+          <li><span class="check">✓</span> Original music & songs</li>
+          <li><span class="check">✓</span> No ads, ever</li>
+        </ul>
+        <a href="https://play.google.com/store/apps/details?id=com.afrotods.app" target="_blank" class="plan-btn">👉 Start Watching Now</a>
+      </div>
+
+      <!-- Standard -->
+      <div class="pricing-card standard">
+        <div class="plan-label">After Intro Period</div>
+        <div class="plan-name">Full Access</div>
+        <div class="plan-price-row">
+          <span class="price-sym" id="reg-sym">£</span>
+          <span class="price-val" id="reg-val">14.99</span>
+        </div>
+        <div class="plan-period">per month, billed monthly</div>
+        <ul class="plan-features">
+          <li><span class="check">✓</span> Everything in Starter</li>
+          <li><span class="check">✓</span> New content every month</li>
+          <li><span class="check">✓</span> Priority access to new seasons</li>
+          <li><span class="check">✓</span> Exclusive seasonal specials</li>
+          <li><span class="check">✓</span> Cancel anytime — no penalty</li>
+        </ul>
+        <a href="https://play.google.com/store/apps/details?id=com.afrotods.app" target="_blank" class="plan-btn">Get Full Access</a>
+      </div>
+    </div>
+
+    <div class="pricing-disclaimer sr sr-delay-3">
+      <strong>Pricing note:</strong> Prices are displayed based on your detected region and are approximate. Final pricing is confirmed at checkout via Google Play. Subscriptions renew automatically; you can cancel at any time through your Google Play account settings. All transactions are processed securely by Google.
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CTA STRIP ===================== -->
+<section class="cta-strip">
+  <div class="cta-strip-pattern"></div>
+  <div class="cta-blob-1 cta-strip-blob"></div>
+  <div class="cta-blob-2 cta-strip-blob"></div>
+  <div class="container cta-strip-inner">
+    <div class="section-tag sr" style="background:rgba(255,255,255,0.15); border-color:rgba(255,255,255,0.25); color:rgba(255,255,255,0.9);">Join the Afrotods Family</div>
+    <h2 class="sr sr-delay-1">
+      Give Your Child Stories That<br>
+      <span class="accent">Look Like Them</span>
+    </h2>
+    <p class="sr sr-delay-2">
+      Join thousands of parents introducing their kids to culture through the joy of storytelling.
+    </p>
+    <div class="cta-strip-actions sr sr-delay-3">
+      <a href="https://play.google.com/store/apps/details?id=com.afrotods.app" target="_blank" class="btn btn-cta-main">
+        👉 Start Watching Now
+      </a>
+      <a href="https://play.google.com/store/apps/details?id=com.afrotods.app" target="_blank" class="btn btn-gplay">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76a2 2 0 0 0 2.08-.18L19 14.48l-3.82-3.82-12 13.1zM22.37 9.74a1.94 1.94 0 0 0 0-3.48L19.5 4.6l-4.32 4.32 4.32 4.32 2.87-3.5zM1.55.47A1.94 1.94 0 0 0 1 1.73v20.54c0 .5.2.96.55 1.26L2 23l11.5-11.5v-.27L2 0l-.45.47z"/></svg>
+        Download on Google Play
+      </a>
+    </div>
+    <div class="cta-parent-count sr sr-delay-4">
+      <div class="avatars-mini">
+        <div class="avatar-mini">👩</div>
+        <div class="avatar-mini">👨</div>
+        <div class="avatar-mini">👩</div>
+        <div class="avatar-mini">👨</div>
+        <div class="avatar-mini">+</div>
+      </div>
+      Trusted by parents across 4 continents
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand-name">The Afrotods™</div>
+        <p class="footer-brand-tagline">Joyful Stories. Cultural Roots. Smart Learning. A product of aDeomedia UK — bringing Afro-modern storytelling to children everywhere.</p>
+        <div class="footer-social">
+          <a href="https://www.facebook.com/theafrotods" target="_blank" class="social-link">Facebook</a>
+          <a href="https://www.instagram.com/theafrotods" target="_blank" class="social-link">Instagram</a>
+          <a href="https://www.tiktok.com/@afrotods" target="_blank" class="social-link">TikTok</a>
+          <a href="https://www.youtube.com/@afrotods" target="_blank" class="social-link">YouTube</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Navigate</h4>
+        <a href="https://afrotods.com/">Home</a>
+        <a href="https://afrotods.com/about/">About</a>
+        <a href="https://afrotods.com/characters/">Characters</a>
+        <a href="https://afrotods.com/animation/">Animation</a>
+        <a href="https://afrotods.com/shop/">Shop</a>
+      </div>
+      <div class="footer-col">
+        <h4>Get the App</h4>
+        <a href="https://play.google.com/store/apps/details?id=com.afrotods.app" target="_blank">Google Play ↗</a>
+        <a href="https://afrotods.com/contact-us/">Contact Us</a>
+        <a href="https://afrotods.com/privacy-policy/">Privacy Policy</a>
+        <a href="https://afrotods.com/terms-conditions/">Terms & Conditions</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>©️ 2025 The Afrotods. aDeomedia UK Property. All rights reserved.</span>
+      <div class="footer-legal">
+        <a href="https://afrotods.com/privacy-policy/">Privacy</a>
+        <a href="https://afrotods.com/terms-conditions/">Terms</a>
+        <a href="https://afrotods.com/contact-us/">Contact</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ===================== SCRIPTS ===================== -->
+<script>
+/* === NAV scroll effect === */
+const nav = document.getElementById('main-nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 40);
+});
+
+/* === Scroll reveal === */
+const srEls = document.querySelectorAll('.sr');
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('show'); io.unobserve(e.target); } });
+}, { threshold: 0.08 });
+srEls.forEach(el => io.observe(el));
+
+/* === Currency pricing === */
+const PRICES = {
+  GBP: { sym: '£', intro: '9.90',   reg: '14.99', label: '🇬🇧 Showing GBP — United Kingdom' },
+  NGN: { sym: '₦', intro: '7,999',  reg: '11,999', label: '🇳🇬 Showing NGN — Nigeria' },
+  ZAR: { sym: 'R', intro: '249',    reg: '369',    label: '🇿🇦 Showing ZAR — South Africa' },
+  USD: { sym: '$', intro: '12.99',  reg: '18.99',  label: '🌍 Showing USD — International' },
+};
+
+function applyPricing(code) {
+  const p = PRICES[code] || PRICES.USD;
+  document.getElementById('intro-sym').textContent = p.sym;
+  document.getElementById('intro-val').textContent  = p.intro;
+  document.getElementById('reg-sym').textContent    = p.sym;
+  document.getElementById('reg-val').textContent    = p.reg;
+  document.getElementById('currency-status').textContent = p.label;
+  document.getElementById('currency-selector').value = code in PRICES ? code : 'USD';
+}
+
+function setCurrency(code) { applyPricing(code); }
+
+(async () => {
+  try {
+    const r = await fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(4000) });
+    const d = await r.json();
+    const map = { GB:'GBP', NG:'NGN', ZA:'ZAR' };
+    const code = map[d.country_code] || 'USD';
+    applyPricing(code);
+  } catch {
+    applyPricing('GBP'); // Sensible default since brand is UK-based
+  }
+})();
+</script>
+</body>
+</html>
