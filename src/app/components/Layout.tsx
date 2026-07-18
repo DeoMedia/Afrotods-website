@@ -1,11 +1,16 @@
 import { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation } from 'react-router';
+import { ShoppingBag, User } from 'lucide-react';
 import afrotodLogo from '../../imports/afro-logo-1_(2).png';
+import { useCart } from '../shop/CartContext';
+import { useAuth } from '../shop/AuthContext';
 
 export function Layout() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { count } = useCart();
+  const { customer } = useAuth();
   const baloo = "'Baloo 2', cursive";
   const nunito = "'Nunito', sans-serif";
 
@@ -43,6 +48,29 @@ export function Layout() {
 
           {/* CTA Buttons */}
           <div className="flex gap-3 items-center">
+            <Link
+              to="/account"
+              className="relative text-white p-2 hover:text-[#FBBF24] transition-colors"
+              aria-label="Account"
+              title={customer ? customer.email : 'Sign in'}
+            >
+              <User className="w-6 h-6" />
+              {customer && (
+                <span className="absolute -top-0.5 -right-0.5 bg-green-400 rounded-full w-2.5 h-2.5" />
+              )}
+            </Link>
+            <Link
+              to="/shop/cart"
+              className="relative text-white p-2 hover:text-[#FBBF24] transition-colors"
+              aria-label="Cart"
+            >
+              <ShoppingBag className="w-6 h-6" />
+              {count > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 bg-[#F97316] text-white text-[10px] font-extrabold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
+                  {count}
+                </span>
+              )}
+            </Link>
             <a
               href="https://play.google.com/store/apps/details?id=com.afrotods.app"
               target="_blank"
@@ -128,6 +156,7 @@ export function Layout() {
               <Link to="/" className="block text-sm text-white/60 mb-2.5 font-semibold hover:text-white transition-colors">Home</Link>
               <Link to="/about" className="block text-sm text-white/60 mb-2.5 font-semibold hover:text-white transition-colors">About</Link>
               <Link to="/shop" className="block text-sm text-white/60 mb-2.5 font-semibold hover:text-white transition-colors">Shop</Link>
+              <Link to="/track" className="block text-sm text-white/60 mb-2.5 font-semibold hover:text-white transition-colors">Track Order</Link>
               <Link to="/contact" className="block text-sm text-white/60 mb-2.5 font-semibold hover:text-white transition-colors">Contact Us</Link>
             </div>
             <div>
@@ -137,6 +166,8 @@ export function Layout() {
               </a>
               <Link to="/privacy" className="block text-sm text-white/60 mb-2.5 font-semibold hover:text-white transition-colors">Privacy Policy</Link>
               <Link to="/terms" className="block text-sm text-white/60 mb-2.5 font-semibold hover:text-white transition-colors">Terms & Conditions</Link>
+              <Link to="/returns" className="block text-sm text-white/60 mb-2.5 font-semibold hover:text-white transition-colors">Returns & Refunds</Link>
+              <Link to="/shipping" className="block text-sm text-white/60 mb-2.5 font-semibold hover:text-white transition-colors">Shipping & Delivery</Link>
             </div>
           </div>
           <div className="border-t border-white/[0.08] pt-7 flex flex-col md:flex-row justify-between items-center gap-3 text-xs text-white/40">
