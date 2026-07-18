@@ -1,3 +1,5 @@
+import { Globe2, Mail } from 'lucide-react';
+
 export function ContactUs() {
   const baloo = "'Baloo 2', cursive";
 

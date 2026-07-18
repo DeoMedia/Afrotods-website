@@ -1,3 +1,5 @@
+import { BookOpen, Globe2, Music, Palette } from 'lucide-react';
+
 export function About() {
   const baloo = "'Baloo 2', cursive";
 
