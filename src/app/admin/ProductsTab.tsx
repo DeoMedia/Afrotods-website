@@ -1,6 +1,6 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { adminApi, type ProductCreate } from './api';
-import { formatMoney, type Currency, type Product } from '../shop/api';
+import { formatMoney, imageSrc, type Currency, type Product } from '../shop/api';
 
 const baloo = "'Baloo 2', cursive";
 const CURRENCIES: Currency[] = ['GBP', 'NGN', 'ZAR', 'USD'];
@@ -66,6 +66,17 @@ export function ProductsTab({ onUnauthorized }: { onUnauthorized: () => void }) 
     load();
   };
 
+  const deleteProduct = async (p: Product) => {
+    if (!window.confirm(`Permanently delete "${p.name}"? This cannot be undone.`)) return;
+    setError(null);
+    try {
+      await adminApi.deleteProduct(p.id);
+      load();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Could not delete the product');
+    }
+  };
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
@@ -100,7 +111,7 @@ export function ProductsTab({ onUnauthorized }: { onUnauthorized: () => void }) 
               <div className="flex items-start justify-between gap-4 flex-wrap">
                 <div className="flex items-center gap-4">
                   {p.images[0] && (
-                    <img src={p.images[0].url} alt="" className="w-14 h-14 rounded-xl object-cover bg-gray-50" />
+                    <img src={imageSrc(p.images[0].url)} alt="" className="w-14 h-14 rounded-xl object-cover bg-gray-50" />
                   )}
                   <div>
                     <div className="font-black text-[#2D0A6B]" style={{ fontFamily: baloo }}>
@@ -130,6 +141,12 @@ export function ProductsTab({ onUnauthorized }: { onUnauthorized: () => void }) 
                     }`}
                   >
                     {active ? 'Hide from shop' : 'Show in shop'}
+                  </button>
+                  <button
+                    onClick={() => deleteProduct(p)}
+                    className="px-4 py-1.5 rounded-full text-xs font-extrabold border-2 border-red-200 text-red-500 hover:bg-red-50"
+                  >
+                    Delete
                   </button>
                 </div>
               </div>
@@ -192,6 +209,22 @@ function NewProductForm({ onCreated }: { onCreated: () => void }) {
   const [variants, setVariants] = useState<VariantDraft[]>([emptyVariant()]);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInput = useRef<HTMLInputElement>(null);
+
+  const handleFile = async (file: File | undefined) => {
+    if (!file) return;
+    setUploading(true);
+    setError(null);
+    try {
+      const { url } = await adminApi.uploadImage(file);
+      setForm((f) => ({ ...f, image_url: url }));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Upload failed');
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const set = (key: keyof typeof form) => (e: { target: { value: string } }) =>
     setForm((f) => ({ ...f, [key]: e.target.value }));
@@ -276,7 +309,28 @@ function NewProductForm({ onCreated }: { onCreated: () => void }) {
           />
           <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400">VAT %</span>
         </div>
-        <input placeholder="Image URL (/products/x.png)" value={form.image_url} onChange={set('image_url')} className={inputCls} />
+        <div className="flex items-center gap-3">
+          <input
+            ref={fileInput}
+            type="file"
+            accept="image/png,image/jpeg,image/webp,image/gif"
+            className="hidden"
+            onChange={(e) => handleFile(e.target.files?.[0])}
+          />
+          <button
+            type="button"
+            onClick={() => fileInput.current?.click()}
+            disabled={uploading}
+            className="shrink-0 px-4 py-2.5 rounded-xl border-2 border-[#2D0A6B] text-[#2D0A6B] text-sm font-extrabold hover:bg-[#2D0A6B] hover:text-white transition-colors disabled:opacity-40"
+          >
+            {uploading ? 'Uploading…' : '📷 Upload image'}
+          </button>
+          {form.image_url ? (
+            <img src={imageSrc(form.image_url)} alt="preview" className="w-11 h-11 rounded-lg object-cover bg-gray-50" />
+          ) : (
+            <span className="text-xs font-semibold text-gray-400">PNG/JPEG/WebP, max 5 MB</span>
+          )}
+        </div>
       </div>
 
       <div className="space-y-3">

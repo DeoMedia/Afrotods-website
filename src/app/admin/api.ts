@@ -92,6 +92,25 @@ export interface StaffMember {
 }
 
 export const adminApi = {
+  /** Multipart upload — browser sets the Content-Type boundary itself. */
+  uploadImage: async (file: File): Promise<{ url: string }> => {
+    const body = new FormData();
+    body.append('file', file);
+    const res = await fetch(`${API_URL}/api/admin/catalog/uploads`, {
+      method: 'POST',
+      headers: authHeaders(),
+      body,
+    });
+    if (res.status === 401) {
+      clearAdminKey();
+      throw new Error('unauthorized');
+    }
+    if (!res.ok) {
+      const errBody = await res.json().catch(() => null);
+      throw new Error(errBody?.detail ?? `Upload failed (${res.status})`);
+    }
+    return res.json();
+  },
   login: async (email: string, password: string) => {
     const res = await fetch(`${API_URL}/api/admin/auth/login`, {
       method: 'POST',

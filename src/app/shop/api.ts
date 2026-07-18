@@ -152,6 +152,11 @@ export const startPayment = (reference: string) =>
     json<{ provider: string; url: string }>(r),
   );
 
+/** Uploaded images live on the backend (/api/uploads/…); site assets stay relative. */
+export function imageSrc(url: string): string {
+  return url.startsWith('/api/uploads/') ? `${API_URL}${url}` : url;
+}
+
 export function priceFor(variant: Variant, currency: Currency): Price | undefined {
   return variant.prices.find((p) => p.currency === currency);
 }

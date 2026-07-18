@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
 import { ArrowLeft, Minus, Plus, ShoppingBag } from 'lucide-react';
-import { fetchProduct, fetchProducts, formatMoney, priceFor, type Product, type Variant } from '../shop/api';
+import { imageSrc, fetchProduct, fetchProducts, formatMoney, priceFor, type Product, type Variant } from '../shop/api';
 import { useCart } from '../shop/CartContext';
 
 const baloo = "'Baloo 2', cursive";
@@ -82,7 +82,7 @@ export function ShopProduct() {
         <div className="grid md:grid-cols-2 gap-12 items-start">
           <div className="rounded-3xl bg-[#FFF8F0] overflow-hidden aspect-square flex items-center justify-center">
             {cover ? (
-              <img src={cover.url} alt={cover.alt || product.name} className="w-full h-full object-cover" />
+              <img src={imageSrc(cover.url)} alt={cover.alt || product.name} className="w-full h-full object-cover" />
             ) : (
               <span className="text-9xl">🧸</span>
             )}
@@ -182,7 +182,7 @@ export function ShopProduct() {
                     <div className="aspect-square bg-white flex items-center justify-center overflow-hidden">
                       {cover ? (
                         <img
-                          src={cover.url}
+                          src={imageSrc(cover.url)}
                           alt={cover.alt || rel.name}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />

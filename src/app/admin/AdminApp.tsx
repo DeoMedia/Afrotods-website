@@ -13,6 +13,7 @@ import { ProductsTab } from './ProductsTab';
 import { OrdersTab } from './OrdersTab';
 import { StaffTab } from './StaffTab';
 import { formatMoney, type Currency } from '../shop/api';
+import afrotodLogo from '../../imports/afro-logo-1_(2).png';
 
 const baloo = "'Baloo 2', cursive";
 
@@ -31,9 +32,12 @@ export default function AdminApp() {
   return (
     <div className="min-h-screen bg-gray-50" style={{ fontFamily: "'Nunito', sans-serif" }}>
       <header className="bg-[#2D0A6B] text-white px-6 py-4 flex items-center justify-between">
-        <h1 className="text-xl font-black" style={{ fontFamily: baloo }}>
-          Afrotods Admin
-        </h1>
+        <div className="flex items-center gap-3">
+          <img src={afrotodLogo} alt="The Afrotods" className="h-10 w-auto" />
+          <span className="text-sm font-extrabold text-white/60 uppercase tracking-wider" style={{ fontFamily: baloo }}>
+            Admin
+          </span>
+        </div>
         <div className="flex items-center gap-2">
           {tabs.map((t) => (
             <button
@@ -109,8 +113,9 @@ function Login({ onSuccess }: { onSuccess: () => void }) {
   return (
     <div className="min-h-screen bg-[#2D0A6B] flex items-center justify-center px-6">
       <form onSubmit={handleSubmit} className="bg-white rounded-3xl p-10 w-full max-w-[400px] text-center">
-        <h1 className="text-2xl font-black text-[#2D0A6B] mb-6" style={{ fontFamily: baloo }}>
-          Afrotods Admin
+        <img src={afrotodLogo} alt="The Afrotods" className="h-14 w-auto mx-auto mb-2" />
+        <h1 className="text-lg font-black text-[#2D0A6B] mb-6" style={{ fontFamily: baloo }}>
+          Admin
         </h1>
         {mode === 'account' ? (
           <>

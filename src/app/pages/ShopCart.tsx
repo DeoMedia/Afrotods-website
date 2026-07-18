@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router';
 import { Minus, Plus, Trash2 } from 'lucide-react';
-import { fetchProducts, formatMoney, priceFor, type Product, type Variant } from '../shop/api';
+import { imageSrc, fetchProducts, formatMoney, priceFor, type Product, type Variant } from '../shop/api';
 import { useCart } from '../shop/CartContext';
 import { CurrencyPicker } from '../shop/CurrencyPicker';
 
@@ -95,7 +95,7 @@ export function ShopCart() {
                       className="w-20 h-20 rounded-2xl bg-[#FFF8F0] overflow-hidden flex items-center justify-center shrink-0"
                     >
                       {cover ? (
-                        <img src={cover.url} alt={line.product.name} className="w-full h-full object-cover" />
+                        <img src={imageSrc(cover.url)} alt={line.product.name} className="w-full h-full object-cover" />
                       ) : (
                         <span className="text-3xl">🧸</span>
                       )}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { Facebook, Instagram, Music, Youtube } from 'lucide-react';
-import { fetchProducts, formatMoney, priceFor, type Product } from '../shop/api';
+import { imageSrc, fetchProducts, formatMoney, priceFor, type Product } from '../shop/api';
 import { useCart } from '../shop/CartContext';
 import { useCurrencyDetection } from '../shop/useCurrencyDetection';
 import { CurrencyPicker } from '../shop/CurrencyPicker';
@@ -116,7 +116,7 @@ export function Shop() {
                     <div className="aspect-square bg-white flex items-center justify-center overflow-hidden">
                       {cover ? (
                         <img
-                          src={cover.url}
+                          src={imageSrc(cover.url)}
                           alt={cover.alt || product.name}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
