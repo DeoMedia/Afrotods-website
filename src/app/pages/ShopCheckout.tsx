@@ -8,16 +8,8 @@ import { useResolvedCart } from './ShopCart';
 
 const baloo = "'Baloo 2', cursive";
 
-const COUNTRIES = [
-  { code: 'GB', name: 'United Kingdom' },
-  { code: 'NG', name: 'Nigeria' },
-  { code: 'ZA', name: 'South Africa' },
-  { code: 'US', name: 'United States' },
-  { code: 'GH', name: 'Ghana' },
-  { code: 'KE', name: 'Kenya' },
-  { code: 'CA', name: 'Canada' },
-  { code: 'IE', name: 'Ireland' },
-];
+// Launch scope: UK only via Royal Mail — must match the backend's SHIP_COUNTRIES.
+const COUNTRIES = [{ code: 'GB', name: 'United Kingdom' }];
 
 const inputCls =
   'w-full px-5 py-3.5 rounded-2xl border-2 border-gray-200 focus:border-[#F97316] outline-none font-semibold text-gray-800 bg-white transition-colors';
@@ -152,6 +144,9 @@ export function ShopCheckout() {
                 ))}
               </select>
             </div>
+            <p className="text-xs text-gray-400 font-semibold">
+              🇬🇧 We currently ship within the UK via Royal Mail — Europe and international delivery coming soon!
+            </p>
 
             {error && <p className="text-red-600 font-bold">{error}</p>}
 
