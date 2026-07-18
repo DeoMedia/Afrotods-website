@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
-import { ArrowLeft, Minus, Plus, ShoppingBag } from 'lucide-react';
+import { ArrowLeft, Gift, Minus, Plus, SearchX, ShoppingBag } from 'lucide-react';
 import { imageSrc, fetchProduct, fetchProducts, formatMoney, priceFor, type Product, type Variant } from '../shop/api';
 import { useCart } from '../shop/CartContext';
 
@@ -43,7 +43,7 @@ export function ShopProduct() {
   if (error) {
     return (
       <div className="pt-40 pb-24 text-center">
-        <div className="text-7xl mb-6">😕</div>
+        <SearchX className="w-20 h-20 mx-auto mb-6 text-[#2D0A6B]/30" />
         <h1 className="text-3xl font-black text-[#2D0A6B] mb-4" style={{ fontFamily: baloo }}>
           Product not found
         </h1>
@@ -84,7 +84,7 @@ export function ShopProduct() {
             {cover ? (
               <img src={imageSrc(cover.url)} alt={cover.alt || product.name} className="w-full h-full object-cover" />
             ) : (
-              <span className="text-9xl">🧸</span>
+              <Gift className="w-24 h-24 text-[#2D0A6B]/20" />
             )}
           </div>
 
@@ -147,7 +147,7 @@ export function ShopProduct() {
               style={{ fontFamily: baloo }}
             >
               <ShoppingBag className="w-5 h-5" />
-              {added ? 'Added! 🎉' : inStock ? 'Add to Cart' : 'Out of Stock'}
+              {added ? 'Added!' : inStock ? 'Add to Cart' : 'Out of Stock'}
             </button>
 
             <div className="mt-6">

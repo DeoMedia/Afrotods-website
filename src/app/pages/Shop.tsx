@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
-import { Facebook, Instagram, Music, Youtube } from 'lucide-react';
+import { Facebook, Gift, Instagram, Music, ShoppingBag, Youtube } from 'lucide-react';
 import { imageSrc, fetchProducts, formatMoney, priceFor, type Product } from '../shop/api';
 import { useCart } from '../shop/CartContext';
 import { useCurrencyDetection } from '../shop/useCurrencyDetection';
@@ -64,7 +64,6 @@ export function Shop() {
         <div className="max-w-[1140px] mx-auto px-6">
           {error && (
             <FallbackMessage
-              emoji="🛍️"
               title="Coming Soon!"
               body="We're working hard to bring you amazing Afrotods merchandise. Follow us on social media to be first to know!"
               showSocials
@@ -79,7 +78,6 @@ export function Shop() {
           )}
           {!error && products !== null && products.length === 0 && (
             <FallbackMessage
-              emoji="🛍️"
               title="Coming Soon!"
               body="We're stocking the shelves — check back very soon for plush toys, books, and more."
               showSocials
@@ -121,7 +119,7 @@ export function Shop() {
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                       ) : (
-                        <span className="text-7xl">🧸</span>
+                        <Gift className="w-16 h-16 text-[#2D0A6B]/20" />
                       )}
                     </div>
                     <div className="p-6">
@@ -148,19 +146,17 @@ export function Shop() {
 }
 
 function FallbackMessage({
-  emoji,
   title,
   body,
   showSocials,
 }: {
-  emoji: string;
   title: string;
   body: string;
   showSocials?: boolean;
 }) {
   return (
     <div className="max-w-[700px] mx-auto text-center py-12">
-      <div className="text-8xl mb-6">{emoji}</div>
+      <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-[#FFF8F0] flex items-center justify-center"><ShoppingBag className="w-12 h-12 text-[#F97316]" /></div>
       <h2 className="text-4xl font-black text-[#2D0A6B] mb-4" style={{ fontFamily: baloo }}>
         {title}
       </h2>

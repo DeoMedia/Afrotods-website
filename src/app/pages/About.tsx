@@ -35,19 +35,19 @@ export function About() {
               <h2 className="text-3xl font-black text-[#2D0A6B] mb-4" style={{ fontFamily: baloo }}>What We Believe</h2>
               <ul className="space-y-4 text-lg text-gray-700">
                 <li className="flex items-start gap-3">
-                  <span className="text-2xl">🎨</span>
+                  <Palette className="w-6 h-6 mt-0.5 shrink-0 text-[#F97316]" />
                   <span><strong className="text-[#5A1F9F]">Representation Matters:</strong> Every child deserves to see characters that look like them.</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-2xl">🌍</span>
+                  <Globe2 className="w-6 h-6 mt-0.5 shrink-0 text-[#F97316]" />
                   <span><strong className="text-[#5A1F9F]">Culture is Fun:</strong> Learning about heritage should be joyful and engaging.</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-2xl">🎵</span>
+                  <Music className="w-6 h-6 mt-0.5 shrink-0 text-[#F97316]" />
                   <span><strong className="text-[#5A1F9F]">Music Teaches:</strong> Rhythm and melody make lessons stick.</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-2xl">📚</span>
+                  <BookOpen className="w-6 h-6 mt-0.5 shrink-0 text-[#F97316]" />
                   <span><strong className="text-[#5A1F9F]">Safe Content:</strong> Parents can trust what their kids are watching.</span>
                 </li>
               </ul>

@@ -1,3 +1,4 @@
+import { ImagePlus } from 'lucide-react';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { adminApi, type ProductCreate } from './api';
 import { formatMoney, imageSrc, type Currency, type Product } from '../shop/api';
@@ -323,7 +324,7 @@ function NewProductForm({ onCreated }: { onCreated: () => void }) {
             disabled={uploading}
             className="shrink-0 px-4 py-2.5 rounded-xl border-2 border-[#2D0A6B] text-[#2D0A6B] text-sm font-extrabold hover:bg-[#2D0A6B] hover:text-white transition-colors disabled:opacity-40"
           >
-            {uploading ? 'Uploading…' : '📷 Upload image'}
+            {uploading ? 'Uploading…' : (<span className="inline-flex items-center gap-1.5"><ImagePlus className="w-4 h-4" />Upload image</span>)}
           </button>
           {form.image_url ? (
             <img src={imageSrc(form.image_url)} alt="preview" className="w-11 h-11 rounded-lg object-cover bg-gray-50" />

@@ -1,3 +1,4 @@
+import { Ban, BookOpen, Clapperboard, Gamepad2, Globe2, Lock, Music, PartyPopper, Star } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import heroPhoneHand from '../../imports/ChatGPT_Image_Apr_17,_2026,_11_27_52_AM_(1).png';
 import kelaniImg from '../../imports/kelani-1.png';
@@ -22,10 +23,10 @@ const CHARACTERS = [
 ];
 
 const FEATURES = [
-  { icon: '🎬', title: 'Animated Story Videos', description: 'Vibrant, music-filled episodes featuring the Afrotods family on exciting cultural adventures.', color: 'rgba(236,72,153,0.15)' },
-  { icon: '📚', title: 'Interactive Books', description: 'Story books that come alive with sound, animation, and gentle questions that spark curiosity.', color: 'rgba(249,115,22,0.15)' },
-  { icon: '🎮', title: 'Games for Kids', description: 'Age-appropriate games that build problem-solving, creativity, and cultural knowledge through play.', color: 'rgba(52,211,153,0.15)' },
-  { icon: '🎵', title: 'Music + Learning', description: 'Original songs and soundscapes woven into every experience — because kids learn best through rhythm.', color: 'rgba(96,165,250,0.15)' }
+  { icon: Clapperboard, title: 'Animated Story Videos', description: 'Vibrant, music-filled episodes featuring the Afrotods family on exciting cultural adventures.', color: 'rgba(236,72,153,0.15)' },
+  { icon: BookOpen, title: 'Interactive Books', description: 'Story books that come alive with sound, animation, and gentle questions that spark curiosity.', color: 'rgba(249,115,22,0.15)' },
+  { icon: Gamepad2, title: 'Games for Kids', description: 'Age-appropriate games that build problem-solving, creativity, and cultural knowledge through play.', color: 'rgba(52,211,153,0.15)' },
+  { icon: Music, title: 'Music + Learning', description: 'Original songs and soundscapes woven into every experience — because kids learn best through rhythm.', color: 'rgba(96,165,250,0.15)' }
 ];
 
 const CURRENCIES = [
@@ -155,11 +156,11 @@ export function Home() {
               className="scroll-reveal opacity-0 translate-y-9 transition-all duration-[650ms] [transition-delay:400ms] flex flex-wrap items-center gap-4 text-[#374151] text-sm font-bold"
               style={{ fontFamily: nunito }}
             >
-              <div className="flex items-center gap-1.5"><span className="text-yellow-400 text-base">⭐</span> 4.8 Rating</div>
+              <div className="flex items-center gap-1.5"><Star className="w-4 h-4 text-yellow-400 fill-yellow-400" /> 4.8 Rating</div>
               <div className="text-[#D1D5DB]">•</div>
-              <div className="flex items-center gap-1.5"><span className="text-base">🔒</span> Safe for Kids</div>
+              <div className="flex items-center gap-1.5"><Lock className="w-4 h-4" /> Safe for Kids</div>
               <div className="text-[#D1D5DB]">•</div>
-              <div className="flex items-center gap-1.5"><span className="text-base">🚫</span> No Ads</div>
+              <div className="flex items-center gap-1.5"><Ban className="w-4 h-4" /> No Ads</div>
             </div>
           </div>
 
@@ -184,7 +185,7 @@ export function Home() {
             <div className="flex flex-col items-center gap-0.5">
               <div className="flex gap-0.5">
                 {[...Array(5)].map((_, i) => (
-                  <span key={i} className="text-[#FBBF24] text-lg">★</span>
+                  <Star key={i} className="w-4 h-4 text-[#FBBF24] fill-[#FBBF24]" />
                 ))}
               </div>
               <p className="text-xs font-bold text-white/60" style={{ fontFamily: nunito }}>4.8 · 100+ Reviews</p>
@@ -206,17 +207,17 @@ export function Home() {
             {/* Badges */}
             <div className="flex gap-2 flex-wrap justify-center">
               {[
-                { icon: '📚', label: 'Educational' },
-                { icon: '🌍', label: 'Cultural Learning' },
-                { icon: '🔒', label: 'Safe for Kids' },
-                { icon: '🚫', label: 'No Ads' }
+                { icon: BookOpen, label: 'Educational' },
+                { icon: Globe2, label: 'Cultural Learning' },
+                { icon: Lock, label: 'Safe for Kids' },
+                { icon: Ban, label: 'No Ads' }
               ].map((badge) => (
                 <div
                   key={badge.label}
                   className="flex items-center gap-1.5 bg-white/10 border border-white/20 text-white font-extrabold text-xs px-3.5 py-1.5 rounded-full"
                   style={{ fontFamily: nunito }}
                 >
-                  <span className="text-sm">{badge.icon}</span>
+                  <badge.icon className="w-3.5 h-3.5" />
                   {badge.label}
                 </div>
               ))}
@@ -263,7 +264,7 @@ export function Home() {
                   className="relative w-12 h-12 rounded-2xl flex items-center justify-center text-2xl mb-4"
                   style={{ background: `linear-gradient(135deg, ${feature.color}, ${feature.color.replace('0.15', '0.05')})` }}
                 >
-                  {feature.icon}
+                  <feature.icon className="w-6 h-6 text-[#2D0A6B]" />
                 </div>
                 <h3 className="relative text-base font-bold mb-1.5 text-[#1E0A3C]" style={{ fontFamily: baloo }}>
                   {feature.title}
@@ -394,7 +395,7 @@ export function Home() {
                 className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-[#FBBF24] to-[#F97316] text-[#2D0A6B] font-black text-xs px-5 py-1.5 rounded-full shadow-[0_4px_20px_rgba(249,115,22,0.5)] whitespace-nowrap"
                 style={{ fontFamily: baloo, letterSpacing: '0.5px' }}
               >
-                🎉 LIMITED INTRO OFFER
+                <span className="inline-flex items-center gap-1.5"><PartyPopper className="w-3.5 h-3.5" />LIMITED INTRO OFFER</span>
               </div>
 
               <div className="text-sm font-bold text-white/75 mb-5 mt-2" style={{ fontFamily: baloo }}>

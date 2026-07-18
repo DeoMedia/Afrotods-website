@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useParams } from 'react-router';
-import { Check, Truck } from 'lucide-react';
+import { Check, Clock, Home, Package, PartyPopper, Search, Truck, XCircle, type LucideIcon } from 'lucide-react';
 import {
   fetchOrder,
   formatMoney,
@@ -12,16 +12,16 @@ import {
 
 const baloo = "'Baloo 2', cursive";
 
-const STATUS_DISPLAY: Record<OrderStatus, { emoji: string; title: string; body: string }> = {
+const STATUS_DISPLAY: Record<OrderStatus, { Icon: LucideIcon; title: string; body: string }> = {
   pending_payment: {
-    emoji: '⏳',
+    Icon: Clock,
     title: 'Awaiting payment',
     body: "Your order is reserved but hasn't been paid yet.",
   },
-  paid: { emoji: '🎉', title: 'Payment received!', body: "Thank you! We're getting your order ready." },
-  fulfilled: { emoji: '📦', title: 'On its way!', body: 'Your order has been shipped.' },
-  delivered: { emoji: '🏠', title: 'Delivered', body: 'Your order has arrived. We hope you love it!' },
-  cancelled: { emoji: '❌', title: 'Cancelled', body: 'This order was cancelled.' },
+  paid: { Icon: PartyPopper, title: 'Payment received!', body: "Thank you! We're getting your order ready." },
+  fulfilled: { Icon: Package, title: 'On its way!', body: 'Your order has been shipped.' },
+  delivered: { Icon: Home, title: 'Delivered', body: 'Your order has arrived. We hope you love it!' },
+  cancelled: { Icon: XCircle, title: 'Cancelled', body: 'This order was cancelled.' },
 };
 
 const TIMELINE_STEPS: { status: OrderStatus; label: string }[] = [
@@ -85,7 +85,9 @@ export function ShopOrder() {
     return (
       <div className="pt-40 pb-24 bg-white min-h-screen">
         <div className="max-w-[480px] mx-auto px-6 text-center">
-          <div className="text-7xl mb-6">🔎</div>
+          <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-[#FFF8F0] flex items-center justify-center">
+            <Search className="w-12 h-12 text-[#F97316]" />
+          </div>
           <h1 className="text-3xl font-black text-[#2D0A6B] mb-3" style={{ fontFamily: baloo }}>
             Find your order
           </h1>
@@ -126,7 +128,9 @@ export function ShopOrder() {
   return (
     <div className="pt-32 pb-24 bg-white min-h-screen">
       <div className="max-w-[700px] mx-auto px-6 text-center">
-        <div className="text-8xl mb-6">{display.emoji}</div>
+        <div className="w-28 h-28 mx-auto mb-6 rounded-full bg-[#FFF8F0] flex items-center justify-center">
+          <display.Icon className="w-14 h-14 text-[#F97316]" />
+        </div>
         <h1 className="text-4xl font-black text-[#2D0A6B] mb-3" style={{ fontFamily: baloo }}>
           {display.title}
         </h1>
