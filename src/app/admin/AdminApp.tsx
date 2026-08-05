@@ -170,6 +170,118 @@ function Login({ onSuccess }: { onSuccess: () => void }) {
   );
 }
 
+const STATUS_OPTIONS = [
+  { value: '', label: 'All statuses' },
+  { value: 'paid', label: 'Paid' },
+  { value: 'fulfilled', label: 'Shipped' },
+  { value: 'delivered', label: 'Delivered' },
+  { value: 'pending_payment', label: 'Awaiting payment' },
+  { value: 'cancelled', label: 'Cancelled' },
+];
+
+function ExportPanel() {
+  const [filters, setFilters] = useState({ status: '', date_from: '', date_to: '' });
+  const [busy, setBusy] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const inputCls =
+    'px-4 py-2.5 rounded-xl border-2 border-gray-200 focus:border-[#F97316] outline-none font-semibold text-sm';
+
+  const run = async (format: 'csv' | 'xlsx' | 'pdf') => {
+    setBusy(format);
+    setError(null);
+    try {
+      await adminApi.downloadExport(format, filters);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Export failed');
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const set = (key: keyof typeof filters) => (e: { target: { value: string } }) =>
+    setFilters((f) => ({ ...f, [key]: e.target.value }));
+
+  const quickRange = (months: number) => {
+    const to = new Date();
+    const from = new Date();
+    from.setMonth(from.getMonth() - months);
+    setFilters((f) => ({
+      ...f,
+      date_from: from.toISOString().slice(0, 10),
+      date_to: to.toISOString().slice(0, 10),
+    }));
+  };
+
+  return (
+    <div className="bg-white rounded-3xl p-6 shadow-sm mb-8">
+      <div className="flex items-center justify-between gap-4 flex-wrap mb-4">
+        <h2 className="font-black text-[#2D0A6B]" style={{ fontFamily: baloo }}>
+          Export sales
+        </h2>
+        <div className="flex gap-2">
+          {(['csv', 'xlsx', 'pdf'] as const).map((f) => (
+            <button
+              key={f}
+              onClick={() => run(f)}
+              disabled={busy !== null}
+              className="px-5 py-2.5 rounded-full text-xs font-extrabold border-2 border-[#2D0A6B] text-[#2D0A6B] hover:bg-[#2D0A6B] hover:text-white transition-colors disabled:opacity-40"
+            >
+              {busy === f ? 'Preparing…' : f === 'xlsx' ? 'Excel' : f.toUpperCase()}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex gap-3 flex-wrap items-center">
+        <select value={filters.status} onChange={set('status')} className={inputCls}>
+          {STATUS_OPTIONS.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.label}
+            </option>
+          ))}
+        </select>
+        <label className="text-xs font-bold text-gray-400">
+          From
+          <input type="date" value={filters.date_from} onChange={set('date_from')} className={`${inputCls} ml-2`} />
+        </label>
+        <label className="text-xs font-bold text-gray-400">
+          To
+          <input type="date" value={filters.date_to} onChange={set('date_to')} className={`${inputCls} ml-2`} />
+        </label>
+        <div className="flex gap-2">
+          {[
+            { label: 'This quarter', months: 3 },
+            { label: 'Last 12 months', months: 12 },
+          ].map((r) => (
+            <button
+              key={r.label}
+              onClick={() => quickRange(r.months)}
+              className="px-3 py-1.5 rounded-full text-xs font-bold text-gray-500 border border-gray-200 hover:border-[#2D0A6B] hover:text-[#2D0A6B]"
+            >
+              {r.label}
+            </button>
+          ))}
+          {(filters.date_from || filters.date_to || filters.status) && (
+            <button
+              onClick={() => setFilters({ status: '', date_from: '', date_to: '' })}
+              className="px-3 py-1.5 rounded-full text-xs font-bold text-gray-400 hover:text-red-500"
+            >
+              Clear
+            </button>
+          )}
+        </div>
+      </div>
+
+      {error && <p className="text-red-600 font-bold text-sm mt-3">{error}</p>}
+      <p className="text-xs font-semibold text-gray-400 mt-3">
+        Every format carries the same rows, with VAT per order and a paid-revenue summary by currency — the numbers
+        your accountant needs for a VAT return.
+      </p>
+    </div>
+  );
+}
+
 function DashboardTab({ onUnauthorized }: { onUnauthorized: () => void }) {
   const [stats, setStats] = useState<Stats | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -193,6 +305,8 @@ function DashboardTab({ onUnauthorized }: { onUnauthorized: () => void }) {
 
   return (
     <div>
+      <ExportPanel />
+
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {cards.map((c) => (
           <div key={c.label} className="bg-white rounded-3xl p-6 shadow-sm">

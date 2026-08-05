@@ -1,11 +1,13 @@
 import type { Currency } from './api';
 import { useCart } from './CartContext';
 
-// Launch currencies: GBP is the base price, USD for international browsing.
-// NGN/ZAR return when shipping opens outside the UK.
+// GBP is the base price; the rest let international visitors see what they'd pay.
+// Shipping is still UK-only until those markets open.
 const OPTIONS: { code: Currency; label: string }[] = [
   { code: 'GBP', label: '🇬🇧 GBP' },
-  { code: 'USD', label: '$ USD' },
+  { code: 'USD', label: '🇺🇸 USD' },
+  { code: 'ZAR', label: '🇿🇦 ZAR' },
+  { code: 'NGN', label: '🇳🇬 NGN' },
 ];
 
 export function CurrencyPicker() {

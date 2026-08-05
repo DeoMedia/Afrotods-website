@@ -28,6 +28,7 @@ export function ProductsTab({ onUnauthorized }: { onUnauthorized: () => void }) 
   const [products, setProducts] = useState<Product[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [editingPrices, setEditingPrices] = useState<number | null>(null);
 
   const load = () =>
     adminApi
@@ -251,7 +252,26 @@ export function ProductsTab({ onUnauthorized }: { onUnauthorized: () => void }) 
                         )}
                       </td>
                       <td className="py-2 text-xs">
-                        {v.prices.map((pr) => formatMoney(pr.amount_minor, pr.currency)).join(' · ')}
+                        {editingPrices === v.id ? (
+                          <PriceEditor
+                            variant={v}
+                            onCancel={() => setEditingPrices(null)}
+                            onSaved={() => {
+                              setEditingPrices(null);
+                              load();
+                            }}
+                          />
+                        ) : (
+                          <button
+                            onClick={() => setEditingPrices(v.id)}
+                            className="text-left underline decoration-dotted hover:text-[#F97316]"
+                            title="Click to edit prices"
+                          >
+                            {v.prices.length
+                              ? v.prices.map((pr) => formatMoney(pr.amount_minor, pr.currency)).join(' · ')
+                              : 'Set prices'}
+                          </button>
+                        )}
                       </td>
                     </tr>
                   ))}
@@ -261,6 +281,69 @@ export function ProductsTab({ onUnauthorized }: { onUnauthorized: () => void }) 
           );
         })}
       </div>
+    </div>
+  );
+}
+
+/** Inline editor for one variant's prices across every currency. */
+function PriceEditor({
+  variant,
+  onSaved,
+  onCancel,
+}: {
+  variant: Product['variants'][number];
+  onSaved: () => void;
+  onCancel: () => void;
+}) {
+  const [values, setValues] = useState<Record<Currency, string>>(() => {
+    const start = { GBP: '', NGN: '', ZAR: '', USD: '' } as Record<Currency, string>;
+    for (const p of variant.prices) start[p.currency] = (p.amount_minor / 100).toFixed(2);
+    return start;
+  });
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const save = async () => {
+    setBusy(true);
+    setError(null);
+    try {
+      const prices = CURRENCIES.flatMap((c) => {
+        const raw = values[c].trim();
+        if (!raw) return [];
+        return [{ currency: c, amount_minor: Math.round(parseFloat(raw) * 100) }];
+      });
+      await adminApi.setPrices(variant.id, prices);
+      onSaved();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Could not save prices');
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="flex items-center gap-1.5 flex-wrap">
+      {CURRENCIES.map((c) => (
+        <input
+          key={c}
+          value={values[c]}
+          onChange={(e) => setValues((v) => ({ ...v, [c]: e.target.value }))}
+          placeholder={c}
+          inputMode="decimal"
+          className="w-20 px-2 py-1 rounded-lg border-2 border-gray-200 focus:border-[#F97316] outline-none text-xs font-semibold"
+          title={`${c} price in major units (blank removes this currency)`}
+        />
+      ))}
+      <button
+        onClick={save}
+        disabled={busy}
+        className="px-3 py-1 rounded-full bg-[#2D0A6B] text-white text-xs font-extrabold disabled:opacity-40"
+      >
+        {busy ? '…' : 'Save'}
+      </button>
+      <button onClick={onCancel} className="px-2 py-1 text-xs font-bold text-gray-400 hover:text-gray-600">
+        Cancel
+      </button>
+      {error && <span className="text-red-600 font-bold text-xs">{error}</span>}
     </div>
   );
 }
