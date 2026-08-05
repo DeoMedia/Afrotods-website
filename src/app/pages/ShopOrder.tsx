@@ -9,6 +9,7 @@ import {
   type Order,
   type OrderStatus,
 } from '../shop/api';
+import { useAuth } from '../shop/AuthContext';
 
 const baloo = "'Baloo 2', cursive";
 
@@ -32,6 +33,7 @@ const TIMELINE_STEPS: { status: OrderStatus; label: string }[] = [
 ];
 
 export function ShopOrder() {
+  const { customer } = useAuth();
   const { reference } = useParams<{ reference: string }>();
   const [email, setEmail] = useState<string>(() => sessionStorage.getItem(ORDER_EMAIL_KEY) ?? '');
   const [emailInput, setEmailInput] = useState('');
@@ -139,16 +141,25 @@ export function ShopOrder() {
           Order <span className="text-[#2D0A6B]">{order.reference}</span> · {order.customer_email}
         </p>
 
-        {order.status === 'pending_payment' && (
-          <button
-            onClick={payNow}
-            disabled={paying}
-            className="mb-10 px-10 py-4 bg-gradient-to-r from-[#F97316] to-[#FBBF24] text-[#2D0A6B] rounded-full font-extrabold text-lg shadow-lg hover:-translate-y-0.5 transition-all disabled:opacity-40"
-            style={{ fontFamily: baloo }}
-          >
-            {paying ? 'Redirecting…' : 'Pay Now →'}
-          </button>
-        )}
+        {order.status === 'pending_payment' &&
+          (customer ? (
+            <button
+              onClick={payNow}
+              disabled={paying}
+              className="mb-10 px-10 py-4 bg-gradient-to-r from-[#F97316] to-[#FBBF24] text-[#2D0A6B] rounded-full font-extrabold text-lg shadow-lg hover:-translate-y-0.5 transition-all disabled:opacity-40"
+              style={{ fontFamily: baloo }}
+            >
+              {paying ? 'Redirecting…' : 'Pay Now →'}
+            </button>
+          ) : (
+            // paying requires the signed-in owner, so tracking guests get a nudge
+            <p className="mb-10 text-sm font-semibold text-gray-500">
+              <Link to="/account" className="text-[#F97316] hover:underline">
+                Sign in
+              </Link>{' '}
+              to pay for this order.
+            </p>
+          ))}
 
         {/* Timeline */}
         {order.status !== 'cancelled' && (

@@ -15,6 +15,7 @@ import { PrivacyPolicy } from "./pages/PrivacyPolicy";
 import { TermsConditions } from "./pages/TermsConditions";
 import { ReturnsRefunds } from "./pages/ReturnsRefunds";
 import { ShippingDelivery } from "./pages/ShippingDelivery";
+import { NotFound } from "./pages/NotFound";
 
 import TrackingProvider from "./TrackingProvider";
 import { CartProvider } from "./shop/CartContext";
@@ -55,6 +56,10 @@ export const router = createBrowserRouter([
       // Redirect old/simple URLs
       { path: "privacy", element: <Navigate to="/privacy-policy" replace /> },
       { path: "terms", element: <Navigate to="/terms-conditions" replace /> },
+
+      // Anything else gets a branded 404 inside the normal layout, rather than
+      // React Router's raw "Unexpected Application Error" screen.
+      { path: "*", Component: NotFound },
     ],
   },
 ]);

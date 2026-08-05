@@ -26,6 +26,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Fails the deploy on type errors rather than shipping a page that
+      # crashes in the browser (npm run build runs this too; kept separate
+      # so the log shows which step failed).
+      - name: Typecheck
+        run: npm run typecheck
+
       - name: Build
         run: npm run build
         env:

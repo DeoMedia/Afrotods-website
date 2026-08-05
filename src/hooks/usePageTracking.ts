@@ -8,14 +8,18 @@ declare global {
   }
 }
 
-export function usePageTracking() {
+/**
+ * Pushes a pageview to GTM/GA4 on each route change.
+ * `enabled` gates on cookie consent — the hook itself always runs, so the
+ * hook order stays stable no matter what the visitor has chosen.
+ */
+export function usePageTracking(enabled = true) {
   const location = useLocation();
 
   useEffect(() => {
-    // Ensure dataLayer exists
-    window.dataLayer = window.dataLayer || [];
+    if (!enabled) return;
 
-    // Push SPA pageview event for GTM
+    window.dataLayer = window.dataLayer || [];
     window.dataLayer.push({
       event: "pageview",
       page_path: location.pathname,
@@ -23,7 +27,6 @@ export function usePageTracking() {
       page_location: window.location.href,
     });
 
-    // Optional direct GA4 support
     if (window.gtag) {
       window.gtag("event", "page_view", {
         page_path: location.pathname,
@@ -31,8 +34,5 @@ export function usePageTracking() {
         page_location: window.location.href,
       });
     }
-
-    console.log("Tracked page:", location.pathname);
-
-  }, [location]);
+  }, [location, enabled]);
 }
