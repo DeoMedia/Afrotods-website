@@ -30,9 +30,31 @@ export interface Product {
   category: string;
   vat_rate: number;
   active: boolean;
+  rating_average: number | null;
+  rating_count: number;
   images: ProductImage[];
   variants: Variant[];
 }
+
+export interface MyRating {
+  stars: number | null;
+  /** true only if this customer has a paid order containing the product */
+  can_rate: boolean;
+  average: number | null;
+  count: number;
+}
+
+export const fetchMyRating = (slug: string) =>
+  fetch(`${API_URL}/api/products/${encodeURIComponent(slug)}/rating`, {
+    headers: { Authorization: `Bearer ${getCustomerToken()}` },
+  }).then((r) => json<MyRating>(r));
+
+export const submitRating = (slug: string, stars: number) =>
+  fetch(`${API_URL}/api/products/${encodeURIComponent(slug)}/rating`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getCustomerToken()}` },
+    body: JSON.stringify({ stars }),
+  }).then((r) => json<MyRating>(r));
 
 export interface OrderItem {
   sku: string;

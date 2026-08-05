@@ -5,6 +5,7 @@ import { imageSrc, fetchProducts, formatMoney, priceFor, type Product } from '..
 import { useCart } from '../shop/CartContext';
 import { useCurrencyDetection } from '../shop/useCurrencyDetection';
 import { CurrencyPicker } from '../shop/CurrencyPicker';
+import { RatingSummary } from '../shop/Rating';
 
 const baloo = "'Baloo 2', cursive";
 
@@ -105,21 +106,29 @@ export function Shop() {
               {products.filter((p) => category === 'all' || p.category === category).map((product) => {
                 const price = productPriceLabel(product, currency);
                 const cover = product.images[0];
+                const soldOut = product.variants.filter((v) => v.active).every((v) => v.stock_qty === 0);
                 return (
                   <Link
                     key={product.id}
                     to={`/shop/${product.slug}`}
                     className="group rounded-3xl bg-[#FFF8F0] overflow-hidden shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
                   >
-                    <div className="aspect-square bg-white flex items-center justify-center overflow-hidden">
+                    <div className="relative aspect-square bg-white flex items-center justify-center overflow-hidden">
                       {cover ? (
                         <img
                           src={imageSrc(cover.url)}
                           alt={cover.alt || product.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${
+                            soldOut ? 'opacity-60' : ''
+                          }`}
                         />
                       ) : (
                         <Gift className="w-16 h-16 text-[#2D0A6B]/20" />
+                      )}
+                      {soldOut && (
+                        <span className="absolute top-3 left-3 bg-[#2D0A6B] text-white text-xs font-extrabold px-3 py-1.5 rounded-full">
+                          Out of stock
+                        </span>
                       )}
                     </div>
                     <div className="p-6">
@@ -129,6 +138,9 @@ export function Shop() {
                       <h3 className="text-xl font-black text-[#2D0A6B] mb-2" style={{ fontFamily: baloo }}>
                         {product.name}
                       </h3>
+                      <div className="mb-2">
+                        <RatingSummary average={product.rating_average} count={product.rating_count} />
+                      </div>
                       <div className="font-extrabold text-gray-800">
                         {price ?? <span className="text-gray-400 text-sm">Not available in {currency}</span>}
                       </div>

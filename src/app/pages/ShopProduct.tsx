@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router';
 import { ArrowLeft, Gift, Minus, Plus, SearchX, ShoppingBag } from 'lucide-react';
 import { imageSrc, fetchProduct, fetchProducts, formatMoney, priceFor, type Product, type Variant } from '../shop/api';
 import { useCart } from '../shop/CartContext';
+import { ProductRating, RatingSummary } from '../shop/Rating';
 
 const baloo = "'Baloo 2', cursive";
 
@@ -112,9 +113,12 @@ export function ShopProduct() {
 
           <div>
             <div className="text-sm font-extrabold uppercase tracking-wide text-[#F97316] mb-2">{product.category}</div>
-            <h1 className="text-4xl md:text-5xl font-black text-[#2D0A6B] mb-4" style={{ fontFamily: baloo }}>
+            <h1 className="text-4xl md:text-5xl font-black text-[#2D0A6B] mb-2" style={{ fontFamily: baloo }}>
               {product.name}
             </h1>
+            <div className="mb-4">
+              <RatingSummary average={product.rating_average} count={product.rating_count} />
+            </div>
             <p className="text-lg text-gray-700 leading-relaxed mb-8">{product.description}</p>
 
             {product.variants.filter((v) => v.active).length > 1 && (
@@ -177,6 +181,17 @@ export function ShopProduct() {
                 View cart →
               </Link>
             </div>
+
+            <ProductRating
+              slug={product.slug}
+              average={product.rating_average}
+              count={product.rating_count}
+              onChanged={(r) =>
+                setProduct((p) =>
+                  p ? { ...p, rating_average: r.average, rating_count: r.count } : p,
+                )
+              }
+            />
           </div>
         </div>
 
