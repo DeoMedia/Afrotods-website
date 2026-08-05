@@ -170,10 +170,12 @@ export const submitCheckout = (payload: CheckoutPayload) =>
     body: JSON.stringify(payload),
   }).then((r) => json<Order>(r));
 
+/** Requires the signed-in owner: the API checks the order belongs to this customer. */
 export const startPayment = (reference: string) =>
-  fetch(`${API_URL}/api/orders/${reference}/pay`, { method: 'POST' }).then((r) =>
-    json<{ provider: string; url: string }>(r),
-  );
+  fetch(`${API_URL}/api/orders/${reference}/pay`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${getCustomerToken()}` },
+  }).then((r) => json<{ provider: string; url: string }>(r));
 
 /** Uploaded images live on the backend (/api/uploads/…); site assets stay relative. */
 export function imageSrc(url: string): string {
