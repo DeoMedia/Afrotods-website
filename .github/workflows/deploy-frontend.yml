@@ -50,6 +50,21 @@ jobs:
               echo "::error::VITE_API_URL points at localhost — set it to the Railway URL"
               missing=1 ;;
           esac
+          # Without a scheme the browser reads the value as a relative path, so
+          # every API call lands on Bluehost, gets the SPA rewrite, and comes
+          # back as HTML ("Unexpected token '<'"). Silent and site-wide.
+          case "$VITE_API_URL" in
+            https://*) ;;
+            http://*)
+              echo "::error::VITE_API_URL must use https, not http"
+              missing=1 ;;
+            *)
+              echo "::error::VITE_API_URL is missing the https:// scheme (got '$VITE_API_URL')"
+              missing=1 ;;
+          esac
+          case "$VITE_API_URL" in
+            */) echo "::error::VITE_API_URL must not end with a trailing slash" ; missing=1 ;;
+          esac
           [ "$missing" = "0" ] || exit 1
 
       - name: Install dependencies
