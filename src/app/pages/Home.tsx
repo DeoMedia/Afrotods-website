@@ -1,4 +1,4 @@
-import { Ban, BookOpen, Clapperboard, Gamepad2, Globe2, Lock, Music, PartyPopper, Star } from 'lucide-react';
+import { Ban, BookOpen, Clapperboard, Gamepad2, Globe2, Lock, Music, PartyPopper } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import heroPhoneHand from '../../imports/ChatGPT_Image_Apr_17,_2026,_11_27_52_AM_(1).png';
 import kelaniImg from '../../imports/kelani-1.png';
@@ -156,7 +156,7 @@ export function Home() {
               className="scroll-reveal opacity-0 translate-y-9 transition-all duration-[650ms] [transition-delay:400ms] flex flex-wrap items-center gap-4 text-[#374151] text-sm font-bold"
               style={{ fontFamily: nunito }}
             >
-              <div className="flex items-center gap-1.5"><Star className="w-4 h-4 text-yellow-400 fill-yellow-400" /> 4.8 Rating</div>
+              <div className="flex items-center gap-1.5"><BookOpen className="w-4 h-4" /> Ages 3–8</div>
               <div className="text-[#D1D5DB]">•</div>
               <div className="flex items-center gap-1.5"><Lock className="w-4 h-4" /> Safe for Kids</div>
               <div className="text-[#D1D5DB]">•</div>
@@ -181,23 +181,11 @@ export function Home() {
           <div
             className="scroll-reveal opacity-0 translate-y-9 transition-all duration-[650ms] bg-[#3D1080] rounded-2xl shadow-[0_8px_40px_rgba(61,16,128,0.35)] px-8 py-5 flex items-center justify-between gap-6 flex-wrap"
           >
-            {/* Stars + count */}
-            <div className="flex flex-col items-center gap-0.5">
-              <div className="flex gap-0.5">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 text-[#FBBF24] fill-[#FBBF24]" />
-                ))}
-              </div>
-              <p className="text-xs font-bold text-white/60" style={{ fontFamily: nunito }}>4.8 · 100+ Reviews</p>
-            </div>
-
-            {/* Divider */}
-            <div className="hidden md:block w-px h-10 bg-white/15 flex-shrink-0" />
-
-            {/* Love text */}
+            {/* Positioning line — no rating or review counts until we have real ones
+                (UK DMCC Act 2024 prohibits fake reviews/ratings) */}
             <div className="text-center">
-              <p className="text-sm font-extrabold text-white max-w-[220px] leading-snug" style={{ fontFamily: nunito }}>
-                Loved by families across the Globe
+              <p className="text-sm font-extrabold text-white max-w-[260px] leading-snug" style={{ fontFamily: nunito }}>
+                Joyful stories. Cultural roots. Smart learning.
               </p>
             </div>
 

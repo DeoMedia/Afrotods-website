@@ -205,21 +205,24 @@ function NewProductForm({ onCreated }: { onCreated: () => void }) {
     description: '',
     category: 'plush',
     vat_rate: '20',
-    image_url: '',
   });
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [variants, setVariants] = useState<VariantDraft[]>([emptyVariant()]);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [uploading, setUploading] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
 
-  const handleFile = async (file: File | undefined) => {
-    if (!file) return;
+  // First image is the shop cover; the rest show in the product-page gallery.
+  const handleFiles = async (files: FileList | null) => {
+    if (!files?.length) return;
     setUploading(true);
     setError(null);
     try {
-      const { url } = await adminApi.uploadImage(file);
-      setForm((f) => ({ ...f, image_url: url }));
+      for (const file of Array.from(files)) {
+        const { url } = await adminApi.uploadImage(file);
+        setImageUrls((urls) => [...urls, url]);
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Upload failed');
     } finally {
@@ -245,7 +248,7 @@ function NewProductForm({ onCreated }: { onCreated: () => void }) {
         category: form.category,
         vat_rate: parseFloat(form.vat_rate) / 100,
         active: true,
-        images: form.image_url ? [{ url: form.image_url.trim(), alt: form.name }] : [],
+        images: imageUrls.map((url, i) => ({ url, alt: form.name, sort_order: i })),
         variants: variants
           .filter((v) => v.sku.trim())
           .map((v) => ({
@@ -310,13 +313,17 @@ function NewProductForm({ onCreated }: { onCreated: () => void }) {
           />
           <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400">VAT %</span>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           <input
             ref={fileInput}
             type="file"
+            multiple
             accept="image/png,image/jpeg,image/webp,image/gif"
             className="hidden"
-            onChange={(e) => handleFile(e.target.files?.[0])}
+            onChange={(e) => {
+              handleFiles(e.target.files);
+              e.target.value = '';
+            }}
           />
           <button
             type="button"
@@ -324,13 +331,31 @@ function NewProductForm({ onCreated }: { onCreated: () => void }) {
             disabled={uploading}
             className="shrink-0 px-4 py-2.5 rounded-xl border-2 border-[#2D0A6B] text-[#2D0A6B] text-sm font-extrabold hover:bg-[#2D0A6B] hover:text-white transition-colors disabled:opacity-40"
           >
-            {uploading ? 'Uploading…' : (<span className="inline-flex items-center gap-1.5"><ImagePlus className="w-4 h-4" />Upload image</span>)}
+            {uploading ? 'Uploading…' : (<span className="inline-flex items-center gap-1.5"><ImagePlus className="w-4 h-4" />Upload images</span>)}
           </button>
-          {form.image_url ? (
-            <img src={imageSrc(form.image_url)} alt="preview" className="w-11 h-11 rounded-lg object-cover bg-gray-50" />
-          ) : (
-            <span className="text-xs font-semibold text-gray-400">PNG/JPEG/WebP, max 5 MB</span>
+          {imageUrls.length === 0 && (
+            <span className="text-xs font-semibold text-gray-400">
+              PNG/JPEG/WebP, max 5 MB each. First image = shop cover; the rest appear in the product gallery.
+            </span>
           )}
+          {imageUrls.map((url, i) => (
+            <div key={url} className="relative">
+              <img src={imageSrc(url)} alt={`image ${i + 1}`} className="w-11 h-11 rounded-lg object-cover bg-gray-50" />
+              {i === 0 && (
+                <span className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 bg-[#2D0A6B] text-white text-[8px] font-extrabold px-1.5 rounded-full">
+                  COVER
+                </span>
+              )}
+              <button
+                type="button"
+                onClick={() => setImageUrls((urls) => urls.filter((u) => u !== url))}
+                className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-red-500 text-white text-[10px] font-bold leading-none"
+                aria-label="Remove image"
+              >
+                ×
+              </button>
+            </div>
+          ))}
         </div>
       </div>
 

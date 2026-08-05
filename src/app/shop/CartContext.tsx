@@ -36,7 +36,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [lines, setLines] = useState<CartLine[]>(loadLines);
   const [currency, setCurrencyState] = useState<Currency>(() => {
     const saved = localStorage.getItem(CURRENCY_KEY);
-    return saved === 'GBP' || saved === 'NGN' || saved === 'ZAR' || saved === 'USD' ? saved : 'GBP';
+    // Only GBP/USD are live at launch; older saved NGN/ZAR values fall back to GBP
+    return saved === 'GBP' || saved === 'USD' ? saved : 'GBP';
   });
 
   useEffect(() => {

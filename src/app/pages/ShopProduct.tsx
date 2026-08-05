@@ -13,6 +13,7 @@ export function ShopProduct() {
   const [related, setRelated] = useState<Product[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [variant, setVariant] = useState<Variant | null>(null);
+  const [imageIndex, setImageIndex] = useState(0);
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
   const { currency, add } = useCart();
@@ -23,6 +24,7 @@ export function ShopProduct() {
     setRelated([]);
     setError(null);
     setQty(1);
+    setImageIndex(0);
     fetchProduct(slug)
       .then((p) => {
         setProduct(p);
@@ -60,7 +62,8 @@ export function ShopProduct() {
 
   const price = variant ? priceFor(variant, currency) : undefined;
   const inStock = variant != null && variant.stock_qty > 0;
-  const cover = product.images[0];
+  const images = product.images;
+  const cover = images[Math.min(imageIndex, images.length - 1)];
 
   const handleAdd = () => {
     if (!variant) return;
@@ -80,11 +83,30 @@ export function ShopProduct() {
         </button>
 
         <div className="grid md:grid-cols-2 gap-12 items-start">
-          <div className="rounded-3xl bg-[#FFF8F0] overflow-hidden aspect-square flex items-center justify-center">
-            {cover ? (
-              <img src={imageSrc(cover.url)} alt={cover.alt || product.name} className="w-full h-full object-cover" />
-            ) : (
-              <Gift className="w-24 h-24 text-[#2D0A6B]/20" />
+          <div>
+            <div className="rounded-3xl bg-[#FFF8F0] overflow-hidden aspect-square flex items-center justify-center">
+              {cover ? (
+                <img src={imageSrc(cover.url)} alt={cover.alt || product.name} className="w-full h-full object-contain" />
+              ) : (
+                <Gift className="w-24 h-24 text-[#2D0A6B]/20" />
+              )}
+            </div>
+            {/* Gallery thumbnails */}
+            {images.length > 1 && (
+              <div className="flex gap-3 mt-4 flex-wrap">
+                {images.map((img, i) => (
+                  <button
+                    key={img.url}
+                    onClick={() => setImageIndex(i)}
+                    className={`w-20 h-20 rounded-2xl overflow-hidden bg-[#FFF8F0] border-2 transition-colors ${
+                      i === imageIndex ? 'border-[#F97316]' : 'border-transparent hover:border-[#2D0A6B]/30'
+                    }`}
+                    aria-label={`View image ${i + 1}`}
+                  >
+                    <img src={imageSrc(img.url)} alt={img.alt || ''} className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
             )}
           </div>
 
