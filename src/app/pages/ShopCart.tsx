@@ -92,7 +92,7 @@ export function ShopCart() {
                   <div key={line.variantId} className="py-6 flex items-center gap-6">
                     <Link
                       to={`/shop/${line.product.slug}`}
-                      className="w-20 h-20 rounded-2xl bg-[#FFF8F0] overflow-hidden flex items-center justify-center shrink-0"
+                      className="w-20 h-20 rounded-2xl bg-white border border-gray-100 overflow-hidden flex items-center justify-center shrink-0"
                     >
                       {cover ? (
                         <img src={imageSrc(cover.url)} alt={line.product.name} className="w-full h-full object-cover" />

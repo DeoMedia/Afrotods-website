@@ -24,6 +24,7 @@ function productPriceLabel(product: Product, currency: ReturnType<typeof useCart
 
 const CATEGORY_LABELS: Record<string, string> = {
   all: 'All',
+  toy: 'Toys',
   plush: 'Plush Toys',
   book: 'Books',
   apparel: 'Clothing',
@@ -73,7 +74,7 @@ export function Shop() {
           {!error && products === null && (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {[0, 1, 2].map((i) => (
-                <div key={i} className="rounded-3xl bg-[#FFF8F0] animate-pulse h-[360px]" />
+                <div key={i} className="rounded-3xl bg-white border border-gray-100 animate-pulse h-[360px]" />
               ))}
             </div>
           )}
@@ -111,7 +112,7 @@ export function Shop() {
                   <Link
                     key={product.id}
                     to={`/shop/${product.slug}`}
-                    className="group rounded-3xl bg-[#FFF8F0] overflow-hidden shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+                    className="group rounded-3xl bg-white border border-gray-100 overflow-hidden shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
                   >
                     <div className="relative aspect-square bg-white flex items-center justify-center overflow-hidden">
                       {cover ? (

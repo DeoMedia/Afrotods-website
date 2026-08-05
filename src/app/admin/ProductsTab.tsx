@@ -5,7 +5,7 @@ import { formatMoney, imageSrc, type Currency, type Product } from '../shop/api'
 
 const baloo = "'Baloo 2', cursive";
 const CURRENCIES: Currency[] = ['GBP', 'NGN', 'ZAR', 'USD'];
-const CATEGORIES = ['plush', 'book', 'apparel', 'music', 'other'];
+const CATEGORIES = ['toy', 'plush', 'book', 'apparel', 'music', 'other'];
 
 const inputCls =
   'w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 focus:border-[#F97316] outline-none font-semibold text-sm';
@@ -65,6 +65,33 @@ export function ProductsTab({ onUnauthorized }: { onUnauthorized: () => void }) 
       if (v.stock_qty > 0) await adminApi.setStock(v.id, 0);
     }
     load();
+  };
+
+  const addImagesTo = async (p: Product, files: FileList | null) => {
+    if (!files?.length) return;
+    setError(null);
+    try {
+      const uploaded = [];
+      for (const file of Array.from(files)) {
+        const { url } = await adminApi.uploadImage(file);
+        uploaded.push({ url, alt: p.name });
+      }
+      await adminApi.addImages(p.id, uploaded);
+      load();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Could not add images');
+    }
+  };
+
+  const removeImage = async (imageId: number) => {
+    if (!window.confirm('Remove this image?')) return;
+    setError(null);
+    try {
+      await adminApi.deleteImage(imageId);
+      load();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Could not remove the image');
+    }
   };
 
   const deleteProduct = async (p: Product) => {
@@ -151,6 +178,46 @@ export function ProductsTab({ onUnauthorized }: { onUnauthorized: () => void }) 
                   </button>
                 </div>
               </div>
+              {/* Gallery — first image is the shop cover */}
+              <div className="flex items-center gap-2 flex-wrap mt-4">
+                {p.images.map((img, i) => (
+                  <div key={img.id ?? img.url} className="relative">
+                    <img
+                      src={imageSrc(img.url)}
+                      alt=""
+                      className="w-12 h-12 rounded-lg object-cover bg-gray-50"
+                    />
+                    {i === 0 && (
+                      <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-[#2D0A6B] text-white text-[7px] font-extrabold px-1 rounded-full">
+                        COVER
+                      </span>
+                    )}
+                    {img.id != null && p.images.length > 1 && (
+                      <button
+                        onClick={() => removeImage(img.id!)}
+                        className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-red-500 text-white text-[10px] font-bold leading-none"
+                        aria-label="Remove image"
+                      >
+                        ×
+                      </button>
+                    )}
+                  </div>
+                ))}
+                <label className="px-3 py-2 rounded-lg border-2 border-dashed border-gray-300 text-gray-500 text-xs font-extrabold cursor-pointer hover:border-[#2D0A6B] hover:text-[#2D0A6B]">
+                  + Add images
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/png,image/jpeg,image/webp,image/gif"
+                    className="hidden"
+                    onChange={(e) => {
+                      addImagesTo(p, e.target.files);
+                      e.target.value = '';
+                    }}
+                  />
+                </label>
+              </div>
+
               <table className="w-full text-sm mt-4">
                 <thead>
                   <tr className="text-left text-gray-400 font-bold text-xs">

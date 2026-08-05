@@ -17,6 +17,7 @@ export interface Variant {
 }
 
 export interface ProductImage {
+  id?: number;
   url: string;
   alt: string;
   sort_order: number;

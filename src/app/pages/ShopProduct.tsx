@@ -85,7 +85,7 @@ export function ShopProduct() {
 
         <div className="grid md:grid-cols-2 gap-12 items-start">
           <div>
-            <div className="rounded-3xl bg-[#FFF8F0] overflow-hidden aspect-square flex items-center justify-center">
+            <div className="rounded-3xl bg-white border border-gray-100 overflow-hidden aspect-square flex items-center justify-center">
               {cover ? (
                 <img src={imageSrc(cover.url)} alt={cover.alt || product.name} className="w-full h-full object-contain" />
               ) : (
@@ -99,8 +99,8 @@ export function ShopProduct() {
                   <button
                     key={img.url}
                     onClick={() => setImageIndex(i)}
-                    className={`w-20 h-20 rounded-2xl overflow-hidden bg-[#FFF8F0] border-2 transition-colors ${
-                      i === imageIndex ? 'border-[#F97316]' : 'border-transparent hover:border-[#2D0A6B]/30'
+                    className={`w-20 h-20 rounded-2xl overflow-hidden bg-white border-2 transition-colors ${
+                      i === imageIndex ? 'border-[#F97316]' : 'border-gray-200 hover:border-[#2D0A6B]/40'
                     }`}
                     aria-label={`View image ${i + 1}`}
                   >
@@ -214,7 +214,7 @@ export function ShopProduct() {
                   <Link
                     key={rel.id}
                     to={`/shop/${rel.slug}`}
-                    className="group rounded-3xl bg-[#FFF8F0] overflow-hidden shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+                    className="group rounded-3xl bg-white border border-gray-100 overflow-hidden shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
                   >
                     <div className="aspect-square bg-white flex items-center justify-center overflow-hidden">
                       {cover ? (

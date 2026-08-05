@@ -135,6 +135,13 @@ export const adminApi = {
   updateProduct: (id: number, patch: Partial<Pick<ProductCreate, 'name' | 'description' | 'category' | 'vat_rate' | 'active'>>) =>
     request<Product>(`/api/admin/catalog/products/${id}`, { method: 'PATCH', body: JSON.stringify(patch) }),
   deleteProduct: (id: number) => request<void>(`/api/admin/catalog/products/${id}`, { method: 'DELETE' }),
+  addImages: (productId: number, images: { url: string; alt: string }[]) =>
+    request<Product>(`/api/admin/catalog/products/${productId}/images`, {
+      method: 'POST',
+      body: JSON.stringify(images),
+    }),
+  deleteImage: (imageId: number) =>
+    request<void>(`/api/admin/catalog/images/${imageId}`, { method: 'DELETE' }),
   addVariant: (productId: number, v: VariantIn) =>
     request<Product>(`/api/admin/catalog/products/${productId}/variants`, { method: 'POST', body: JSON.stringify(v) }),
   setStock: (variantId: number, stockQty: number) =>
