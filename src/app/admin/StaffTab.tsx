@@ -124,7 +124,7 @@ export function StaffTab({ onUnauthorized }: { onUnauthorized: () => void }) {
                     {member.role === 'super' ? 'Super admin' : 'Staff'}
                   </span>
                 </td>
-                <td className="py-3 pr-4">{member.active ? '🟢 Active' : '⚪ Deactivated'}</td>
+                <td className="py-3 pr-4"><span className="inline-flex items-center gap-1.5"><span className={`w-2 h-2 rounded-full ${member.active ? 'bg-green-500' : 'bg-gray-300'}`} />{member.active ? 'Active' : 'Deactivated'}</span></td>
                 <td className="py-3 pr-4 text-gray-400">{new Date(member.created_at).toLocaleDateString()}</td>
                 <td className="py-3 text-right">
                   <button

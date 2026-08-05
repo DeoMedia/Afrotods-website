@@ -1,10 +1,11 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { ImagePlus } from 'lucide-react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { adminApi, type ProductCreate } from './api';
-import { formatMoney, type Currency, type Product } from '../shop/api';
+import { formatMoney, imageSrc, type Currency, type Product } from '../shop/api';
 
 const baloo = "'Baloo 2', cursive";
 const CURRENCIES: Currency[] = ['GBP', 'NGN', 'ZAR', 'USD'];
-const CATEGORIES = ['plush', 'book', 'apparel', 'music', 'other'];
+const CATEGORIES = ['toy', 'plush', 'book', 'apparel', 'music', 'other'];
 
 const inputCls =
   'w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 focus:border-[#F97316] outline-none font-semibold text-sm';
@@ -27,6 +28,7 @@ export function ProductsTab({ onUnauthorized }: { onUnauthorized: () => void }) 
   const [products, setProducts] = useState<Product[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [editingPrices, setEditingPrices] = useState<number | null>(null);
 
   const load = () =>
     adminApi
@@ -66,6 +68,44 @@ export function ProductsTab({ onUnauthorized }: { onUnauthorized: () => void }) 
     load();
   };
 
+  const addImagesTo = async (p: Product, files: FileList | null) => {
+    if (!files?.length) return;
+    setError(null);
+    try {
+      const uploaded = [];
+      for (const file of Array.from(files)) {
+        const { url } = await adminApi.uploadImage(file);
+        uploaded.push({ url, alt: p.name });
+      }
+      await adminApi.addImages(p.id, uploaded);
+      load();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Could not add images');
+    }
+  };
+
+  const removeImage = async (imageId: number) => {
+    if (!window.confirm('Remove this image?')) return;
+    setError(null);
+    try {
+      await adminApi.deleteImage(imageId);
+      load();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Could not remove the image');
+    }
+  };
+
+  const deleteProduct = async (p: Product) => {
+    if (!window.confirm(`Permanently delete "${p.name}"? This cannot be undone.`)) return;
+    setError(null);
+    try {
+      await adminApi.deleteProduct(p.id);
+      load();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Could not delete the product');
+    }
+  };
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
@@ -100,7 +140,7 @@ export function ProductsTab({ onUnauthorized }: { onUnauthorized: () => void }) 
               <div className="flex items-start justify-between gap-4 flex-wrap">
                 <div className="flex items-center gap-4">
                   {p.images[0] && (
-                    <img src={p.images[0].url} alt="" className="w-14 h-14 rounded-xl object-cover bg-gray-50" />
+                    <img src={imageSrc(p.images[0].url)} alt="" className="w-14 h-14 rounded-xl object-cover bg-gray-50" />
                   )}
                   <div>
                     <div className="font-black text-[#2D0A6B]" style={{ fontFamily: baloo }}>
@@ -131,8 +171,54 @@ export function ProductsTab({ onUnauthorized }: { onUnauthorized: () => void }) 
                   >
                     {active ? 'Hide from shop' : 'Show in shop'}
                   </button>
+                  <button
+                    onClick={() => deleteProduct(p)}
+                    className="px-4 py-1.5 rounded-full text-xs font-extrabold border-2 border-red-200 text-red-500 hover:bg-red-50"
+                  >
+                    Delete
+                  </button>
                 </div>
               </div>
+              {/* Gallery — first image is the shop cover */}
+              <div className="flex items-center gap-2 flex-wrap mt-4">
+                {p.images.map((img, i) => (
+                  <div key={img.id ?? img.url} className="relative">
+                    <img
+                      src={imageSrc(img.url)}
+                      alt=""
+                      className="w-12 h-12 rounded-lg object-cover bg-gray-50"
+                    />
+                    {i === 0 && (
+                      <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-[#2D0A6B] text-white text-[7px] font-extrabold px-1 rounded-full">
+                        COVER
+                      </span>
+                    )}
+                    {img.id != null && p.images.length > 1 && (
+                      <button
+                        onClick={() => removeImage(img.id!)}
+                        className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-red-500 text-white text-[10px] font-bold leading-none"
+                        aria-label="Remove image"
+                      >
+                        ×
+                      </button>
+                    )}
+                  </div>
+                ))}
+                <label className="px-3 py-2 rounded-lg border-2 border-dashed border-gray-300 text-gray-500 text-xs font-extrabold cursor-pointer hover:border-[#2D0A6B] hover:text-[#2D0A6B]">
+                  + Add images
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/png,image/jpeg,image/webp,image/gif"
+                    className="hidden"
+                    onChange={(e) => {
+                      addImagesTo(p, e.target.files);
+                      e.target.value = '';
+                    }}
+                  />
+                </label>
+              </div>
+
               <table className="w-full text-sm mt-4">
                 <thead>
                   <tr className="text-left text-gray-400 font-bold text-xs">
@@ -166,7 +252,26 @@ export function ProductsTab({ onUnauthorized }: { onUnauthorized: () => void }) 
                         )}
                       </td>
                       <td className="py-2 text-xs">
-                        {v.prices.map((pr) => formatMoney(pr.amount_minor, pr.currency)).join(' · ')}
+                        {editingPrices === v.id ? (
+                          <PriceEditor
+                            variant={v}
+                            onCancel={() => setEditingPrices(null)}
+                            onSaved={() => {
+                              setEditingPrices(null);
+                              load();
+                            }}
+                          />
+                        ) : (
+                          <button
+                            onClick={() => setEditingPrices(v.id)}
+                            className="text-left underline decoration-dotted hover:text-[#F97316]"
+                            title="Click to edit prices"
+                          >
+                            {v.prices.length
+                              ? v.prices.map((pr) => formatMoney(pr.amount_minor, pr.currency)).join(' · ')
+                              : 'Set prices'}
+                          </button>
+                        )}
                       </td>
                     </tr>
                   ))}
@@ -180,6 +285,69 @@ export function ProductsTab({ onUnauthorized }: { onUnauthorized: () => void }) 
   );
 }
 
+/** Inline editor for one variant's prices across every currency. */
+function PriceEditor({
+  variant,
+  onSaved,
+  onCancel,
+}: {
+  variant: Product['variants'][number];
+  onSaved: () => void;
+  onCancel: () => void;
+}) {
+  const [values, setValues] = useState<Record<Currency, string>>(() => {
+    const start = { GBP: '', NGN: '', ZAR: '', USD: '' } as Record<Currency, string>;
+    for (const p of variant.prices) start[p.currency] = (p.amount_minor / 100).toFixed(2);
+    return start;
+  });
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const save = async () => {
+    setBusy(true);
+    setError(null);
+    try {
+      const prices = CURRENCIES.flatMap((c) => {
+        const raw = values[c].trim();
+        if (!raw) return [];
+        return [{ currency: c, amount_minor: Math.round(parseFloat(raw) * 100) }];
+      });
+      await adminApi.setPrices(variant.id, prices);
+      onSaved();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Could not save prices');
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="flex items-center gap-1.5 flex-wrap">
+      {CURRENCIES.map((c) => (
+        <input
+          key={c}
+          value={values[c]}
+          onChange={(e) => setValues((v) => ({ ...v, [c]: e.target.value }))}
+          placeholder={c}
+          inputMode="decimal"
+          className="w-20 px-2 py-1 rounded-lg border-2 border-gray-200 focus:border-[#F97316] outline-none text-xs font-semibold"
+          title={`${c} price in major units (blank removes this currency)`}
+        />
+      ))}
+      <button
+        onClick={save}
+        disabled={busy}
+        className="px-3 py-1 rounded-full bg-[#2D0A6B] text-white text-xs font-extrabold disabled:opacity-40"
+      >
+        {busy ? '…' : 'Save'}
+      </button>
+      <button onClick={onCancel} className="px-2 py-1 text-xs font-bold text-gray-400 hover:text-gray-600">
+        Cancel
+      </button>
+      {error && <span className="text-red-600 font-bold text-xs">{error}</span>}
+    </div>
+  );
+}
+
 function NewProductForm({ onCreated }: { onCreated: () => void }) {
   const [form, setForm] = useState({
     slug: '',
@@ -187,11 +355,30 @@ function NewProductForm({ onCreated }: { onCreated: () => void }) {
     description: '',
     category: 'plush',
     vat_rate: '20',
-    image_url: '',
   });
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [variants, setVariants] = useState<VariantDraft[]>([emptyVariant()]);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInput = useRef<HTMLInputElement>(null);
+
+  // First image is the shop cover; the rest show in the product-page gallery.
+  const handleFiles = async (files: FileList | null) => {
+    if (!files?.length) return;
+    setUploading(true);
+    setError(null);
+    try {
+      for (const file of Array.from(files)) {
+        const { url } = await adminApi.uploadImage(file);
+        setImageUrls((urls) => [...urls, url]);
+      }
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Upload failed');
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const set = (key: keyof typeof form) => (e: { target: { value: string } }) =>
     setForm((f) => ({ ...f, [key]: e.target.value }));
@@ -211,7 +398,7 @@ function NewProductForm({ onCreated }: { onCreated: () => void }) {
         category: form.category,
         vat_rate: parseFloat(form.vat_rate) / 100,
         active: true,
-        images: form.image_url ? [{ url: form.image_url.trim(), alt: form.name }] : [],
+        images: imageUrls.map((url, i) => ({ url, alt: form.name, sort_order: i })),
         variants: variants
           .filter((v) => v.sku.trim())
           .map((v) => ({
@@ -276,7 +463,50 @@ function NewProductForm({ onCreated }: { onCreated: () => void }) {
           />
           <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400">VAT %</span>
         </div>
-        <input placeholder="Image URL (/products/x.png)" value={form.image_url} onChange={set('image_url')} className={inputCls} />
+        <div className="flex items-center gap-3 flex-wrap">
+          <input
+            ref={fileInput}
+            type="file"
+            multiple
+            accept="image/png,image/jpeg,image/webp,image/gif"
+            className="hidden"
+            onChange={(e) => {
+              handleFiles(e.target.files);
+              e.target.value = '';
+            }}
+          />
+          <button
+            type="button"
+            onClick={() => fileInput.current?.click()}
+            disabled={uploading}
+            className="shrink-0 px-4 py-2.5 rounded-xl border-2 border-[#2D0A6B] text-[#2D0A6B] text-sm font-extrabold hover:bg-[#2D0A6B] hover:text-white transition-colors disabled:opacity-40"
+          >
+            {uploading ? 'Uploading…' : (<span className="inline-flex items-center gap-1.5"><ImagePlus className="w-4 h-4" />Upload images</span>)}
+          </button>
+          {imageUrls.length === 0 && (
+            <span className="text-xs font-semibold text-gray-400">
+              PNG/JPEG/WebP, max 5 MB each. First image = shop cover; the rest appear in the product gallery.
+            </span>
+          )}
+          {imageUrls.map((url, i) => (
+            <div key={url} className="relative">
+              <img src={imageSrc(url)} alt={`image ${i + 1}`} className="w-11 h-11 rounded-lg object-cover bg-gray-50" />
+              {i === 0 && (
+                <span className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 bg-[#2D0A6B] text-white text-[8px] font-extrabold px-1.5 rounded-full">
+                  COVER
+                </span>
+              )}
+              <button
+                type="button"
+                onClick={() => setImageUrls((urls) => urls.filter((u) => u !== url))}
+                className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-red-500 text-white text-[10px] font-bold leading-none"
+                aria-label="Remove image"
+              >
+                ×
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="space-y-3">

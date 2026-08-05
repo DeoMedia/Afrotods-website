@@ -17,6 +17,7 @@ export interface Variant {
 }
 
 export interface ProductImage {
+  id?: number;
   url: string;
   alt: string;
   sort_order: number;
@@ -30,9 +31,31 @@ export interface Product {
   category: string;
   vat_rate: number;
   active: boolean;
+  rating_average: number | null;
+  rating_count: number;
   images: ProductImage[];
   variants: Variant[];
 }
+
+export interface MyRating {
+  stars: number | null;
+  /** true only if this customer has a paid order containing the product */
+  can_rate: boolean;
+  average: number | null;
+  count: number;
+}
+
+export const fetchMyRating = (slug: string) =>
+  fetch(`${API_URL}/api/products/${encodeURIComponent(slug)}/rating`, {
+    headers: { Authorization: `Bearer ${getCustomerToken()}` },
+  }).then((r) => json<MyRating>(r));
+
+export const submitRating = (slug: string, stars: number) =>
+  fetch(`${API_URL}/api/products/${encodeURIComponent(slug)}/rating`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getCustomerToken()}` },
+    body: JSON.stringify({ stars }),
+  }).then((r) => json<MyRating>(r));
 
 export interface OrderItem {
   sku: string;
@@ -151,6 +174,11 @@ export const startPayment = (reference: string) =>
   fetch(`${API_URL}/api/orders/${reference}/pay`, { method: 'POST' }).then((r) =>
     json<{ provider: string; url: string }>(r),
   );
+
+/** Uploaded images live on the backend (/api/uploads/…); site assets stay relative. */
+export function imageSrc(url: string): string {
+  return url.startsWith('/api/uploads/') ? `${API_URL}${url}` : url;
+}
 
 export function priceFor(variant: Variant, currency: Currency): Price | undefined {
   return variant.prices.find((p) => p.currency === currency);

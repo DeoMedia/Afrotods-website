@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
-import { ArrowLeft, Minus, Plus, ShoppingBag } from 'lucide-react';
-import { fetchProduct, fetchProducts, formatMoney, priceFor, type Product, type Variant } from '../shop/api';
+import { ArrowLeft, Gift, Minus, Plus, SearchX, ShoppingBag } from 'lucide-react';
+import { imageSrc, fetchProduct, fetchProducts, formatMoney, priceFor, type Product, type Variant } from '../shop/api';
 import { useCart } from '../shop/CartContext';
+import { ProductRating, RatingSummary } from '../shop/Rating';
 
 const baloo = "'Baloo 2', cursive";
 
@@ -13,6 +14,7 @@ export function ShopProduct() {
   const [related, setRelated] = useState<Product[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [variant, setVariant] = useState<Variant | null>(null);
+  const [imageIndex, setImageIndex] = useState(0);
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
   const { currency, add } = useCart();
@@ -23,6 +25,7 @@ export function ShopProduct() {
     setRelated([]);
     setError(null);
     setQty(1);
+    setImageIndex(0);
     fetchProduct(slug)
       .then((p) => {
         setProduct(p);
@@ -43,7 +46,7 @@ export function ShopProduct() {
   if (error) {
     return (
       <div className="pt-40 pb-24 text-center">
-        <div className="text-7xl mb-6">😕</div>
+        <SearchX className="w-20 h-20 mx-auto mb-6 text-[#2D0A6B]/30" />
         <h1 className="text-3xl font-black text-[#2D0A6B] mb-4" style={{ fontFamily: baloo }}>
           Product not found
         </h1>
@@ -60,7 +63,8 @@ export function ShopProduct() {
 
   const price = variant ? priceFor(variant, currency) : undefined;
   const inStock = variant != null && variant.stock_qty > 0;
-  const cover = product.images[0];
+  const images = product.images;
+  const cover = images[Math.min(imageIndex, images.length - 1)];
 
   const handleAdd = () => {
     if (!variant) return;
@@ -80,19 +84,41 @@ export function ShopProduct() {
         </button>
 
         <div className="grid md:grid-cols-2 gap-12 items-start">
-          <div className="rounded-3xl bg-[#FFF8F0] overflow-hidden aspect-square flex items-center justify-center">
-            {cover ? (
-              <img src={cover.url} alt={cover.alt || product.name} className="w-full h-full object-cover" />
-            ) : (
-              <span className="text-9xl">🧸</span>
+          <div>
+            <div className="rounded-3xl bg-white border border-gray-100 overflow-hidden aspect-square flex items-center justify-center">
+              {cover ? (
+                <img src={imageSrc(cover.url)} alt={cover.alt || product.name} className="w-full h-full object-contain" />
+              ) : (
+                <Gift className="w-24 h-24 text-[#2D0A6B]/20" />
+              )}
+            </div>
+            {/* Gallery thumbnails */}
+            {images.length > 1 && (
+              <div className="flex gap-3 mt-4 flex-wrap">
+                {images.map((img, i) => (
+                  <button
+                    key={img.url}
+                    onClick={() => setImageIndex(i)}
+                    className={`w-20 h-20 rounded-2xl overflow-hidden bg-white border-2 transition-colors ${
+                      i === imageIndex ? 'border-[#F97316]' : 'border-gray-200 hover:border-[#2D0A6B]/40'
+                    }`}
+                    aria-label={`View image ${i + 1}`}
+                  >
+                    <img src={imageSrc(img.url)} alt={img.alt || ''} className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
             )}
           </div>
 
           <div>
             <div className="text-sm font-extrabold uppercase tracking-wide text-[#F97316] mb-2">{product.category}</div>
-            <h1 className="text-4xl md:text-5xl font-black text-[#2D0A6B] mb-4" style={{ fontFamily: baloo }}>
+            <h1 className="text-4xl md:text-5xl font-black text-[#2D0A6B] mb-2" style={{ fontFamily: baloo }}>
               {product.name}
             </h1>
+            <div className="mb-4">
+              <RatingSummary average={product.rating_average} count={product.rating_count} />
+            </div>
             <p className="text-lg text-gray-700 leading-relaxed mb-8">{product.description}</p>
 
             {product.variants.filter((v) => v.active).length > 1 && (
@@ -147,7 +173,7 @@ export function ShopProduct() {
               style={{ fontFamily: baloo }}
             >
               <ShoppingBag className="w-5 h-5" />
-              {added ? 'Added! 🎉' : inStock ? 'Add to Cart' : 'Out of Stock'}
+              {added ? 'Added!' : inStock ? 'Add to Cart' : 'Out of Stock'}
             </button>
 
             <div className="mt-6">
@@ -155,6 +181,17 @@ export function ShopProduct() {
                 View cart →
               </Link>
             </div>
+
+            <ProductRating
+              slug={product.slug}
+              average={product.rating_average}
+              count={product.rating_count}
+              onChanged={(r) =>
+                setProduct((p) =>
+                  p ? { ...p, rating_average: r.average, rating_count: r.count } : p,
+                )
+              }
+            />
           </div>
         </div>
 
@@ -177,12 +214,12 @@ export function ShopProduct() {
                   <Link
                     key={rel.id}
                     to={`/shop/${rel.slug}`}
-                    className="group rounded-3xl bg-[#FFF8F0] overflow-hidden shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+                    className="group rounded-3xl bg-white border border-gray-100 overflow-hidden shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
                   >
                     <div className="aspect-square bg-white flex items-center justify-center overflow-hidden">
                       {cover ? (
                         <img
-                          src={cover.url}
+                          src={imageSrc(cover.url)}
                           alt={cover.alt || rel.name}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />

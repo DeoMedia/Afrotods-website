@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router';
-import { Minus, Plus, Trash2 } from 'lucide-react';
-import { fetchProducts, formatMoney, priceFor, type Product, type Variant } from '../shop/api';
+import { Gift, Minus, Plus, ShoppingCart, Trash2 } from 'lucide-react';
+import { imageSrc, fetchProducts, formatMoney, priceFor, type Product, type Variant } from '../shop/api';
 import { useCart } from '../shop/CartContext';
 import { CurrencyPicker } from '../shop/CurrencyPicker';
 
@@ -70,7 +70,7 @@ export function ShopCart() {
 
         {!error && resolved !== null && resolved.length === 0 && (
           <div className="text-center py-16">
-            <div className="text-7xl mb-6">🛒</div>
+            <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-[#FFF8F0] flex items-center justify-center"><ShoppingCart className="w-12 h-12 text-[#F97316]" /></div>
             <p className="text-xl text-gray-700 mb-8">Your cart is empty.</p>
             <Link
               to="/shop"
@@ -92,12 +92,12 @@ export function ShopCart() {
                   <div key={line.variantId} className="py-6 flex items-center gap-6">
                     <Link
                       to={`/shop/${line.product.slug}`}
-                      className="w-20 h-20 rounded-2xl bg-[#FFF8F0] overflow-hidden flex items-center justify-center shrink-0"
+                      className="w-20 h-20 rounded-2xl bg-white border border-gray-100 overflow-hidden flex items-center justify-center shrink-0"
                     >
                       {cover ? (
-                        <img src={cover.url} alt={line.product.name} className="w-full h-full object-cover" />
+                        <img src={imageSrc(cover.url)} alt={line.product.name} className="w-full h-full object-cover" />
                       ) : (
-                        <span className="text-3xl">🧸</span>
+                        <Gift className="w-8 h-8 text-[#2D0A6B]/20" />
                       )}
                     </Link>
                     <div className="flex-1 min-w-0">

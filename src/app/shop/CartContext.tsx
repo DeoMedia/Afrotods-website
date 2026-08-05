@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import type { Currency } from './api';
+import { fetchProducts, type Currency } from './api';
 
 export interface CartLine {
   variantId: number;
@@ -36,12 +36,38 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [lines, setLines] = useState<CartLine[]>(loadLines);
   const [currency, setCurrencyState] = useState<Currency>(() => {
     const saved = localStorage.getItem(CURRENCY_KEY);
-    return saved === 'GBP' || saved === 'NGN' || saved === 'ZAR' || saved === 'USD' ? saved : 'GBP';
+    // GBP is the base currency and the default for anyone without a saved choice
+    return saved === 'GBP' || saved === 'USD' || saved === 'ZAR' || saved === 'NGN' ? saved : 'GBP';
   });
 
   useEffect(() => {
     localStorage.setItem(LINES_KEY, JSON.stringify(lines));
   }, [lines]);
+
+  // Drop saved lines whose variant has left the catalog (product hidden, deleted,
+  // or variant removed) — otherwise the nav badge counts items the cart page can't
+  // show. Only prunes on a successful fetch, so a backend outage never wipes a cart.
+  useEffect(() => {
+    if (lines.length === 0) return;
+    let cancelled = false;
+    fetchProducts()
+      .then((products) => {
+        if (cancelled) return;
+        const live = new Set(products.flatMap((p) => p.variants.map((v) => v.id)));
+        setLines((prev) => {
+          const kept = prev.filter((l) => live.has(l.variantId));
+          return kept.length === prev.length ? prev : kept;
+        });
+      })
+      .catch(() => {
+        /* offline or API down — keep the cart as-is */
+      });
+    return () => {
+      cancelled = true;
+    };
+    // once per mount: a stale line can only arrive from a previous session
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const setCurrency = (c: Currency) => {
     localStorage.setItem(CURRENCY_KEY, c);

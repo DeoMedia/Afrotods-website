@@ -1,3 +1,5 @@
+import { Globe2, Mail } from 'lucide-react';
+
 export function ContactUs() {
   const baloo = "'Baloo 2', cursive";
 
@@ -43,7 +45,7 @@ const socialLinks = [
         <div className="max-w-[900px] mx-auto px-6">
           <div className="grid md:grid-cols-2 gap-12 mb-16">
             <div className="bg-[#FFF8F0] rounded-3xl p-8 border-2 border-[#A855F7]/10">
-              <div className="text-4xl mb-4">📧</div>
+              <Mail className="w-10 h-10 mb-4 text-[#F97316]" />
               <h3 className="text-2xl font-black text-[#2D0A6B] mb-3" style={{ fontFamily: baloo }}>Email Us</h3>
               <p className="text-gray-700 mb-4">For general inquiries, partnerships, or support.</p>
               <a href="mailto:Supportafro@deomedia.net" className="text-[#5A1F9F] font-bold hover:text-[#7B2FBE] transition-colors">
@@ -52,7 +54,7 @@ const socialLinks = [
             </div>
 
           <div className="bg-[#FFF8F0] rounded-3xl p-8 border-2 border-[#A855F7]/10">
-  <div className="text-4xl mb-4">🌐</div>
+  <Globe2 className="w-10 h-10 mb-4 text-[#F97316]" />
 
   <h3
     className="text-2xl font-black text-[#2D0A6B] mb-3"

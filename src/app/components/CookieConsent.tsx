@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { motion } from "framer-motion";
+import { CONSENT_COOKIE, CONSENT_EVENT } from "../TrackingProvider";
 
 // Pages where the cookie banner must not appear —
 // Google's crawler visits these pages and flags a banner as blocking the content.
@@ -18,29 +19,27 @@ const CookieConsent = () => {
       return;
     }
 
-    const consent = Cookies.get("afrotods_cookie_consent");
+    const consent = Cookies.get(CONSENT_COOKIE);
     if (!consent) {
       setShowBanner(true);
     }
   }, []);
 
-  const acceptCookies = () => {
-    Cookies.set("afrotods_cookie_consent", "accepted", {
+  const record = (choice: "accepted" | "rejected") => {
+    Cookies.set(CONSENT_COOKIE, choice, {
       expires: 365,
       sameSite: "Lax",
-      secure: true,
+      // `secure` cookies are dropped on plain http, which silently breaks the
+      // banner (and so tracking) on localhost. Only set it where it applies.
+      secure: window.location.protocol === "https:",
     });
+    // TrackingProvider sits in a separate tree and cannot see this state
+    window.dispatchEvent(new Event(CONSENT_EVENT));
     setShowBanner(false);
   };
 
-  const rejectCookies = () => {
-    Cookies.set("afrotods_cookie_consent", "rejected", {
-      expires: 365,
-      sameSite: "Lax",
-      secure: true,
-    });
-    setShowBanner(false);
-  };
+  const acceptCookies = () => record("accepted");
+  const rejectCookies = () => record("rejected");
 
   if (!showBanner) return null;
 

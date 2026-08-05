@@ -91,7 +91,61 @@ export interface StaffMember {
   created_at: string;
 }
 
+export interface ExportFilters {
+  status?: string;
+  date_from?: string;
+  date_to?: string;
+}
+
 export const adminApi = {
+  /** Downloads a sales export. Uses fetch (not a plain link) because the
+   *  endpoint needs the admin auth header. */
+  downloadExport: async (format: 'csv' | 'xlsx' | 'pdf', filters: ExportFilters = {}) => {
+    const params = new URLSearchParams(
+      Object.entries(filters).filter(([, v]) => v) as [string, string][],
+    );
+    const res = await fetch(
+      `${API_URL}/api/admin/orders/export.${format}${params.toString() ? `?${params}` : ''}`,
+      { headers: authHeaders() },
+    );
+    if (res.status === 401) {
+      clearAdminKey();
+      throw new Error('unauthorized');
+    }
+    if (!res.ok) throw new Error(`Export failed (${res.status})`);
+
+    const blob = await res.blob();
+    const name =
+      res.headers.get('content-disposition')?.match(/filename="([^"]+)"/)?.[1] ??
+      `afrotods-sales.${format}`;
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  },
+  /** Multipart upload — browser sets the Content-Type boundary itself. */
+  uploadImage: async (file: File): Promise<{ url: string }> => {
+    const body = new FormData();
+    body.append('file', file);
+    const res = await fetch(`${API_URL}/api/admin/catalog/uploads`, {
+      method: 'POST',
+      headers: authHeaders(),
+      body,
+    });
+    if (res.status === 401) {
+      clearAdminKey();
+      throw new Error('unauthorized');
+    }
+    if (!res.ok) {
+      const errBody = await res.json().catch(() => null);
+      throw new Error(errBody?.detail ?? `Upload failed (${res.status})`);
+    }
+    return res.json();
+  },
   login: async (email: string, password: string) => {
     const res = await fetch(`${API_URL}/api/admin/auth/login`, {
       method: 'POST',
@@ -116,8 +170,20 @@ export const adminApi = {
   updateProduct: (id: number, patch: Partial<Pick<ProductCreate, 'name' | 'description' | 'category' | 'vat_rate' | 'active'>>) =>
     request<Product>(`/api/admin/catalog/products/${id}`, { method: 'PATCH', body: JSON.stringify(patch) }),
   deleteProduct: (id: number) => request<void>(`/api/admin/catalog/products/${id}`, { method: 'DELETE' }),
+  addImages: (productId: number, images: { url: string; alt: string }[]) =>
+    request<Product>(`/api/admin/catalog/products/${productId}/images`, {
+      method: 'POST',
+      body: JSON.stringify(images),
+    }),
+  deleteImage: (imageId: number) =>
+    request<void>(`/api/admin/catalog/images/${imageId}`, { method: 'DELETE' }),
   addVariant: (productId: number, v: VariantIn) =>
     request<Product>(`/api/admin/catalog/products/${productId}/variants`, { method: 'POST', body: JSON.stringify(v) }),
+  setPrices: (variantId: number, prices: PriceIn[]) =>
+    request<Product>(`/api/admin/catalog/variants/${variantId}/prices`, {
+      method: 'PUT',
+      body: JSON.stringify(prices),
+    }),
   setStock: (variantId: number, stockQty: number) =>
     request<Product>(`/api/admin/catalog/variants/${variantId}/stock?stock_qty=${stockQty}`, { method: 'PATCH' }),
   listOrders: (status?: string) =>

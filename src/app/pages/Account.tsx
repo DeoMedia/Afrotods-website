@@ -1,17 +1,18 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
+import { Clock, Home, Package, PartyPopper, ShoppingBag, XCircle, type LucideIcon } from 'lucide-react';
 import { fetchMyOrders, formatMoney, type Order } from '../shop/api';
 import { useAuth } from '../shop/AuthContext';
 import { SignInForm } from '../shop/SignInForm';
 
 const baloo = "'Baloo 2', cursive";
 
-const STATUS_LABEL: Record<Order['status'], string> = {
-  pending_payment: '⏳ Awaiting payment',
-  paid: '🎉 Paid',
-  fulfilled: '📦 Shipped',
-  delivered: '🏠 Delivered',
-  cancelled: '❌ Cancelled',
+const STATUS_LABEL: Record<Order['status'], { Icon: LucideIcon; label: string }> = {
+  pending_payment: { Icon: Clock, label: 'Awaiting payment' },
+  paid: { Icon: PartyPopper, label: 'Paid' },
+  fulfilled: { Icon: Package, label: 'Shipped' },
+  delivered: { Icon: Home, label: 'Delivered' },
+  cancelled: { Icon: XCircle, label: 'Cancelled' },
 };
 
 export function Account() {
@@ -30,7 +31,7 @@ export function Account() {
       <section className="relative py-20 bg-gradient-to-br from-[#F97316] via-[#FB923C] to-[#FBBF24] text-white">
         <div className="relative max-w-[1140px] mx-auto px-6 text-center">
           <h1 className="text-5xl md:text-6xl font-black mb-4 text-[#2D0A6B]" style={{ fontFamily: baloo }}>
-            {customer ? `Hi${customer.name ? `, ${customer.name.split(' ')[0]}` : ''}! 👋` : 'Your Account'}
+            {customer ? `Hi${customer.name ? `, ${customer.name.split(' ')[0]}` : ''}!` : 'Your Account'}
           </h1>
           <p className="text-xl text-white/90 max-w-[600px] mx-auto leading-relaxed">
             {customer ? customer.email : 'Sign in or sign up with just your email.'}
@@ -62,7 +63,9 @@ export function Account() {
               {orders === null && <div className="h-32 rounded-3xl bg-[#FFF8F0] animate-pulse" />}
               {orders !== null && orders.length === 0 && (
                 <div className="text-center py-10">
-                  <div className="text-6xl mb-4">🛍️</div>
+                  <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-[#FFF8F0] flex items-center justify-center">
+                    <ShoppingBag className="w-10 h-10 text-[#F97316]" />
+                  </div>
                   <p className="text-gray-600 font-semibold mb-6">No orders yet — let's fix that!</p>
                   <Link
                     to="/shop"
@@ -93,7 +96,17 @@ export function Account() {
                       </div>
                       <div className="text-right">
                         <div className="font-black text-gray-800">{formatMoney(o.total_minor, o.currency)}</div>
-                        <div className="text-xs font-bold text-gray-500">{STATUS_LABEL[o.status]}</div>
+                        <div className="text-xs font-bold text-gray-500 inline-flex items-center gap-1">
+                          {(() => {
+                            const { Icon, label } = STATUS_LABEL[o.status];
+                            return (
+                              <>
+                                <Icon className="w-3.5 h-3.5" />
+                                {label}
+                              </>
+                            );
+                          })()}
+                        </div>
                       </div>
                     </div>
                   </Link>

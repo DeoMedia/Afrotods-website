@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
-import { Facebook, Instagram, Music, Youtube } from 'lucide-react';
-import { fetchProducts, formatMoney, priceFor, type Product } from '../shop/api';
+import { Facebook, Gift, Instagram, Music, ShoppingBag, Youtube } from 'lucide-react';
+import { imageSrc, fetchProducts, formatMoney, priceFor, type Product } from '../shop/api';
 import { useCart } from '../shop/CartContext';
 import { useCurrencyDetection } from '../shop/useCurrencyDetection';
 import { CurrencyPicker } from '../shop/CurrencyPicker';
+import { RatingSummary } from '../shop/Rating';
 
 const baloo = "'Baloo 2', cursive";
 
@@ -23,6 +24,7 @@ function productPriceLabel(product: Product, currency: ReturnType<typeof useCart
 
 const CATEGORY_LABELS: Record<string, string> = {
   all: 'All',
+  toy: 'Toys',
   plush: 'Plush Toys',
   book: 'Books',
   apparel: 'Clothing',
@@ -64,7 +66,6 @@ export function Shop() {
         <div className="max-w-[1140px] mx-auto px-6">
           {error && (
             <FallbackMessage
-              emoji="🛍️"
               title="Coming Soon!"
               body="We're working hard to bring you amazing Afrotods merchandise. Follow us on social media to be first to know!"
               showSocials
@@ -73,13 +74,12 @@ export function Shop() {
           {!error && products === null && (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {[0, 1, 2].map((i) => (
-                <div key={i} className="rounded-3xl bg-[#FFF8F0] animate-pulse h-[360px]" />
+                <div key={i} className="rounded-3xl bg-white border border-gray-100 animate-pulse h-[360px]" />
               ))}
             </div>
           )}
           {!error && products !== null && products.length === 0 && (
             <FallbackMessage
-              emoji="🛍️"
               title="Coming Soon!"
               body="We're stocking the shelves — check back very soon for plush toys, books, and more."
               showSocials
@@ -107,21 +107,29 @@ export function Shop() {
               {products.filter((p) => category === 'all' || p.category === category).map((product) => {
                 const price = productPriceLabel(product, currency);
                 const cover = product.images[0];
+                const soldOut = product.variants.filter((v) => v.active).every((v) => v.stock_qty === 0);
                 return (
                   <Link
                     key={product.id}
                     to={`/shop/${product.slug}`}
-                    className="group rounded-3xl bg-[#FFF8F0] overflow-hidden shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+                    className="group rounded-3xl bg-white border border-gray-100 overflow-hidden shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
                   >
-                    <div className="aspect-square bg-white flex items-center justify-center overflow-hidden">
+                    <div className="relative aspect-square bg-white flex items-center justify-center overflow-hidden">
                       {cover ? (
                         <img
-                          src={cover.url}
+                          src={imageSrc(cover.url)}
                           alt={cover.alt || product.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${
+                            soldOut ? 'opacity-60' : ''
+                          }`}
                         />
                       ) : (
-                        <span className="text-7xl">🧸</span>
+                        <Gift className="w-16 h-16 text-[#2D0A6B]/20" />
+                      )}
+                      {soldOut && (
+                        <span className="absolute top-3 left-3 bg-[#2D0A6B] text-white text-xs font-extrabold px-3 py-1.5 rounded-full">
+                          Out of stock
+                        </span>
                       )}
                     </div>
                     <div className="p-6">
@@ -131,6 +139,9 @@ export function Shop() {
                       <h3 className="text-xl font-black text-[#2D0A6B] mb-2" style={{ fontFamily: baloo }}>
                         {product.name}
                       </h3>
+                      <div className="mb-2">
+                        <RatingSummary average={product.rating_average} count={product.rating_count} />
+                      </div>
                       <div className="font-extrabold text-gray-800">
                         {price ?? <span className="text-gray-400 text-sm">Not available in {currency}</span>}
                       </div>
@@ -148,19 +159,17 @@ export function Shop() {
 }
 
 function FallbackMessage({
-  emoji,
   title,
   body,
   showSocials,
 }: {
-  emoji: string;
   title: string;
   body: string;
   showSocials?: boolean;
 }) {
   return (
     <div className="max-w-[700px] mx-auto text-center py-12">
-      <div className="text-8xl mb-6">{emoji}</div>
+      <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-[#FFF8F0] flex items-center justify-center"><ShoppingBag className="w-12 h-12 text-[#F97316]" /></div>
       <h2 className="text-4xl font-black text-[#2D0A6B] mb-4" style={{ fontFamily: baloo }}>
         {title}
       </h2>

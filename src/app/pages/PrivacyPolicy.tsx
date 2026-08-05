@@ -1,3 +1,5 @@
+import { CheckCircle2, XCircle } from 'lucide-react';
+
 export function PrivacyPolicy() {
   const baloo = "'Baloo 2', cursive";
 
@@ -24,10 +26,10 @@ export function PrivacyPolicy() {
                 THE AFROTODS is a children's app designed for ages 4-8. We take your child's privacy very seriously.
               </p>
               <ul className="list-none space-y-1 text-gray-700 font-semibold">
-                <li>✅ We do NOT collect personal information from children</li>
-                <li>✅ We do NOT use advertising or tracking</li>
-                <li>✅ We do NOT share your child's information with third parties</li>
-                <li>✅ In-app purchase information is handled securely by Google Play</li>
+                <li className="flex items-start gap-2"><CheckCircle2 className="w-5 h-5 mt-0.5 shrink-0 text-green-600" /> We do NOT collect personal information from children</li>
+                <li className="flex items-start gap-2"><CheckCircle2 className="w-5 h-5 mt-0.5 shrink-0 text-green-600" /> We do NOT use advertising or tracking</li>
+                <li className="flex items-start gap-2"><CheckCircle2 className="w-5 h-5 mt-0.5 shrink-0 text-green-600" /> We do NOT share your child's information with third parties</li>
+                <li className="flex items-start gap-2"><CheckCircle2 className="w-5 h-5 mt-0.5 shrink-0 text-green-600" /> In-app purchase information is handled securely by Google Play</li>
               </ul>
               <p className="text-gray-700 leading-relaxed mt-3">
                 Our <strong>online shop</strong> (merchandise, toys, and books) is designed for <strong>adult
@@ -64,15 +66,15 @@ export function PrivacyPolicy() {
                 This includes:
               </p>
               <ul className="list-none space-y-2 text-gray-700">
-                <li>❌ Names</li>
-                <li>❌ Email addresses</li>
-                <li>❌ Phone numbers</li>
-                <li>❌ Physical addresses</li>
-                <li>❌ Photos or videos</li>
-                <li>❌ Voice recordings</li>
-                <li>❌ Geolocation data</li>
-                <li>❌ Device identifiers, cookies, or advertising IDs</li>
-                <li>❌ Any other personal information as defined by COPPA and GDPR</li>
+                <li className="flex items-start gap-2"><XCircle className="w-5 h-5 mt-0.5 shrink-0 text-red-400" /> Names</li>
+                <li className="flex items-start gap-2"><XCircle className="w-5 h-5 mt-0.5 shrink-0 text-red-400" /> Email addresses</li>
+                <li className="flex items-start gap-2"><XCircle className="w-5 h-5 mt-0.5 shrink-0 text-red-400" /> Phone numbers</li>
+                <li className="flex items-start gap-2"><XCircle className="w-5 h-5 mt-0.5 shrink-0 text-red-400" /> Physical addresses</li>
+                <li className="flex items-start gap-2"><XCircle className="w-5 h-5 mt-0.5 shrink-0 text-red-400" /> Photos or videos</li>
+                <li className="flex items-start gap-2"><XCircle className="w-5 h-5 mt-0.5 shrink-0 text-red-400" /> Voice recordings</li>
+                <li className="flex items-start gap-2"><XCircle className="w-5 h-5 mt-0.5 shrink-0 text-red-400" /> Geolocation data</li>
+                <li className="flex items-start gap-2"><XCircle className="w-5 h-5 mt-0.5 shrink-0 text-red-400" /> Device identifiers, cookies, or advertising IDs</li>
+                <li className="flex items-start gap-2"><XCircle className="w-5 h-5 mt-0.5 shrink-0 text-red-400" /> Any other personal information as defined by COPPA and GDPR</li>
               </ul>
               <p className="text-gray-700 leading-relaxed mt-4 font-semibold">
                 Your child can enjoy our app without creating an account, logging in, or providing any personal information.
