@@ -141,6 +141,12 @@ export function ShopOrder() {
           Order <span className="text-[#2D0A6B]">{order.reference}</span> · {order.customer_email}
         </p>
 
+        {/* A failed "Pay Now" used to set this and render nothing, so the button
+            looked dead. Always surface it. */}
+        {error && order && (
+          <p className="mb-6 mx-auto max-w-[520px] text-red-600 font-bold">{error}</p>
+        )}
+
         {order.status === 'pending_payment' &&
           (customer ? (
             <button
