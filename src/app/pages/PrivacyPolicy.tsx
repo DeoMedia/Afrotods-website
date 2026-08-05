@@ -100,7 +100,7 @@ export function PrivacyPolicy() {
               </ul>
               <p className="text-gray-700 leading-relaxed mt-4">
                 <strong>We never see or store your card details.</strong> Payment is completed on the secure hosted
-                pages of our payment processors — <strong>Stripe</strong> (GBP/USD) and <strong>Paystack</strong>{' '}
+                pages of our payment processors, <strong>Stripe</strong> (GBP/USD) and <strong>Paystack</strong>{' '}
                 (NGN/ZAR). Order data is stored with <strong>Supabase</strong> (our database provider) and processed
                 on <strong>Railway</strong> (our hosting provider); order confirmation emails are sent via{' '}
                 <strong>Resend</strong>. These processors act on our instructions and are bound by data-processing
@@ -163,11 +163,11 @@ export function PrivacyPolicy() {
                 We use carefully selected third-party service providers who are also COPPA compliant:
               </p>
               <ul className="list-disc pl-6 space-y-2 text-gray-700">
-                <li>Google Play — in-app purchase handling</li>
-                <li>Stripe and Paystack — shop payment processing (card details never reach our servers)</li>
-                <li>Supabase — database hosting for shop orders</li>
-                <li>Railway — application hosting for the shop backend</li>
-                <li>Resend — transactional order emails</li>
+                <li>Google Play for in-app purchase handling</li>
+                <li>Stripe and Paystack for shop payment processing (card details never reach our servers)</li>
+                <li>Supabase for database hosting of shop orders</li>
+                <li>Railway for application hosting of the shop backend</li>
+                <li>Resend for transactional order emails</li>
                 <li>Cloud storage providers for content delivery</li>
                 <li>Analytics services for app performance monitoring (anonymized data only)</li>
               </ul>

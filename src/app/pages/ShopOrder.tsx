@@ -226,7 +226,7 @@ export function ShopOrder() {
             {order.items.map((item) => (
               <li key={item.sku} className="flex justify-between text-sm font-semibold text-gray-700">
                 <span>
-                  {item.product_name} — {item.variant_name} <span className="text-gray-400">× {item.quantity}</span>
+                  {item.product_name}, {item.variant_name} <span className="text-gray-400">× {item.quantity}</span>
                 </span>
                 <span>{formatMoney(item.unit_amount_minor * item.quantity, order.currency)}</span>
               </li>

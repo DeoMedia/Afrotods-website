@@ -105,6 +105,12 @@ export const fetchProducts = () => fetch(`${API_URL}/api/catalog/products`).then
 export const fetchProduct = (slug: string) =>
   fetch(`${API_URL}/api/catalog/products/${slug}`).then((r) => json<Product>(r));
 
+/** Small, ready-picked list — avoids downloading the whole catalogue per product page. */
+export const fetchRelatedProducts = (slug: string, limit = 3) =>
+  fetch(`${API_URL}/api/catalog/products/${encodeURIComponent(slug)}/related?limit=${limit}`).then(
+    (r) => json<Product[]>(r),
+  );
+
 // Orders are only returned on an exact reference + email match (anti-enumeration)
 export const fetchOrder = (reference: string, email: string) =>
   fetch(`${API_URL}/api/orders/${encodeURIComponent(reference)}?email=${encodeURIComponent(email)}`).then((r) =>

@@ -69,7 +69,7 @@ export function TermsConditions() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-black text-[#2D0A6B] mt-12 mb-4" style={{ fontFamily: baloo }}>Online Shop — Physical Goods</h2>
+              <h2 className="text-2xl font-black text-[#2D0A6B] mt-12 mb-4" style={{ fontFamily: baloo }}>Online Shop: Physical Goods</h2>
               <p className="text-gray-700 leading-relaxed mb-4">
                 These terms apply to purchases of physical merchandise (toys, apparel, and books) from our online
                 shop, which is intended for <strong>adult purchasers (18+)</strong>. Displayed prices are inclusive

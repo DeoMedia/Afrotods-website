@@ -17,7 +17,7 @@ export function About() {
   About The Afrotods
 </h1>
           <p className="text-xl text-white/80 max-w-[700px] mx-auto leading-relaxed">
-          We’re on a mission to bring bold, Afrocentric storytelling to children everywhere — through vibrant, educational, and culturally rich content that reflects who they are and inspires who they can become.
+          We’re on a mission to bring bold, Afrocentric storytelling to children everywhere through vibrant, educational, and culturally rich content that reflects who they are and inspires who they can become.
           </p>
         </div>
       </section>
@@ -29,7 +29,7 @@ export function About() {
             <div>
               <h2 className="text-3xl font-black text-[#2D0A6B] mb-4" style={{ fontFamily: baloo }}>Our Story</h2>
               <p className="text-lg text-gray-700 leading-relaxed">
-               THE AFROTODS was born from a simple but powerful insight: children deserve to see themselves reflected in the stories they love. We set out to build a world where African culture, music, and values aren’t just included — they lead every adventure, shaping stories that are as meaningful as they are entertaining.
+               THE AFROTODS was born from a simple but powerful insight: children deserve to see themselves reflected in the stories they love. We set out to build a world where African culture, music, and values aren’t just included they lead every adventure, shaping stories that are as meaningful as they are entertaining.
               </p>
             </div>
 

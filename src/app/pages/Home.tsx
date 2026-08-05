@@ -26,14 +26,14 @@ const FEATURES = [
   { icon: Clapperboard, title: 'Animated Story Videos', description: 'Vibrant, music-filled episodes featuring the Afrotods family on exciting cultural adventures.', color: 'rgba(236,72,153,0.15)' },
   { icon: BookOpen, title: 'Interactive Books', description: 'Story books that come alive with sound, animation, and gentle questions that spark curiosity.', color: 'rgba(249,115,22,0.15)' },
   { icon: Gamepad2, title: 'Games for Kids', description: 'Age-appropriate games that build problem-solving, creativity, and cultural knowledge through play.', color: 'rgba(52,211,153,0.15)' },
-  { icon: Music, title: 'Music + Learning', description: 'Original songs and soundscapes woven into every experience — because kids learn best through rhythm.', color: 'rgba(96,165,250,0.15)' }
+  { icon: Music, title: 'Music + Learning', description: 'Original songs and soundscapes woven into every experience, because kids learn best through rhythm.', color: 'rgba(96,165,250,0.15)' }
 ];
 
 const CURRENCIES = [
-  { code: 'GBP', symbol: '£', flag: '🇬🇧', intro: '9.90', regular: '14.99', label: '🇬🇧 Showing GBP — United Kingdom' },
-  { code: 'NGN', symbol: '₦', flag: '🇳🇬', intro: '7,999', regular: '11,999', label: '🇳🇬 Showing NGN — Nigeria' },
-  { code: 'ZAR', symbol: 'R', flag: '🇿🇦', intro: '249', regular: '369', label: '🇿🇦 Showing ZAR — South Africa' },
-  { code: 'USD', symbol: '$', flag: '🌍', intro: '12.99', regular: '18.99', label: '🌍 Showing USD — International' }
+  { code: 'GBP', symbol: '£', flag: '🇬🇧', intro: '9.90', regular: '14.99', label: '🇬🇧 Showing GBP for the United Kingdom' },
+  { code: 'NGN', symbol: '₦', flag: '🇳🇬', intro: '7,999', regular: '11,999', label: '🇳🇬 Showing NGN for Nigeria' },
+  { code: 'ZAR', symbol: 'R', flag: '🇿🇦', intro: '249', regular: '369', label: '🇿🇦 Showing ZAR for South Africa' },
+  { code: 'USD', symbol: '$', flag: '🌍', intro: '12.99', regular: '18.99', label: '🌍 Showing USD for international visitors' }
 ];
 
 export function Home() {
@@ -123,7 +123,7 @@ export function Home() {
               className="scroll-reveal opacity-0 translate-y-9 transition-all duration-[650ms] [transition-delay:200ms] text-base text-[#4B5563] leading-relaxed mb-8 max-w-[440px]"
               style={{ fontFamily: nunito }}
             >
-              Watch colourful stories with music, playful characters, and gentle learning built in — designed to educate, entertain, and inspire children aged 4–8.
+              Watch colourful stories with music, playful characters, and gentle learning built in designed to educate, entertain, and inspire children aged 4–8.
             </p>
 
             {/* Buttons */}
@@ -232,7 +232,7 @@ export function Home() {
               <span className="text-[#7B2FBE]">Thrive</span>
             </h2>
             <p className="text-base text-[#6B46A0] max-w-[440px] mx-auto leading-relaxed" style={{ fontFamily: nunito }}>
-              Educate, entertain, and build early cultural pride — all in one beautifully designed app.
+              Educate, entertain, and build early cultural pride all in one beautifully designed app.
             </p>
           </div>
 
@@ -288,7 +288,7 @@ export function Home() {
   Meet The Afrotods Family
 </h2>
             <p className="text-base text-[#6B46A0] max-w-[480px] mx-auto leading-relaxed" style={{ fontFamily: nunito }}>
-              A vibrant world where music, culture, and storytelling come to life — one character at a time.
+              A vibrant world where music, culture, and storytelling come to life one character at a time.
             </p>
           </div>
 

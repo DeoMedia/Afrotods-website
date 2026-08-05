@@ -130,7 +130,7 @@ export function Layout() {
             <div>
               <img src={afrotodLogo} alt="The Afrotods™" className="h-[60px] w-auto mb-2.5" />
               <p className="text-sm text-white/55 leading-relaxed max-w-[300px] mb-6">
-                Joyful Stories. Cultural Roots. Smart Learning. A product of <a href="https://deomedia.net" target="_blank" rel="noopener noreferrer" className="text-white/70 hover:text-white transition-colors">Deo Media Limited UK</a> — bringing Afro-modern storytelling to children everywhere.
+                Joyful Stories. Cultural Roots. Smart Learning. A product of <a href="https://deomedia.net" target="_blank" rel="noopener noreferrer" className="text-white/70 hover:text-white transition-colors">Deo Media Limited UK</a>, bringing Afro-modern storytelling to children everywhere.
               </p>
               <div className="flex gap-2.5 flex-wrap">
                 {[

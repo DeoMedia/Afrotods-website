@@ -151,7 +151,7 @@ function OrderDetail({ order, onChanged }: { order: AdminOrder; onChanged: () =>
         <ul className="space-y-1 mb-4 font-semibold text-gray-700">
           {order.items.map((item) => (
             <li key={item.sku}>
-              {item.product_name} — {item.variant_name} × {item.quantity} (
+              {item.product_name}, {item.variant_name} × {item.quantity} (
               {formatMoney(item.unit_amount_minor, order.currency)})
             </li>
           ))}
@@ -165,7 +165,7 @@ function OrderDetail({ order, onChanged }: { order: AdminOrder; onChanged: () =>
           <ul className="space-y-1 text-gray-600 font-semibold">
             {order.history.map((h, i) => (
               <li key={i}>
-                {new Date(h.created_at).toLocaleString()} — {h.status.replace('_', ' ')}
+                {new Date(h.created_at).toLocaleString()}: {h.status.replace('_', ' ')}
                 {h.note && <span className="text-gray-400"> · {h.note}</span>}
               </li>
             ))}
@@ -268,7 +268,7 @@ function ManualOrderForm({ onCreated }: { onCreated: () => void }) {
   return (
     <form onSubmit={handleSubmit} className="bg-white rounded-3xl p-6 shadow-sm mb-6 space-y-3">
       <div className="text-sm font-black text-[#2D0A6B]">
-        Manual order (phone/social sale) — recorded as already paid; stock is reserved
+        Manual order (phone/social sale), recorded as already paid. Stock is reserved
       </div>
       <div className="grid sm:grid-cols-3 gap-3">
         <input required placeholder="Customer name" value={form.customer_name} onChange={set('customer_name')} className={inputCls} />

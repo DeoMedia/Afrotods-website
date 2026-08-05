@@ -23,7 +23,7 @@ export function ShippingDelivery() {
               </h2>
               <p className="text-gray-700 leading-relaxed">
                 We currently ship within the <strong>United Kingdom</strong>, delivered by <strong>Royal Mail</strong>.
-                Delivery to Europe and the rest of the world is <strong>coming soon</strong> — follow us on social
+                Delivery to Europe and the rest of the world is <strong>coming soon</strong>, so follow us on social
                 media or email Supportafro@deomedia.net to hear when your country opens.
               </p>
             </section>
@@ -47,7 +47,7 @@ export function ShippingDelivery() {
                 <li>Royal Mail delivery typically takes 2–5 business days after dispatch</li>
               </ul>
               <p className="text-gray-700 leading-relaxed mt-4">
-                These are estimates, not guarantees — carrier delays can happen outside our control. If your order
+                These are estimates, not guarantees, as carrier delays can happen outside our control. If your order
                 hasn't arrived within 30 days, contact us and we'll investigate with Royal Mail.
               </p>
             </section>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
 import { ArrowLeft, Gift, Minus, Plus, SearchX, ShoppingBag } from 'lucide-react';
-import { imageSrc, fetchProduct, fetchProducts, formatMoney, priceFor, type Product, type Variant } from '../shop/api';
+import { imageSrc, fetchProduct, fetchRelatedProducts, formatMoney, priceFor, type Product, type Variant } from '../shop/api';
 import { useCart } from '../shop/CartContext';
 import { ProductRating, RatingSummary } from '../shop/Rating';
 
@@ -30,17 +30,13 @@ export function ShopProduct() {
       .then((p) => {
         setProduct(p);
         setVariant(p.variants.find((v) => v.active) ?? null);
-        // Related: same category first, then anything else, excluding this product
-        fetchProducts()
-          .then((all) => {
-            const others = all.filter((o) => o.slug !== p.slug);
-            const sameCategory = others.filter((o) => o.category === p.category);
-            const rest = others.filter((o) => o.category !== p.category);
-            setRelated([...sameCategory, ...rest].slice(0, 3));
-          })
-          .catch(() => setRelated([]));
       })
       .catch((e: Error) => setError(e.message));
+
+    // separate request so a slow or failed suggestion list never delays the product
+    fetchRelatedProducts(slug)
+      .then(setRelated)
+      .catch(() => setRelated([]));
   }, [slug]);
 
   if (error) {

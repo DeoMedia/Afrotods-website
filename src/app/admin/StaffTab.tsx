@@ -93,7 +93,7 @@ export function StaffTab({ onUnauthorized }: { onUnauthorized: () => void }) {
         </div>
         <p className="text-xs font-semibold text-gray-400 mt-3">
           Staff can manage products and orders. Super admins can also manage this staff list. Share the password with
-          them securely — they can't reset it themselves yet.
+          them securely, they can't reset it themselves yet.
         </p>
       </form>
 

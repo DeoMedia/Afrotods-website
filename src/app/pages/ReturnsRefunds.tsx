@@ -49,7 +49,7 @@ export function ReturnsRefunds() {
               <ul className="list-disc pl-6 space-y-2 text-gray-700">
                 <li>Contact us within 30 days for a full refund, or ask for a repair or replacement</li>
                 <li>We cover the return postage for faulty or incorrect items</li>
-                <li>Photos of the problem help us resolve things faster — attach them to your email if you can</li>
+                <li>Photos of the problem help us resolve things faster, so attach them to your email if you can</li>
               </ul>
             </section>
 

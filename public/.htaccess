@@ -1,10 +1,56 @@
-# SPA rewrite for Bluehost/Apache — route all non-file requests to index.html
-# so /shop, /track, /admin, etc. don't 404 on refresh or direct visit.
+# ---------------------------------------------------------------------------
+# Security headers
+# ---------------------------------------------------------------------------
+<IfModule mod_headers.c>
+  # Force https for a year. Only safe because afrotods.com is https-only.
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+
+  # Stop the site being framed by someone else (clickjacking on the shop
+  # and, worse, on the admin sign-in form).
+  Header always set X-Frame-Options "SAMEORIGIN"
+
+  # Never let a browser second-guess a declared content type.
+  Header always set X-Content-Type-Options "nosniff"
+
+  # Send only the origin to other sites, never the full path a customer is on.
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+  # We ask for none of these; deny them by default.
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(self)"
+
+  # Hashed asset filenames change on every deploy, so they can cache forever.
+  <FilesMatch "\.(js|css|woff2?|png|jpe?g|webp|gif|svg|ico)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+
+  # index.html must not be cached, or visitors keep loading an old bundle
+  # after a deploy and see stale prices.
+  <FilesMatch "^(index\.html|robots\.txt|sitemap\.xml)$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+</IfModule>
+
+# ---------------------------------------------------------------------------
+# SPA routing
+# Real files (robots.txt, sitemap.xml, assets) are served as-is; everything
+# else falls through to index.html so /shop, /track and /admin survive a
+# refresh or a direct visit.
+# ---------------------------------------------------------------------------
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
+
+  # Always use https
+  RewriteCond %{HTTPS} !=on
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
   RewriteRule ^index\.html$ - [L]
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule . /index.html [L]
+</IfModule>
+
+# Compress text assets if the server supports it
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml application/javascript application/json
 </IfModule>

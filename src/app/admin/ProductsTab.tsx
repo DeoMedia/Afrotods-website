@@ -459,7 +459,7 @@ function NewProductForm({ onCreated }: { onCreated: () => void }) {
             value={form.vat_rate}
             onChange={set('vat_rate')}
             className={inputCls}
-            title="VAT % included in prices — 20 for toys/merch, 0 for children's clothing and books"
+            title="VAT % included in prices. 20 for toys/merch, 0 for children's clothing and books"
           />
           <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400">VAT %</span>
         </div>
@@ -510,7 +510,7 @@ function NewProductForm({ onCreated }: { onCreated: () => void }) {
       </div>
 
       <div className="space-y-3">
-        <div className="text-sm font-black text-[#2D0A6B]">Variants — prices are VAT-inclusive, in major units (e.g. 19.99)</div>
+        <div className="text-sm font-black text-[#2D0A6B]">Variants, prices are VAT-inclusive, in major units (e.g. 19.99)</div>
         {variants.map((v, i) => (
           <div key={i} className="grid grid-cols-2 sm:grid-cols-7 gap-2">
             <input placeholder="SKU" value={v.sku} onChange={(e) => setVariant(i, { sku: e.target.value })} className={inputCls} />

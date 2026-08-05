@@ -82,7 +82,7 @@ export function ShopCheckout() {
             Almost there!
           </h1>
           <p className="text-gray-600 font-semibold text-center mb-8">
-            Sign in with your email to complete your order — it takes 30 seconds.
+            Sign in with your email to complete your order, it takes 30 seconds.
           </p>
           <SignInForm />
         </div>
@@ -114,7 +114,7 @@ export function ShopCheckout() {
               Your details
             </h2>
             <div className="text-sm font-semibold text-gray-500 bg-[#FFF8F0] rounded-xl px-4 py-3">
-              Signed in as <strong className="text-[#2D0A6B]">{customer?.email}</strong> — your order confirmation
+              Signed in as <strong className="text-[#2D0A6B]">{customer?.email}</strong>, your order confirmation
               goes there.
             </div>
             <input required placeholder="Full name" value={form.name} onChange={set('name')} className={inputCls} />
@@ -145,7 +145,7 @@ export function ShopCheckout() {
               </select>
             </div>
             <p className="text-xs text-gray-400 font-semibold">
-              🇬🇧 We currently ship within the UK via Royal Mail — Europe and international delivery coming soon!
+              🇬🇧 We currently ship within the UK via Royal Mail. Europe and international delivery coming soon!
             </p>
 
             {error && <p className="text-red-600 font-bold">{error}</p>}
@@ -182,7 +182,7 @@ export function ShopCheckout() {
                 <div className="border-t border-[#2D0A6B]/10 pt-4 text-sm font-bold text-gray-700 space-y-2">
                   <div className="flex justify-between">
                     <span>Subtotal</span>
-                    <span>{subtotal !== null ? formatMoney(subtotal, currency) : '—'}</span>
+                    <span>{subtotal !== null ? formatMoney(subtotal, currency) : 'N/A'}</span>
                   </div>
                   <div className="flex justify-between text-gray-400">
                     <span>Shipping</span>

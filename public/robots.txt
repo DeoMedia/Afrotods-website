@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# Nothing useful for a crawler, and the admin should never be indexed
+Disallow: /admin
+Disallow: /shop/cart
+Disallow: /shop/checkout
+Disallow: /shop/order/
+Disallow: /account
+
+Sitemap: https://afrotods.com/sitemap.xml

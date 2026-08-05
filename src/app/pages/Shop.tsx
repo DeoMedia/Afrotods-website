@@ -81,7 +81,7 @@ export function Shop() {
           {!error && products !== null && products.length === 0 && (
             <FallbackMessage
               title="Coming Soon!"
-              body="We're stocking the shelves — check back very soon for plush toys, books, and more."
+              body="We're stocking the shelves, so check back very soon for plush toys, books, and more."
               showSocials
             />
           )}

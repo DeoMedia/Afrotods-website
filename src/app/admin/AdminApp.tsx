@@ -275,7 +275,7 @@ function ExportPanel() {
 
       {error && <p className="text-red-600 font-bold text-sm mt-3">{error}</p>}
       <p className="text-xs font-semibold text-gray-400 mt-3">
-        Every format carries the same rows, with VAT per order and a paid-revenue summary by currency — the numbers
+        Every format carries the same rows, with VAT per order and a paid-revenue summary by currency, the numbers
         your accountant needs for a VAT return.
       </p>
     </div>
@@ -299,7 +299,7 @@ function DashboardTab({ onUnauthorized }: { onUnauthorized: () => void }) {
   const cards = [
     { label: 'Active products', value: stats.products_active },
     { label: 'Awaiting payment', value: stats.orders_pending },
-    { label: 'Paid — to fulfil', value: stats.orders_paid },
+    { label: 'Paid, to fulfil', value: stats.orders_paid },
     { label: 'Shipped', value: stats.orders_fulfilled },
   ];
 

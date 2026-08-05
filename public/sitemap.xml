@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://afrotods.com/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://afrotods.com/shop</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://afrotods.com/about</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://afrotods.com/contact</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://afrotods.com/track</loc><changefreq>yearly</changefreq><priority>0.4</priority></url>
+
+  <url><loc>https://afrotods.com/shop/the-afrotods-festival-time</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://afrotods.com/shop/afrotods-mens-t-shirt-black</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://afrotods.com/shop/afrotods-mens-t-shirt-white</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://afrotods.com/shop/afrotods-womens-t-shirt-black</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://afrotods.com/shop/afrotods-womens-t-shirt-white</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://afrotods.com/shop/afrotods-boys-t-shirt-black</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://afrotods.com/shop/afrotods-boys-t-shirt-blue</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://afrotods.com/shop/afrotods-girls-t-shirt-black</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://afrotods.com/shop/afrotods-girls-t-shirt-pink</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+
+  <url><loc>https://afrotods.com/privacy-policy</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://afrotods.com/terms-conditions</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://afrotods.com/returns</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://afrotods.com/shipping</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+</urlset>

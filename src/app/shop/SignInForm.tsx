@@ -47,7 +47,7 @@ export function SignInForm({ compact = false }: { compact?: boolean }) {
       <form onSubmit={sendCode} className="flex flex-col gap-3">
         {!compact && (
           <p className="text-gray-600 font-semibold text-sm">
-            Enter your email — we'll send you a 6-digit code. No password needed; new customers are signed up
+            Enter your email and we'll send you a 6-digit code. No password needed; new customers are signed up
             automatically.
           </p>
         )}

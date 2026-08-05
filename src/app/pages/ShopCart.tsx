@@ -120,7 +120,7 @@ export function ShopCart() {
                       </button>
                     </div>
                     <div className="font-extrabold w-24 text-right">
-                      {price ? formatMoney(price.amount_minor * line.quantity, currency) : '—'}
+                      {price ? formatMoney(price.amount_minor * line.quantity, currency) : 'N/A'}
                     </div>
                     <button
                       onClick={() => remove(line.variantId)}
@@ -137,7 +137,7 @@ export function ShopCart() {
             <div className="flex items-center justify-between border-t-2 border-[#2D0A6B]/10 pt-6">
               <div className="text-lg font-extrabold text-gray-700">
                 Subtotal:{' '}
-                <span className="text-[#2D0A6B]">{subtotal !== null ? formatMoney(subtotal, currency) : '—'}</span>
+                <span className="text-[#2D0A6B]">{subtotal !== null ? formatMoney(subtotal, currency) : 'N/A'}</span>
                 <div className="text-xs text-gray-400 font-semibold">Shipping calculated at checkout</div>
               </div>
               <Link

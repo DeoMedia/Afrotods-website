@@ -66,7 +66,7 @@ export function Account() {
                   <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-[#FFF8F0] flex items-center justify-center">
                     <ShoppingBag className="w-10 h-10 text-[#F97316]" />
                   </div>
-                  <p className="text-gray-600 font-semibold mb-6">No orders yet — let's fix that!</p>
+                  <p className="text-gray-600 font-semibold mb-6">No orders yet, let's fix that!</p>
                   <Link
                     to="/shop"
                     className="inline-block px-8 py-3.5 bg-gradient-to-r from-[#F97316] to-[#FBBF24] text-[#2D0A6B] rounded-full font-extrabold"

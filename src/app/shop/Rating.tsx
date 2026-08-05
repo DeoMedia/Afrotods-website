@@ -92,7 +92,7 @@ export function ProductRating({
         </div>
       ) : (
         <p className="text-sm font-semibold text-gray-400 mb-4">
-          No ratings yet — be the first once you've received your order.
+          No ratings yet, be the first once you've received your order.
         </p>
       )}
 
@@ -132,7 +132,7 @@ export function ProductRating({
 
       {customer && mine && !mine.can_rate && (
         <p className="text-xs font-semibold text-gray-400">
-          Ratings come from verified purchases only — buy this product to leave yours.
+          Ratings come from verified purchases only, buy this product to leave yours.
         </p>
       )}
 

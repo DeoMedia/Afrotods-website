@@ -55,7 +55,7 @@ export function TrackOrder() {
             </button>
           </form>
           <p className="text-xs text-gray-400 text-center font-semibold mt-6">
-            Your order number is in your confirmation email. Both must match — this keeps your order details private.
+            Your order number is in your confirmation email. Both must match, which keeps your order details private.
           </p>
         </div>
       </section>
