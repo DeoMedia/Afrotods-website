@@ -2,9 +2,14 @@
 #
 # Required GitHub Actions secrets (Settings → Secrets and variables → Actions):
 #   VITE_API_URL   — the Railway backend URL, e.g. https://afrotods-backend.up.railway.app
-#   FTP_SERVER     — Bluehost FTP host (e.g. ftp.afrotods.com)
-#   FTP_USERNAME   — Bluehost FTP account username
-#   FTP_PASSWORD   — Bluehost FTP account password
+#                    (no trailing slash)
+#   FTP_SERVER     — Bluehost FTP host, e.g. ftp.afrotods.com
+#   FTP_USERNAME   — full FTP username, e.g. afro@afrotods.com
+#   FTP_PASSWORD   — that account's password
+#
+# server-dir is relative to wherever the FTP account lands on login. That account
+# is rooted at public_html/afrotods, the document root for afrotods.com, so "./"
+# is correct — public_html itself holds several other sites.
 name: Deploy frontend to Bluehost
 
 on:
@@ -22,6 +27,30 @@ jobs:
         with:
           node-version: 20
           cache: npm
+
+      # Stop before building rather than publishing a shop that silently points
+      # at localhost: the app falls back to http://localhost:8000 when
+      # VITE_API_URL is missing, which looks fine in CI and fails for every visitor.
+      - name: Check required secrets
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          missing=0
+          for name in VITE_API_URL FTP_SERVER FTP_USERNAME FTP_PASSWORD; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Missing repository secret: $name"
+              missing=1
+            fi
+          done
+          case "$VITE_API_URL" in
+            *localhost*|*127.0.0.1*)
+              echo "::error::VITE_API_URL points at localhost — set it to the Railway URL"
+              missing=1 ;;
+          esac
+          [ "$missing" = "0" ] || exit 1
 
       - name: Install dependencies
         run: npm ci
@@ -45,4 +74,5 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftps
           local-dir: ./dist/
-          server-dir: ./public_html/
+          # FTP account is rooted at public_html/afrotods (afrotods.com docroot)
+          server-dir: ./
