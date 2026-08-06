@@ -9,6 +9,7 @@ export function StaffTab({ onUnauthorized }: { onUnauthorized: () => void }) {
   const [staff, setStaff] = useState<StaffMember[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState({ email: '', password: '', role: 'staff' as 'staff' | 'super' });
+  const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   const load = () =>
@@ -26,8 +27,16 @@ export function StaffTab({ onUnauthorized }: { onUnauthorized: () => void }) {
     e.preventDefault();
     setBusy(true);
     setError(null);
+    setNotice(null);
     try {
-      await adminApi.createStaff(form.email.trim(), form.password, form.role);
+      const created = await adminApi.createStaff(form.email.trim(), form.password, form.role);
+      // The account exists either way; say plainly whether they were emailed,
+      // because the password cannot be read back and resent later.
+      setNotice(
+        created.invite_emailed
+          ? `Account created. Sign-in details emailed to ${created.email}.`
+          : `Account created, but the invite email could not be sent. Share the password with ${created.email} yourself.`,
+      );
       setForm({ email: '', password: '', role: 'staff' });
       load();
     } catch (err) {
@@ -92,10 +101,21 @@ export function StaffTab({ onUnauthorized }: { onUnauthorized: () => void }) {
           </button>
         </div>
         <p className="text-xs font-semibold text-gray-400 mt-3">
-          Staff can manage products and orders. Super admins can also manage this staff list. Share the password with
-          them securely, they can't reset it themselves yet.
+          Staff can manage products and orders. Super admins can also manage this staff list. The sign-in details are
+          emailed to them automatically. There is no self-service password reset yet, so a super admin has to change it
+          for them.
         </p>
       </form>
+
+      {notice && (
+        <p
+          className={`font-bold mb-4 ${
+            notice.includes('could not be sent') ? 'text-orange-600' : 'text-green-600'
+          }`}
+        >
+          {notice}
+        </p>
+      )}
 
       {error && <p className="text-red-600 font-bold mb-4">{error}</p>}
       {staff === null && <div className="h-32 rounded-3xl bg-white animate-pulse" />}

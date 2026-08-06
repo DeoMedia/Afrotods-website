@@ -89,6 +89,8 @@ export interface StaffMember {
   role: 'super' | 'staff';
   active: boolean;
   created_at: string;
+  /** Only returned when creating: whether the invite email actually went out. */
+  invite_emailed?: boolean | null;
 }
 
 export interface ExportFilters {
