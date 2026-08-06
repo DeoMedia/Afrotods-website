@@ -1,4 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react';
+import { Check, Pencil } from 'lucide-react';
 import { adminApi, type AdminOrder } from './api';
 import { formatMoney, type Currency } from '../shop/api';
 
@@ -116,6 +117,11 @@ function OrderDetail({ order, onChanged }: { order: AdminOrder; onChanged: () =>
   });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Saved details show as a summary; the form only appears when there is
+  // nothing yet, or when Edit is pressed. Before this the inputs were always
+  // on screen, so a saved order looked exactly like an unsaved one.
+  const isSaved = Boolean(order.carrier || order.tracking_number);
+  const [editing, setEditing] = useState(!isSaved);
 
   const doStatus = async (status: string) => {
     if (status === 'cancelled' && !window.confirm(`Cancel order ${order.reference}? Stock will be restored.`)) return;
@@ -136,7 +142,17 @@ function OrderDetail({ order, onChanged }: { order: AdminOrder; onChanged: () =>
     setBusy(true);
     setError(null);
     try {
-      await adminApi.updateShipping(order.reference, shipping);
+      // Fill in Royal Mail's own tracking page when a number is given without
+      // a link, so the customer's email points somewhere that actually tracks.
+      const payload = { ...shipping };
+      if (!payload.tracking_url.trim() && payload.tracking_number.trim() && /royal\s*mail/i.test(payload.carrier)) {
+        payload.tracking_url = `https://www.royalmail.com/track-your-item#/tracking-results/${encodeURIComponent(
+          payload.tracking_number.trim(),
+        )}`;
+      }
+      await adminApi.updateShipping(order.reference, payload);
+      setShipping(payload);
+      setEditing(false);
       onChanged();
     } catch (e2) {
       setError(e2 instanceof Error ? e2.message : 'Failed');
@@ -191,33 +207,96 @@ function OrderDetail({ order, onChanged }: { order: AdminOrder; onChanged: () =>
           ))}
         </div>
 
-        <form onSubmit={saveShipping} className="space-y-2">
-          <input
-            placeholder="Carrier (e.g. Royal Mail)"
-            value={shipping.carrier}
-            onChange={(e) => setShipping((s) => ({ ...s, carrier: e.target.value }))}
-            className={inputCls}
-          />
-          <input
-            placeholder="Tracking number"
-            value={shipping.tracking_number}
-            onChange={(e) => setShipping((s) => ({ ...s, tracking_number: e.target.value }))}
-            className={inputCls}
-          />
-          <input
-            placeholder="Tracking URL"
-            value={shipping.tracking_url}
-            onChange={(e) => setShipping((s) => ({ ...s, tracking_url: e.target.value }))}
-            className={inputCls}
-          />
-          <button
-            type="submit"
-            disabled={busy}
-            className="px-6 py-2 bg-[#2D0A6B] text-white rounded-full text-xs font-extrabold disabled:opacity-40"
-          >
-            Save shipping info
-          </button>
-        </form>
+        {!editing ? (
+          <div className="rounded-2xl border-2 border-gray-100 p-4">
+            <div className="flex items-center justify-between gap-3 mb-2">
+              <span className="inline-flex items-center gap-1.5 text-xs font-extrabold text-green-600">
+                <Check className="w-3.5 h-3.5" />
+                Shipping info saved
+              </span>
+              <button
+                onClick={() => setEditing(true)}
+                className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-extrabold border-2 border-gray-200 text-gray-500 hover:border-[#2D0A6B] hover:text-[#2D0A6B]"
+              >
+                <Pencil className="w-3.5 h-3.5" />
+                Edit
+              </button>
+            </div>
+            <dl className="text-sm font-semibold text-gray-700 space-y-1">
+              <div className="flex gap-2">
+                <dt className="text-gray-400 w-24 shrink-0">Carrier</dt>
+                <dd>{order.carrier || '—'}</dd>
+              </div>
+              <div className="flex gap-2">
+                <dt className="text-gray-400 w-24 shrink-0">Tracking</dt>
+                <dd className="break-all">{order.tracking_number || '—'}</dd>
+              </div>
+              <div className="flex gap-2">
+                <dt className="text-gray-400 w-24 shrink-0">Link</dt>
+                <dd className="break-all">
+                  {order.tracking_url ? (
+                    <a
+                      href={order.tracking_url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-[#F97316] hover:underline"
+                    >
+                      {order.tracking_url}
+                    </a>
+                  ) : (
+                    '—'
+                  )}
+                </dd>
+              </div>
+            </dl>
+          </div>
+        ) : (
+          <form onSubmit={saveShipping} className="space-y-2">
+            <input
+              placeholder="Carrier (e.g. Royal Mail)"
+              value={shipping.carrier}
+              onChange={(e) => setShipping((s) => ({ ...s, carrier: e.target.value }))}
+              className={inputCls}
+            />
+            <input
+              placeholder="Tracking number"
+              value={shipping.tracking_number}
+              onChange={(e) => setShipping((s) => ({ ...s, tracking_number: e.target.value }))}
+              className={inputCls}
+            />
+            <input
+              placeholder="Tracking URL (left blank, Royal Mail's own link is used)"
+              value={shipping.tracking_url}
+              onChange={(e) => setShipping((s) => ({ ...s, tracking_url: e.target.value }))}
+              className={inputCls}
+            />
+            <div className="flex gap-2">
+              <button
+                type="submit"
+                disabled={busy}
+                className="px-6 py-2 bg-[#2D0A6B] text-white rounded-full text-xs font-extrabold disabled:opacity-40"
+              >
+                {busy ? 'Saving…' : 'Save shipping info'}
+              </button>
+              {isSaved && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShipping({
+                      carrier: order.carrier,
+                      tracking_number: order.tracking_number,
+                      tracking_url: order.tracking_url,
+                    });
+                    setEditing(false);
+                  }}
+                  className="px-5 py-2 rounded-full text-xs font-extrabold border-2 border-gray-200 text-gray-500"
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
+          </form>
+        )}
         {error && <p className="text-red-600 font-bold mt-2">{error}</p>}
       </div>
     </div>
