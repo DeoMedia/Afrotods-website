@@ -76,6 +76,7 @@ export interface ProductCreate {
   description: string;
   category: string;
   vat_rate: number;
+  shipping_class: 'large_letter' | 'small_parcel';
   active: boolean;
   images: { url: string; alt: string; sort_order?: number }[];
   variants: VariantIn[];
@@ -210,7 +211,10 @@ export const adminApi = {
   listProducts: () => request<Product[]>('/api/admin/catalog/products'),
   createProduct: (p: ProductCreate) =>
     request<Product>('/api/admin/catalog/products', { method: 'POST', body: JSON.stringify(p) }),
-  updateProduct: (id: number, patch: Partial<Pick<ProductCreate, 'name' | 'description' | 'category' | 'vat_rate' | 'active'>>) =>
+  updateProduct: (
+    id: number,
+    patch: Partial<Pick<ProductCreate, 'name' | 'description' | 'category' | 'vat_rate' | 'shipping_class' | 'active'>>,
+  ) =>
     request<Product>(`/api/admin/catalog/products/${id}`, { method: 'PATCH', body: JSON.stringify(patch) }),
   deleteProduct: (id: number) => request<void>(`/api/admin/catalog/products/${id}`, { method: 'DELETE' }),
   addImages: (productId: number, images: { url: string; alt: string }[]) =>

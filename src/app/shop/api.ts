@@ -30,6 +30,8 @@ export interface Product {
   description: string;
   category: string;
   vat_rate: number;
+  /** Which Royal Mail format it posts as, which is what sets the postage. */
+  shipping_class: 'large_letter' | 'small_parcel';
   active: boolean;
   rating_average: number | null;
   rating_count: number;
@@ -101,6 +103,17 @@ async function json<T>(res: Response): Promise<T> {
 }
 
 export const fetchProducts = () => fetch(`${API_URL}/api/catalog/products`).then((r) => json<Product[]>(r));
+
+export interface ShippingRates {
+  currency: Currency;
+  large_letter_minor: number;
+  small_parcel_minor: number;
+  free_over_minor: number;
+}
+
+/** Comes from the server so the cart quotes exactly what the order will charge. */
+export const fetchShippingRates = () =>
+  fetch(`${API_URL}/api/catalog/shipping/rates`).then((r) => json<ShippingRates[]>(r));
 
 export const fetchProduct = (slug: string) =>
   fetch(`${API_URL}/api/catalog/products/${slug}`).then((r) => json<Product>(r));

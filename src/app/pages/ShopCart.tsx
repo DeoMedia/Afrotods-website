@@ -1,7 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router';
-import { Gift, Minus, Plus, ShoppingCart, Trash2 } from 'lucide-react';
-import { imageSrc, fetchProducts, formatMoney, priceFor, type Product, type Variant } from '../shop/api';
+import { Gift, Minus, Plus, ShoppingCart, Trash2, Truck } from 'lucide-react';
+import {
+  imageSrc,
+  fetchProducts,
+  fetchShippingRates,
+  formatMoney,
+  priceFor,
+  type Product,
+  type ShippingRates,
+  type Variant,
+} from '../shop/api';
 import { useCart } from '../shop/CartContext';
 import { CurrencyPicker } from '../shop/CurrencyPicker';
 
@@ -46,12 +55,33 @@ export function useResolvedCart() {
     return total;
   }, [resolved, currency]);
 
-  return { resolved, subtotal, error };
+  const [rates, setRates] = useState<ShippingRates[] | null>(null);
+  useEffect(() => {
+    // A missing rate only costs the estimate, so a failure here stays quiet.
+    fetchShippingRates()
+      .then(setRates)
+      .catch(() => setRates(null));
+  }, []);
+
+  /** Mirrors the server: one charge per order, priced on the largest format,
+   *  free once the basket clears the threshold. */
+  const shipping = useMemo(() => {
+    const rate = rates?.find((r) => r.currency === currency);
+    if (!rate || !resolved || subtotal === null) return null;
+    if (resolved.length === 0) return 0;
+    if (subtotal >= rate.free_over_minor) return 0;
+    const anyParcel = resolved.some((l) => l.product.shipping_class === 'small_parcel');
+    return anyParcel ? rate.small_parcel_minor : rate.large_letter_minor;
+  }, [rates, currency, resolved, subtotal]);
+
+  const freeOver = rates?.find((r) => r.currency === currency)?.free_over_minor ?? null;
+
+  return { resolved, subtotal, shipping, freeOver, error };
 }
 
 export function ShopCart() {
   const { currency, setQuantity, remove } = useCart();
-  const { resolved, subtotal, error } = useResolvedCart();
+  const { resolved, subtotal, shipping, freeOver, error } = useResolvedCart();
 
   return (
     <div className="pt-32 pb-24 bg-white min-h-screen">
@@ -141,11 +171,25 @@ export function ShopCart() {
               })}
             </div>
 
-            <div className="flex items-center justify-between border-t-2 border-[#2D0A6B]/10 pt-6">
+            {/* Nudge toward the threshold: one more book usually clears it. */}
+            {subtotal !== null && freeOver !== null && subtotal > 0 && subtotal < freeOver && (
+              <div className="mt-6 rounded-2xl bg-[#FFF8F0] px-5 py-3 text-sm font-bold text-[#2D0A6B] flex items-center gap-2">
+                <Truck className="w-4 h-4 shrink-0 text-[#F97316]" />
+                Spend {formatMoney(freeOver - subtotal, currency)} more for free UK delivery
+              </div>
+            )}
+
+            <div className="flex items-center justify-between border-t-2 border-[#2D0A6B]/10 pt-6 mt-6 gap-4 flex-wrap">
               <div className="text-lg font-extrabold text-gray-700">
                 Subtotal:{' '}
                 <span className="text-[#2D0A6B]">{subtotal !== null ? formatMoney(subtotal, currency) : 'N/A'}</span>
-                <div className="text-xs text-gray-400 font-semibold">Shipping calculated at checkout</div>
+                <div className="text-xs text-gray-400 font-semibold">
+                  {shipping === null
+                    ? 'Shipping calculated at checkout'
+                    : shipping === 0
+                      ? 'Free UK delivery'
+                      : `Plus ${formatMoney(shipping, currency)} UK delivery`}
+                </div>
               </div>
               <Link
                 to="/shop/checkout"

@@ -33,8 +33,21 @@ export function ShippingDelivery() {
                 2. Shipping Costs
               </h2>
               <p className="text-gray-700 leading-relaxed">
-                Shipping is charged as a flat rate per order, shown clearly at checkout before you pay, in your
-                order currency. The exact amount depends on the currency/region you order in.
+                UK delivery is <strong>free on orders over £30</strong>. Below that, postage is charged once per
+                order and depends on the size of the largest item in your basket, because that is how Royal Mail
+                prices it:
+              </p>
+              <ul className="list-disc pl-6 space-y-2 text-gray-700 mt-4">
+                <li>
+                  <strong>£2.95</strong> for books and other items that post as a Large Letter
+                </li>
+                <li>
+                  <strong>£3.75</strong> for clothing, toys and anything else that posts as a Small Parcel
+                </li>
+              </ul>
+              <p className="text-gray-700 leading-relaxed mt-4">
+                Order several things together and you pay postage once, not once per item. The exact amount is
+                shown in your basket and again at checkout, in your order currency, before you pay anything.
               </p>
             </section>
 

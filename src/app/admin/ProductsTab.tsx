@@ -98,6 +98,16 @@ export function ProductsTab({ onUnauthorized }: { onUnauthorized: () => void }) 
     }
   };
 
+  const setShippingClass = async (p: Product, shipping_class: Product['shipping_class']) => {
+    setError(null);
+    try {
+      await adminApi.updateProduct(p.id, { shipping_class });
+      load();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Could not change the shipping class');
+    }
+  };
+
   const deleteProduct = async (p: Product) => {
     if (!window.confirm(`Permanently delete "${p.name}"? This cannot be undone.`)) return;
     setError(null);
@@ -155,6 +165,19 @@ export function ProductsTab({ onUnauthorized }: { onUnauthorized: () => void }) 
                     <div className="text-xs font-bold text-gray-400">
                       /{p.slug} · {p.category} · VAT {(vat * 100).toFixed(0)}%
                     </div>
+                    {/* Postage is priced off this, so it needs to be changeable
+                        without rebuilding the product. */}
+                    <label className="text-xs font-bold text-gray-400 inline-flex items-center gap-1.5 mt-1">
+                      Posts as
+                      <select
+                        value={p.shipping_class}
+                        onChange={(e) => setShippingClass(p, e.target.value as Product['shipping_class'])}
+                        className="rounded-lg border-2 border-gray-200 px-2 py-0.5 font-bold text-gray-600 focus:border-[#F97316] outline-none"
+                      >
+                        <option value="large_letter">Large Letter</option>
+                        <option value="small_parcel">Small Parcel</option>
+                      </select>
+                    </label>
                   </div>
                 </div>
                 <div className="flex gap-2">
@@ -367,6 +390,7 @@ function NewProductForm({ onCreated }: { onCreated: () => void }) {
     description: '',
     category: 'plush',
     vat_rate: '20',
+    shipping_class: 'small_parcel' as 'large_letter' | 'small_parcel',
   });
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [variants, setVariants] = useState<VariantDraft[]>([emptyVariant()]);
@@ -409,6 +433,7 @@ function NewProductForm({ onCreated }: { onCreated: () => void }) {
         description: form.description,
         category: form.category,
         vat_rate: parseFloat(form.vat_rate) / 100,
+        shipping_class: form.shipping_class,
         active: true,
         images: imageUrls.map((url, i) => ({ url, alt: form.name, sort_order: i })),
         variants: variants
@@ -475,6 +500,15 @@ function NewProductForm({ onCreated }: { onCreated: () => void }) {
           />
           <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400">VAT %</span>
         </div>
+        <select
+          value={form.shipping_class}
+          onChange={set('shipping_class')}
+          className={inputCls}
+          title="Royal Mail format. Anything thicker than 2.5cm is a Small Parcel and costs more to post."
+        >
+          <option value="large_letter">Large Letter (under 2.5cm thick)</option>
+          <option value="small_parcel">Small Parcel</option>
+        </select>
         <div className="flex items-center gap-3 flex-wrap">
           <input
             ref={fileInput}
