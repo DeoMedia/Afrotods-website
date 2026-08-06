@@ -89,7 +89,9 @@ export function ShopCart() {
                 const price = priceFor(line.variant, currency);
                 const cover = line.product.images[0];
                 return (
-                  <div key={line.variantId} className="py-6 flex items-center gap-6">
+                  // On a phone the fixed columns leave nothing for the name, so the
+                  // controls wrap onto a second line and the name keeps its width.
+                  <div key={line.variantId} className="py-6 flex items-center gap-4 sm:gap-6 flex-wrap sm:flex-nowrap">
                     <Link
                       to={`/shop/${line.product.slug}`}
                       className="w-20 h-20 rounded-2xl bg-white border border-gray-100 overflow-hidden flex items-center justify-center shrink-0"
@@ -100,31 +102,36 @@ export function ShopCart() {
                         <Gift className="w-8 h-8 text-[#2D0A6B]/20" />
                       )}
                     </Link>
-                    <div className="flex-1 min-w-0">
+                    <div className="flex-1 basis-40 min-w-0">
                       <div className="font-black text-[#2D0A6B]" style={{ fontFamily: baloo }}>
                         {line.product.name}
                       </div>
                       <div className="text-sm text-gray-500 font-semibold">{line.variant.name}</div>
                       {!price && <div className="text-sm text-red-600 font-bold">Not available in {currency}</div>}
                     </div>
-                    <div className="inline-flex items-center gap-3 border-2 border-gray-200 rounded-full px-3 py-1.5">
-                      <button onClick={() => setQuantity(line.variantId, line.quantity - 1)} aria-label="Decrease">
+                    <div className="inline-flex items-center gap-3 border-2 border-gray-200 rounded-full px-3 py-1.5 shrink-0">
+                      <button
+                        onClick={() => setQuantity(line.variantId, line.quantity - 1)}
+                        aria-label="Decrease"
+                        className="p-1"
+                      >
                         <Minus className="w-4 h-4" />
                       </button>
                       <span className="font-extrabold w-5 text-center">{line.quantity}</span>
                       <button
                         onClick={() => setQuantity(line.variantId, Math.min(line.variant.stock_qty, line.quantity + 1))}
                         aria-label="Increase"
+                        className="p-1"
                       >
                         <Plus className="w-4 h-4" />
                       </button>
                     </div>
-                    <div className="font-extrabold w-24 text-right">
+                    <div className="font-extrabold w-20 sm:w-24 text-right shrink-0">
                       {price ? formatMoney(price.amount_minor * line.quantity, currency) : 'N/A'}
                     </div>
                     <button
                       onClick={() => remove(line.variantId)}
-                      className="text-gray-400 hover:text-red-500 transition-colors"
+                      className="text-gray-400 hover:text-red-500 transition-colors p-2 -m-1 shrink-0"
                       aria-label="Remove"
                     >
                       <Trash2 className="w-5 h-5" />

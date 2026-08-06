@@ -219,7 +219,9 @@ export function ProductsTab({ onUnauthorized }: { onUnauthorized: () => void }) 
                 </label>
               </div>
 
-              <table className="w-full text-sm mt-4">
+              {/* SKU + option + stock + four currencies is wider than a phone */}
+              <div className="overflow-x-auto -mx-2 px-2">
+              <table className="w-full text-sm mt-4 min-w-[30rem]">
                 <thead>
                   <tr className="text-left text-gray-400 font-bold text-xs">
                     <th className="py-1 pr-4">SKU</th>
@@ -277,6 +279,7 @@ export function ProductsTab({ onUnauthorized }: { onUnauthorized: () => void }) 
                   ))}
                 </tbody>
               </table>
+              </div>
             </div>
           );
         })}
