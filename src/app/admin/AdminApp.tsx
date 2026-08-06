@@ -12,12 +12,13 @@ import {
 import { ProductsTab } from './ProductsTab';
 import { OrdersTab } from './OrdersTab';
 import { StaffTab } from './StaffTab';
+import { CustomersTab } from './CustomersTab';
 import { formatMoney, type Currency } from '../shop/api';
 import afrotodLogo from '../../imports/afro-logo-1_(2).png';
 
 const baloo = "'Baloo 2', cursive";
 
-type Tab = 'dashboard' | 'products' | 'orders' | 'staff';
+type Tab = 'dashboard' | 'products' | 'orders' | 'customers' | 'staff';
 
 export default function AdminApp() {
   const [authed, setAuthed] = useState(() => Boolean(getAdminKey() || getAdminToken()));
@@ -25,9 +26,10 @@ export default function AdminApp() {
 
   if (!authed) return <Login onSuccess={() => setAuthed(true)} />;
 
+  // Staff see customers too; only the destructive controls inside are withheld.
   const tabs: Tab[] = isSuperAdmin()
-    ? ['dashboard', 'products', 'orders', 'staff']
-    : ['dashboard', 'products', 'orders'];
+    ? ['dashboard', 'products', 'orders', 'customers', 'staff']
+    : ['dashboard', 'products', 'orders', 'customers'];
 
   return (
     <div className="min-h-screen bg-gray-50" style={{ fontFamily: "'Nunito', sans-serif" }}>
@@ -38,12 +40,12 @@ export default function AdminApp() {
             Admin
           </span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-2 flex-wrap justify-end">
           {tabs.map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
-              className={`px-4 py-2 rounded-full text-sm font-bold capitalize transition-colors ${
+              className={`px-3 sm:px-4 py-2 rounded-full text-sm font-bold capitalize transition-colors ${
                 tab === t ? 'bg-white text-[#2D0A6B]' : 'text-white/70 hover:text-white'
               }`}
             >
@@ -66,6 +68,7 @@ export default function AdminApp() {
         {tab === 'dashboard' && <DashboardTab onUnauthorized={() => setAuthed(false)} />}
         {tab === 'products' && <ProductsTab onUnauthorized={() => setAuthed(false)} />}
         {tab === 'orders' && <OrdersTab onUnauthorized={() => setAuthed(false)} />}
+        {tab === 'customers' && <CustomersTab onUnauthorized={() => setAuthed(false)} />}
         {tab === 'staff' && <StaffTab onUnauthorized={() => setAuthed(false)} />}
       </main>
     </div>
@@ -73,21 +76,33 @@ export default function AdminApp() {
 }
 
 function Login({ onSuccess }: { onSuccess: () => void }) {
-  const [mode, setMode] = useState<'account' | 'key'>('account');
+  const [mode, setMode] = useState<'account' | 'key' | 'forgot'>('account');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [key, setKey] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [sent, setSent] = useState(false);
   const [busy, setBusy] = useState(false);
 
   const inputCls =
     'w-full px-5 py-3.5 rounded-2xl border-2 border-gray-200 focus:border-[#F97316] outline-none font-semibold mb-4';
+
+  const switchTo = (next: 'account' | 'key' | 'forgot') => {
+    setMode(next);
+    setError(null);
+    setSent(false);
+  };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setBusy(true);
     setError(null);
     try {
+      if (mode === 'forgot') {
+        await adminApi.forgotPassword(email.trim());
+        setSent(true);
+        return;
+      }
       if (mode === 'account') {
         const result = await adminApi.login(email.trim(), password);
         setAdminToken(result.token, result.role);
@@ -109,6 +124,66 @@ function Login({ onSuccess }: { onSuccess: () => void }) {
       setBusy(false);
     }
   };
+
+  if (mode === 'forgot') {
+    return (
+      <div className="min-h-screen bg-[#2D0A6B] flex items-center justify-center px-6">
+        <form onSubmit={handleSubmit} className="bg-white rounded-3xl p-8 sm:p-10 w-full max-w-[400px] text-center">
+          <img src={afrotodLogo} alt="The Afrotods" className="h-14 w-auto mx-auto mb-2" />
+          <h1 className="text-lg font-black text-[#2D0A6B] mb-2" style={{ fontFamily: baloo }}>
+            Forgotten password
+          </h1>
+          {sent ? (
+            <>
+              {/* Deliberately does not confirm whether the address is an admin. */}
+              <p className="text-sm font-semibold text-gray-500 mb-6">
+                If that address belongs to an admin, a reset link is on its way. It works once and expires in
+                an hour.
+              </p>
+              <button
+                type="button"
+                onClick={() => switchTo('account')}
+                className="w-full px-8 py-3.5 bg-gray-100 text-[#2D0A6B] rounded-full font-extrabold"
+                style={{ fontFamily: baloo }}
+              >
+                Back to sign in
+              </button>
+            </>
+          ) : (
+            <>
+              <p className="text-sm font-semibold text-gray-500 mb-6">
+                Enter your admin email and we will send you a link to choose a new password.
+              </p>
+              <input
+                required
+                autoFocus
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className={inputCls}
+              />
+              <button
+                type="submit"
+                disabled={busy}
+                className="w-full px-8 py-3.5 bg-gradient-to-r from-[#F97316] to-[#FBBF24] text-[#2D0A6B] rounded-full font-extrabold disabled:opacity-40"
+                style={{ fontFamily: baloo }}
+              >
+                {busy ? 'Sending…' : 'Send reset link'}
+              </button>
+              <button
+                type="button"
+                onClick={() => switchTo('account')}
+                className="mt-4 text-xs font-bold text-gray-400 hover:text-[#F97316]"
+              >
+                Back to sign in
+              </button>
+            </>
+          )}
+        </form>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#2D0A6B] flex items-center justify-center px-6">
@@ -155,16 +230,24 @@ function Login({ onSuccess }: { onSuccess: () => void }) {
         >
           {busy ? 'Checking…' : 'Sign in'}
         </button>
-        <button
-          type="button"
-          onClick={() => {
-            setMode(mode === 'account' ? 'key' : 'account');
-            setError(null);
-          }}
-          className="mt-4 text-xs font-bold text-gray-400 hover:text-[#F97316]"
-        >
-          {mode === 'account' ? 'Use the bootstrap admin key instead' : 'Use email & password instead'}
-        </button>
+        <div className="mt-4 flex flex-col gap-2">
+          {mode === 'account' && (
+            <button
+              type="button"
+              onClick={() => switchTo('forgot')}
+              className="text-xs font-bold text-gray-400 hover:text-[#F97316]"
+            >
+              Forgotten your password?
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={() => switchTo(mode === 'account' ? 'key' : 'account')}
+            className="text-xs font-bold text-gray-400 hover:text-[#F97316]"
+          >
+            {mode === 'account' ? 'Use the bootstrap admin key instead' : 'Use email & password instead'}
+          </button>
+        </div>
       </form>
     </div>
   );

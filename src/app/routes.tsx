@@ -22,10 +22,13 @@ import { CartProvider } from "./shop/CartContext";
 import { AuthProvider } from "./shop/AuthContext";
 import { Account } from "./pages/Account";
 import AdminApp from "./admin/AdminApp";
+import AdminResetPassword from "./admin/ResetPassword";
 
 export const router = createBrowserRouter([
   // Standalone admin — deliberately outside the marketing Layout (no nav/footer/tracking)
   { path: "/admin", element: <AdminApp /> },
+  // Target of the link in the password reset email; reachable while signed out
+  { path: "/admin/reset", element: <AdminResetPassword /> },
   {
     path: "/",
     element: (

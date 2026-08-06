@@ -89,8 +89,19 @@ export interface StaffMember {
   role: 'super' | 'staff';
   active: boolean;
   created_at: string;
-  /** Only returned when creating: whether the invite email actually went out. */
-  invite_emailed?: boolean | null;
+  /** Set after an invite or a password change: whether the email went out. */
+  emailed?: boolean | null;
+}
+
+export interface AdminCustomer {
+  id: number;
+  email: string;
+  name: string;
+  created_at: string;
+  order_count: number;
+  /** Orders can be in different currencies, so there is no single total. */
+  spend_minor_by_currency: Record<string, number>;
+  last_order_at: string | null;
 }
 
 export interface ExportFilters {
@@ -160,11 +171,41 @@ export const adminApi = {
     }
     return res.json() as Promise<{ token: string; email: string; role: 'super' | 'staff' }>;
   },
+  /** Always resolves, whether or not the address belongs to an admin: the
+   *  backend refuses to confirm which addresses exist. */
+  forgotPassword: async (email: string) => {
+    await fetch(`${API_URL}/api/admin/auth/forgot-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+  },
+  resetPassword: async (token: string, password: string) => {
+    const res = await fetch(`${API_URL}/api/admin/auth/reset-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token, password }),
+    });
+    if (!res.ok) {
+      const body = await res.json().catch(() => null);
+      throw new Error(body?.detail ?? 'That reset link is no longer valid');
+    }
+    return res.json() as Promise<{ token: string; email: string; role: 'super' | 'staff' }>;
+  },
   listStaff: () => request<StaffMember[]>('/api/admin/auth/staff'),
   createStaff: (email: string, password: string, role: 'super' | 'staff' = 'staff') =>
     request<StaffMember>('/api/admin/auth/staff', { method: 'POST', body: JSON.stringify({ email, password, role }) }),
   setStaffActive: (id: number, active: boolean) =>
     request<StaffMember>(`/api/admin/auth/staff/${id}/active?active=${active}`, { method: 'PATCH' }),
+  setStaffPassword: (id: number, password: string) =>
+    request<StaffMember>(`/api/admin/auth/staff/${id}/password`, {
+      method: 'POST',
+      body: JSON.stringify({ password }),
+    }),
+  deleteStaff: (id: number) => request<void>(`/api/admin/auth/staff/${id}`, { method: 'DELETE' }),
+  listCustomers: (q = '') =>
+    request<AdminCustomer[]>(`/api/admin/customers${q ? `?q=${encodeURIComponent(q)}` : ''}`),
+  deleteCustomer: (id: number) => request<void>(`/api/admin/customers/${id}`, { method: 'DELETE' }),
   stats: () => request<Stats>('/api/admin/orders/stats'),
   listProducts: () => request<Product[]>('/api/admin/catalog/products'),
   createProduct: (p: ProductCreate) =>

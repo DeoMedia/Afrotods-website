@@ -1,6 +1,6 @@
 import { ImagePlus } from 'lucide-react';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
-import { adminApi, type ProductCreate } from './api';
+import { adminApi, isSuperAdmin, type ProductCreate } from './api';
 import { formatMoney, imageSrc, type Currency, type Product } from '../shop/api';
 
 const baloo = "'Baloo 2', cursive";
@@ -29,6 +29,9 @@ export function ProductsTab({ onUnauthorized }: { onUnauthorized: () => void }) 
   const [error, setError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [editingPrices, setEditingPrices] = useState<number | null>(null);
+  // Staff edit the catalogue; only super admins create and destroy. The
+  // backend enforces this, so hiding the controls just avoids dead buttons.
+  const canCreate = isSuperAdmin();
 
   const load = () =>
     adminApi
@@ -112,17 +115,19 @@ export function ProductsTab({ onUnauthorized }: { onUnauthorized: () => void }) 
         <h2 className="text-2xl font-black text-[#2D0A6B]" style={{ fontFamily: baloo }}>
           Products
         </h2>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="px-6 py-2.5 bg-gradient-to-r from-[#F97316] to-[#FBBF24] text-[#2D0A6B] rounded-full font-extrabold text-sm"
-          style={{ fontFamily: baloo }}
-        >
-          {showForm ? 'Close' : '+ New product'}
-        </button>
+        {canCreate && (
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="px-6 py-2.5 bg-gradient-to-r from-[#F97316] to-[#FBBF24] text-[#2D0A6B] rounded-full font-extrabold text-sm"
+            style={{ fontFamily: baloo }}
+          >
+            {showForm ? 'Close' : '+ New product'}
+          </button>
+        )}
       </div>
 
       {error && <p className="text-red-600 font-bold mb-4">{error}</p>}
-      {showForm && (
+      {canCreate && showForm && (
         <NewProductForm
           onCreated={() => {
             setShowForm(false);
@@ -171,12 +176,14 @@ export function ProductsTab({ onUnauthorized }: { onUnauthorized: () => void }) 
                   >
                     {active ? 'Hide from shop' : 'Show in shop'}
                   </button>
-                  <button
-                    onClick={() => deleteProduct(p)}
-                    className="px-4 py-1.5 rounded-full text-xs font-extrabold border-2 border-red-200 text-red-500 hover:bg-red-50"
-                  >
-                    Delete
-                  </button>
+                  {canCreate && (
+                    <button
+                      onClick={() => deleteProduct(p)}
+                      className="px-4 py-1.5 rounded-full text-xs font-extrabold border-2 border-red-200 text-red-500 hover:bg-red-50"
+                    >
+                      Delete
+                    </button>
+                  )}
                 </div>
               </div>
               {/* Gallery — first image is the shop cover */}
@@ -193,7 +200,7 @@ export function ProductsTab({ onUnauthorized }: { onUnauthorized: () => void }) 
                         COVER
                       </span>
                     )}
-                    {img.id != null && p.images.length > 1 && (
+                    {canCreate && img.id != null && p.images.length > 1 && (
                       <button
                         onClick={() => removeImage(img.id!)}
                         className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-red-500 text-white text-[10px] font-bold leading-none"
@@ -204,6 +211,7 @@ export function ProductsTab({ onUnauthorized }: { onUnauthorized: () => void }) 
                     )}
                   </div>
                 ))}
+                {canCreate && (
                 <label className="px-3 py-2 rounded-lg border-2 border-dashed border-gray-300 text-gray-500 text-xs font-extrabold cursor-pointer hover:border-[#2D0A6B] hover:text-[#2D0A6B]">
                   + Add images
                   <input
@@ -217,6 +225,7 @@ export function ProductsTab({ onUnauthorized }: { onUnauthorized: () => void }) 
                     }}
                   />
                 </label>
+                )}
               </div>
 
               {/* SKU + option + stock + four currencies is wider than a phone */}
