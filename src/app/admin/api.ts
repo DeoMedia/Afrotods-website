@@ -240,6 +240,18 @@ export const adminApi = {
     request<{ connected: boolean; reason?: string; hint?: string; detail?: string; service?: string }>(
       '/api/admin/diagnostics/royal-mail',
     ),
+  /** Writes one clearly-marked test order into the live Click & Drop account.
+   *  Records nothing here, so the only thing to undo is deleting it there. */
+  sendRoyalMailTestOrder: () =>
+    request<{
+      created: boolean;
+      reference?: string;
+      order_identifier?: number;
+      detail?: string;
+      reason?: string;
+      hint?: string;
+      errors?: string;
+    }>('/api/admin/diagnostics/royal-mail/test-order', { method: 'POST' }),
   stats: () => request<Stats>('/api/admin/orders/stats'),
   listProducts: () => request<Product[]>('/api/admin/catalog/products'),
   createProduct: (p: ProductCreate) =>

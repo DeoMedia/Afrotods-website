@@ -372,14 +372,36 @@ function RoyalMailStatus() {
   const [busy, setBusy] = useState(false);
   const [failed, setFailed] = useState<string | null>(null);
 
+  const [test, setTest] = useState<Awaited<ReturnType<typeof adminApi.sendRoyalMailTestOrder>> | null>(null);
+
   const check = async () => {
     setBusy(true);
     setFailed(null);
     setResult(null);
+    setTest(null);
     try {
       setResult(await adminApi.checkRoyalMail());
     } catch (e) {
       setFailed(e instanceof Error ? e.message : 'Could not run the check');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const sendTestOrder = async () => {
+    const warning =
+      'Send a test order to Royal Mail?\n\n' +
+      'It creates one real order in your Click & Drop account, addressed to Deo Media and marked ' +
+      'as a test. Delete it there afterwards. Nothing is recorded on the website and no stock moves.';
+    if (!window.confirm(warning)) return;
+    setBusy(true);
+    setFailed(null);
+    setResult(null);
+    setTest(null);
+    try {
+      setTest(await adminApi.sendRoyalMailTestOrder());
+    } catch (e) {
+      setFailed(e instanceof Error ? e.message : 'Could not send the test order');
     } finally {
       setBusy(false);
     }
@@ -393,20 +415,50 @@ function RoyalMailStatus() {
             Royal Mail Click &amp; Drop
           </div>
           <p className="text-xs font-semibold text-gray-400 mt-1 max-w-md">
-            Sends a real request to Royal Mail. It reads one order and creates nothing.
+            Check connection reads one order and creates nothing. Send a test order writes a real one,
+            which is the only way to prove orders can actually reach Click &amp; Drop.
           </p>
         </div>
-        <button
-          onClick={check}
-          disabled={busy}
-          className="px-6 py-2.5 rounded-full font-extrabold text-sm border-2 border-[#2D0A6B] text-[#2D0A6B] hover:bg-[#2D0A6B] hover:text-white disabled:opacity-40"
-          style={{ fontFamily: baloo }}
-        >
-          {busy ? 'Checking…' : 'Check connection'}
-        </button>
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            onClick={check}
+            disabled={busy}
+            className="px-6 py-2.5 rounded-full font-extrabold text-sm border-2 border-[#2D0A6B] text-[#2D0A6B] hover:bg-[#2D0A6B] hover:text-white disabled:opacity-40"
+            style={{ fontFamily: baloo }}
+          >
+            {busy ? 'Working…' : 'Check connection'}
+          </button>
+          {isSuperAdmin() && (
+            <button
+              onClick={sendTestOrder}
+              disabled={busy}
+              className="px-6 py-2.5 rounded-full font-extrabold text-sm border-2 border-gray-200 text-gray-500 hover:border-[#F97316] hover:text-[#F97316] disabled:opacity-40"
+              style={{ fontFamily: baloo }}
+            >
+              Send a test order
+            </button>
+          )}
+        </div>
       </div>
 
       {failed && <p className="text-red-600 font-bold text-sm mt-4">{failed}</p>}
+
+      {test && (
+        <div
+          className={`mt-4 rounded-2xl px-5 py-3 text-sm font-bold ${
+            test.created ? 'bg-green-50 text-green-700' : 'bg-orange-50 text-orange-700'
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            <span className={`w-2.5 h-2.5 rounded-full ${test.created ? 'bg-green-500' : 'bg-orange-500'}`} />
+            {test.created ? `Test order ${test.reference} created` : 'Royal Mail would not take the order'}
+          </div>
+          {(test.detail || test.reason) && <p className="font-semibold mt-1">{test.detail ?? test.reason}</p>}
+          {test.errors && <p className="font-semibold opacity-80 mt-1">{test.errors}</p>}
+          {test.hint && <p className="font-semibold opacity-80 mt-1">{test.hint}</p>}
+        </div>
+      )}
+
       {result && (
         <div
           className={`mt-4 rounded-2xl px-5 py-3 text-sm font-bold ${
