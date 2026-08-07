@@ -392,7 +392,8 @@ function RoyalMailStatus() {
     const warning =
       'Send a test order to Royal Mail?\n\n' +
       'It creates one real order in your Click & Drop account, addressed to Deo Media and marked ' +
-      'as a test. Delete it there afterwards. Nothing is recorded on the website and no stock moves.';
+      'as a test, which is why it is not going to a customer. Delete it there afterwards. Nothing is ' +
+      'recorded on the website and no stock moves.';
     if (!window.confirm(warning)) return;
     setBusy(true);
     setFailed(null);
@@ -416,7 +417,8 @@ function RoyalMailStatus() {
           </div>
           <p className="text-xs font-semibold text-gray-400 mt-1 max-w-md">
             Check connection reads one order and creates nothing. Send a test order writes a real one,
-            which is the only way to prove orders can actually reach Click &amp; Drop.
+            addressed to Deo Media rather than a customer, so an accidental label comes back to you.
+            Real orders always go to the address the customer entered at checkout.
           </p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
