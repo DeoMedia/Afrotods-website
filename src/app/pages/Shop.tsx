@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { Facebook, Gift, Instagram, Music, ShoppingBag, Youtube } from 'lucide-react';
-import { imageSrc, fetchProducts, formatMoney, priceFor, type Product } from '../shop/api';
+import { imageSrc, fetchProducts, formatMoney, payable, priceFor, type Product } from '../shop/api';
 import { useCart } from '../shop/CartContext';
 import { useCurrencyDetection } from '../shop/useCurrencyDetection';
 import { CurrencyPicker } from '../shop/CurrencyPicker';
@@ -14,7 +14,7 @@ function productPriceLabel(product: Product, currency: ReturnType<typeof useCart
     .filter((v) => v.active)
     .map((v) => priceFor(v, currency))
     .filter((p): p is NonNullable<typeof p> => p != null)
-    .map((p) => p.amount_minor);
+    .map((p) => payable(p));
   if (priced.length === 0) return null;
   const min = Math.min(...priced);
   return priced.length > 1 && Math.max(...priced) !== min

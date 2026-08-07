@@ -13,12 +13,13 @@ import { ProductsTab } from './ProductsTab';
 import { OrdersTab } from './OrdersTab';
 import { StaffTab } from './StaffTab';
 import { CustomersTab } from './CustomersTab';
+import { CouponsTab } from './CouponsTab';
 import { formatMoney, type Currency } from '../shop/api';
 import afrotodLogo from '../../imports/afro-logo-1_(2).png';
 
 const baloo = "'Baloo 2', cursive";
 
-type Tab = 'dashboard' | 'products' | 'orders' | 'customers' | 'staff';
+type Tab = 'dashboard' | 'products' | 'orders' | 'customers' | 'discounts' | 'staff';
 
 export default function AdminApp() {
   const [authed, setAuthed] = useState(() => Boolean(getAdminKey() || getAdminToken()));
@@ -28,8 +29,8 @@ export default function AdminApp() {
 
   // Staff see customers too; only the destructive controls inside are withheld.
   const tabs: Tab[] = isSuperAdmin()
-    ? ['dashboard', 'products', 'orders', 'customers', 'staff']
-    : ['dashboard', 'products', 'orders', 'customers'];
+    ? ['dashboard', 'products', 'orders', 'customers', 'discounts', 'staff']
+    : ['dashboard', 'products', 'orders', 'customers', 'discounts'];
 
   return (
     <div className="min-h-screen bg-gray-50" style={{ fontFamily: "'Nunito', sans-serif" }}>
@@ -69,6 +70,7 @@ export default function AdminApp() {
         {tab === 'products' && <ProductsTab onUnauthorized={() => setAuthed(false)} />}
         {tab === 'orders' && <OrdersTab onUnauthorized={() => setAuthed(false)} />}
         {tab === 'customers' && <CustomersTab onUnauthorized={() => setAuthed(false)} />}
+        {tab === 'discounts' && <CouponsTab onUnauthorized={() => setAuthed(false)} />}
         {tab === 'staff' && <StaffTab onUnauthorized={() => setAuthed(false)} />}
       </main>
     </div>

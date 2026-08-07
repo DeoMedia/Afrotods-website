@@ -237,6 +237,12 @@ export function ShopOrder() {
               <span>Subtotal</span>
               <span>{formatMoney(order.subtotal_minor, order.currency)}</span>
             </div>
+            {order.discount_minor > 0 && (
+              <div className="flex justify-between text-green-600">
+                <span>Discount{order.coupon_code && ` (${order.coupon_code})`}</span>
+                <span>-{formatMoney(order.discount_minor, order.currency)}</span>
+              </div>
+            )}
             <div className="flex justify-between">
               <span>Shipping</span>
               <span>{formatMoney(order.shipping_minor, order.currency)}</span>

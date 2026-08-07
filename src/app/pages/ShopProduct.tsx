@@ -1,7 +1,16 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
 import { ArrowLeft, Gift, Minus, Plus, SearchX, ShoppingBag } from 'lucide-react';
-import { imageSrc, fetchProduct, fetchRelatedProducts, formatMoney, priceFor, type Product, type Variant } from '../shop/api';
+import {
+  imageSrc,
+  fetchProduct,
+  fetchRelatedProducts,
+  formatMoney,
+  payable,
+  priceFor,
+  type Product,
+  type Variant,
+} from '../shop/api';
 import { useCart } from '../shop/CartContext';
 import { ProductRating, RatingSummary } from '../shop/Rating';
 
@@ -140,8 +149,23 @@ export function ShopProduct() {
               </div>
             )}
 
-            <div className="text-3xl font-black text-gray-900 mb-6" style={{ fontFamily: baloo }}>
-              {price ? formatMoney(price.amount_minor * qty, currency) : `Not available in ${currency}`}
+            <div className="mb-6">
+              <div className="text-3xl font-black text-gray-900 flex items-baseline gap-3 flex-wrap" style={{ fontFamily: baloo }}>
+                {price ? formatMoney(payable(price) * qty, currency) : `Not available in ${currency}`}
+                {/* The original only appears when it differs, so nothing is
+                    ever struck through at full price. UK pricing rules treat a
+                    'was' price as a claim, and it has to be one we really charged. */}
+                {price?.sale_amount_minor != null && (
+                  <span className="text-xl font-bold text-gray-400 line-through">
+                    {formatMoney(price.amount_minor * qty, currency)}
+                  </span>
+                )}
+              </div>
+              {product.sale_percent > 0 && (
+                <span className="inline-block mt-2 px-3 py-1 rounded-full bg-[#F97316] text-white text-xs font-extrabold">
+                  {product.sale_percent}% off
+                </span>
+              )}
             </div>
 
             <div className="flex items-center gap-4 mb-8">
@@ -203,7 +227,7 @@ export function ShopProduct() {
                   .filter((v) => v.active)
                   .map((v) => priceFor(v, currency))
                   .filter((pr): pr is NonNullable<typeof pr> => pr != null)
-                  .map((pr) => pr.amount_minor);
+                  .map((pr) => payable(pr));
                 const min = prices.length ? Math.min(...prices) : null;
                 const cover = rel.images[0];
                 return (

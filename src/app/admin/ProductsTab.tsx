@@ -118,6 +118,16 @@ export function ProductsTab({ onUnauthorized }: { onUnauthorized: () => void }) 
     }
   };
 
+  const setSale = async (p: Product, sale_percent: number) => {
+    setError(null);
+    try {
+      await adminApi.updateProduct(p.id, { sale_percent });
+      load();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Could not change the sale');
+    }
+  };
+
   const deleteProduct = async (p: Product) => {
     if (!window.confirm(`Permanently delete "${p.name}"? This cannot be undone.`)) return;
     setError(null);
@@ -200,6 +210,27 @@ export function ProductsTab({ onUnauthorized }: { onUnauthorized: () => void }) 
                         title="Packed weight in grams, sent to Royal Mail"
                       />
                       g
+                    </label>
+                    <label className="text-xs font-bold text-gray-400 inline-flex items-center gap-1.5 mt-1 ml-3">
+                      Sale
+                      <input
+                        type="number"
+                        min="0"
+                        max="99"
+                        defaultValue={p.sale_percent}
+                        onBlur={(e) => {
+                          const pct = parseInt(e.target.value, 10);
+                          if (pct >= 0 && pct <= 99 && pct !== p.sale_percent) setSale(p, pct);
+                        }}
+                        className="w-16 rounded-lg border-2 border-gray-200 px-2 py-0.5 font-bold text-gray-600 focus:border-[#F97316] outline-none"
+                        title="Percentage off every price on this product. 0 ends the sale."
+                      />
+                      %
+                      {p.sale_percent > 0 && (
+                        <span className="px-2 py-0.5 rounded-full bg-[#F97316] text-white text-[10px] font-extrabold">
+                          ON SALE
+                        </span>
+                      )}
                     </label>
                   </div>
                 </div>
@@ -415,6 +446,7 @@ function NewProductForm({ onCreated }: { onCreated: () => void }) {
     vat_rate: '20',
     shipping_class: 'small_parcel' as 'large_letter' | 'small_parcel',
     weight_grams: '250',
+    sale_percent: '0',
   });
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [variants, setVariants] = useState<VariantDraft[]>([emptyVariant()]);
@@ -459,6 +491,7 @@ function NewProductForm({ onCreated }: { onCreated: () => void }) {
         vat_rate: parseFloat(form.vat_rate) / 100,
         shipping_class: form.shipping_class,
         weight_grams: parseInt(form.weight_grams, 10) || 250,
+        sale_percent: parseInt(form.sale_percent, 10) || 0,
         active: true,
         images: imageUrls.map((url, i) => ({ url, alt: form.name, sort_order: i })),
         variants: variants

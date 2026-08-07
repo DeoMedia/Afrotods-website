@@ -4,7 +4,15 @@ export type Currency = 'GBP' | 'NGN' | 'ZAR' | 'USD';
 
 export interface Price {
   currency: Currency;
+  /** The list price. Stays put during a sale, for the struck-through "was". */
   amount_minor: number;
+  /** What is actually charged, only present while the product is on sale. */
+  sale_amount_minor?: number | null;
+}
+
+/** What the customer pays for one unit, sale included. */
+export function payable(price: Price): number {
+  return price.sale_amount_minor ?? price.amount_minor;
 }
 
 export interface Variant {
@@ -34,6 +42,8 @@ export interface Product {
   shipping_class: 'large_letter' | 'small_parcel';
   /** Royal Mail will not accept a shipment without one. */
   weight_grams: number;
+  /** 0 means not on sale. */
+  sale_percent: number;
   active: boolean;
   rating_average: number | null;
   rating_count: number;
@@ -84,6 +94,8 @@ export interface Order {
   subtotal_minor: number;
   shipping_minor: number;
   tax_minor: number;
+  discount_minor: number;
+  coupon_code: string;
   total_minor: number;
   customer_name: string;
   customer_email: string;
@@ -110,7 +122,6 @@ export interface ShippingRates {
   currency: Currency;
   large_letter_minor: number;
   small_parcel_minor: number;
-  free_over_minor: number;
 }
 
 /** Comes from the server so the cart quotes exactly what the order will charge. */
@@ -147,7 +158,27 @@ export interface CheckoutPayload {
     country: string;
   };
   items: { variant_id: number; quantity: number }[];
+  coupon_code?: string;
 }
+
+export interface CouponPreview {
+  code: string;
+  subtotal_minor: number;
+  discount_minor: number;
+  description: string;
+}
+
+/** Prices a code against the basket. Rejects with the reason to show. */
+export const previewCoupon = (
+  code: string,
+  currency: Currency,
+  items: { variant_id: number; quantity: number }[],
+) =>
+  fetch(`${API_URL}/api/coupons/preview`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ code, currency, items }),
+  }).then((r) => json<CouponPreview>(r));
 
 // --- Customer auth (passwordless email codes) ---------------------------------
 

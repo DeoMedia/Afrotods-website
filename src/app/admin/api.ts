@@ -78,6 +78,7 @@ export interface ProductCreate {
   vat_rate: number;
   shipping_class: 'large_letter' | 'small_parcel';
   weight_grams: number;
+  sale_percent: number;
   active: boolean;
   images: { url: string; alt: string; sort_order?: number }[];
   variants: VariantIn[];
@@ -105,6 +106,25 @@ export interface AdminCustomer {
   spend_minor_by_currency: Record<string, number>;
   last_order_at: string | null;
 }
+
+export interface Coupon {
+  id: number;
+  code: string;
+  discount_type: 'percent' | 'fixed';
+  percent_off: number;
+  amount_minor: number;
+  currency: Currency | null;
+  min_spend_minor: number;
+  max_uses: number | null;
+  times_used: number;
+  starts_at: string | null;
+  expires_at: string | null;
+  active: boolean;
+  description: string;
+  created_at: string;
+}
+
+export type CouponCreate = Omit<Coupon, 'id' | 'times_used' | 'active' | 'created_at'>;
 
 export interface ExportFilters {
   status?: string;
@@ -208,13 +228,19 @@ export const adminApi = {
   listCustomers: (q = '') =>
     request<AdminCustomer[]>(`/api/admin/customers${q ? `?q=${encodeURIComponent(q)}` : ''}`),
   deleteCustomer: (id: number) => request<void>(`/api/admin/customers/${id}`, { method: 'DELETE' }),
+  listCoupons: () => request<Coupon[]>('/api/admin/coupons'),
+  createCoupon: (c: Partial<CouponCreate>) =>
+    request<Coupon>('/api/admin/coupons', { method: 'POST', body: JSON.stringify(c) }),
+  updateCoupon: (id: number, patch: Partial<Pick<Coupon, 'active' | 'max_uses' | 'expires_at' | 'description'>>) =>
+    request<Coupon>(`/api/admin/coupons/${id}`, { method: 'PATCH', body: JSON.stringify(patch) }),
+  deleteCoupon: (id: number) => request<void>(`/api/admin/coupons/${id}`, { method: 'DELETE' }),
   stats: () => request<Stats>('/api/admin/orders/stats'),
   listProducts: () => request<Product[]>('/api/admin/catalog/products'),
   createProduct: (p: ProductCreate) =>
     request<Product>('/api/admin/catalog/products', { method: 'POST', body: JSON.stringify(p) }),
   updateProduct: (
     id: number,
-    patch: Partial<Pick<ProductCreate, 'name' | 'description' | 'category' | 'vat_rate' | 'shipping_class' | 'weight_grams' | 'active'>>,
+    patch: Partial<Pick<ProductCreate, 'name' | 'description' | 'category' | 'vat_rate' | 'shipping_class' | 'weight_grams' | 'sale_percent' | 'active'>>,
   ) =>
     request<Product>(`/api/admin/catalog/products/${id}`, { method: 'PATCH', body: JSON.stringify(patch) }),
   deleteProduct: (id: number) => request<void>(`/api/admin/catalog/products/${id}`, { method: 'DELETE' }),

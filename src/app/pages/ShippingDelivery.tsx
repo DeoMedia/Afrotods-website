@@ -33,9 +33,8 @@ export function ShippingDelivery() {
                 2. Shipping Costs
               </h2>
               <p className="text-gray-700 leading-relaxed">
-                UK delivery is <strong>free on orders over £30</strong>. Below that, postage is charged once per
-                order and depends on the size of the largest item in your basket, because that is how Royal Mail
-                prices it:
+                Postage is charged once per order and depends on the size of the largest item in your basket,
+                because that is how Royal Mail prices it:
               </p>
               <ul className="list-disc pl-6 space-y-2 text-gray-700 mt-4">
                 <li>

@@ -18,7 +18,7 @@ export function ShopCheckout() {
   const navigate = useNavigate();
   const { currency, lines, clear } = useCart();
   const { customer, loading: authLoading } = useAuth();
-  const { resolved, subtotal, error: cartError } = useResolvedCart();
+  const { resolved, subtotal, coupon, discount, error: cartError } = useResolvedCart();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -58,6 +58,8 @@ export function ShopCheckout() {
           country: form.country,
         },
         items: lines.map((l) => ({ variant_id: l.variantId, quantity: l.quantity })),
+        // The server re-prices this; sending it only says which code to use.
+        coupon_code: coupon?.code ?? '',
       });
       clear();
       if (customer) sessionStorage.setItem(ORDER_EMAIL_KEY, customer.email);
@@ -184,6 +186,12 @@ export function ShopCheckout() {
                     <span>Subtotal</span>
                     <span>{subtotal !== null ? formatMoney(subtotal, currency) : 'N/A'}</span>
                   </div>
+                  {discount > 0 && coupon && (
+                    <div className="flex justify-between text-green-600">
+                      <span>Discount ({coupon.code})</span>
+                      <span>-{formatMoney(discount, currency)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-gray-400">
                     <span>Shipping</span>
                     <span>Added at payment</span>

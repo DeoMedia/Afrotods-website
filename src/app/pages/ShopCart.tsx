@@ -1,13 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router';
-import { Gift, Minus, Plus, ShoppingCart, Trash2, Truck } from 'lucide-react';
+import { Gift, Minus, Plus, ShoppingCart, Tag, Trash2, X } from 'lucide-react';
 import {
   imageSrc,
   fetchProducts,
   fetchShippingRates,
   formatMoney,
+  payable,
+  previewCoupon,
   priceFor,
   type Product,
+  type CouponPreview,
   type ShippingRates,
   type Variant,
 } from '../shop/api';
@@ -50,7 +53,7 @@ export function useResolvedCart() {
     for (const line of resolved) {
       const price = priceFor(line.variant, currency);
       if (!price) return null; // some item not priced in this currency
-      total += price.amount_minor * line.quantity;
+      total += payable(price) * line.quantity;
     }
     return total;
   }, [resolved, currency]);
@@ -63,25 +66,39 @@ export function useResolvedCart() {
       .catch(() => setRates(null));
   }, []);
 
-  /** Mirrors the server: one charge per order, priced on the largest format,
-   *  free once the basket clears the threshold. */
+  /** Mirrors the server: one charge per order, priced on the largest format. */
   const shipping = useMemo(() => {
     const rate = rates?.find((r) => r.currency === currency);
     if (!rate || !resolved || subtotal === null) return null;
     if (resolved.length === 0) return 0;
-    if (subtotal >= rate.free_over_minor) return 0;
     const anyParcel = resolved.some((l) => l.product.shipping_class === 'small_parcel');
     return anyParcel ? rate.small_parcel_minor : rate.large_letter_minor;
   }, [rates, currency, resolved, subtotal]);
 
-  const freeOver = rates?.find((r) => r.currency === currency)?.free_over_minor ?? null;
+  const [coupon, setCoupon] = useState<CouponPreview | null>(null);
 
-  return { resolved, subtotal, shipping, freeOver, error };
+  // A coupon priced against an older basket would quote a stale saving, and
+  // the server would then charge something different. Re-price on any change.
+  useEffect(() => {
+    if (!coupon || !resolved) return;
+    previewCoupon(
+      coupon.code,
+      currency,
+      resolved.map((l) => ({ variant_id: l.variantId, quantity: l.quantity })),
+    )
+      .then(setCoupon)
+      .catch(() => setCoupon(null));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currency, subtotal]);
+
+  const discount = coupon?.discount_minor ?? 0;
+
+  return { resolved, subtotal, shipping, coupon, setCoupon, discount, error };
 }
 
 export function ShopCart() {
   const { currency, setQuantity, remove } = useCart();
-  const { resolved, subtotal, shipping, freeOver, error } = useResolvedCart();
+  const { resolved, subtotal, shipping, coupon, setCoupon, discount, error } = useResolvedCart();
 
   return (
     <div className="pt-32 pb-24 bg-white min-h-screen">
@@ -157,7 +174,12 @@ export function ShopCart() {
                       </button>
                     </div>
                     <div className="font-extrabold w-20 sm:w-24 text-right shrink-0">
-                      {price ? formatMoney(price.amount_minor * line.quantity, currency) : 'N/A'}
+                      {price ? formatMoney(payable(price) * line.quantity, currency) : 'N/A'}
+                      {price?.sale_amount_minor != null && (
+                        <div className="text-xs font-bold text-gray-400 line-through">
+                          {formatMoney(price.amount_minor * line.quantity, currency)}
+                        </div>
+                      )}
                     </div>
                     <button
                       onClick={() => remove(line.variantId)}
@@ -171,25 +193,36 @@ export function ShopCart() {
               })}
             </div>
 
-            {/* Nudge toward the threshold: one more book usually clears it. */}
-            {subtotal !== null && freeOver !== null && subtotal > 0 && subtotal < freeOver && (
-              <div className="mt-6 rounded-2xl bg-[#FFF8F0] px-5 py-3 text-sm font-bold text-[#2D0A6B] flex items-center gap-2">
-                <Truck className="w-4 h-4 shrink-0 text-[#F97316]" />
-                Spend {formatMoney(freeOver - subtotal, currency)} more for free UK delivery
-              </div>
-            )}
+            <CouponBox
+              items={resolved.map((l) => ({ variant_id: l.variantId, quantity: l.quantity }))}
+              currency={currency}
+              coupon={coupon}
+              onApplied={setCoupon}
+            />
 
             <div className="flex items-center justify-between border-t-2 border-[#2D0A6B]/10 pt-6 mt-6 gap-4 flex-wrap">
               <div className="text-lg font-extrabold text-gray-700">
-                Subtotal:{' '}
-                <span className="text-[#2D0A6B]">{subtotal !== null ? formatMoney(subtotal, currency) : 'N/A'}</span>
+                <div>
+                  Subtotal:{' '}
+                  <span className="text-[#2D0A6B]">
+                    {subtotal !== null ? formatMoney(subtotal, currency) : 'N/A'}
+                  </span>
+                </div>
+                {discount > 0 && coupon && (
+                  <div className="text-green-600 text-base">
+                    {coupon.code}: -{formatMoney(discount, currency)}
+                  </div>
+                )}
                 <div className="text-xs text-gray-400 font-semibold">
                   {shipping === null
                     ? 'Shipping calculated at checkout'
-                    : shipping === 0
-                      ? 'Free UK delivery'
-                      : `Plus ${formatMoney(shipping, currency)} UK delivery`}
+                    : `Plus ${formatMoney(shipping, currency)} UK delivery`}
                 </div>
+                {subtotal !== null && shipping !== null && (
+                  <div className="text-[#2D0A6B] mt-1">
+                    Total: {formatMoney(subtotal - discount + shipping, currency)}
+                  </div>
+                )}
               </div>
               <Link
                 to="/shop/checkout"
@@ -205,5 +238,80 @@ export function ShopCart() {
         )}
       </div>
     </div>
+  );
+}
+
+function CouponBox({
+  items,
+  currency,
+  coupon,
+  onApplied,
+}: {
+  items: { variant_id: number; quantity: number }[];
+  currency: ReturnType<typeof useCart>['currency'];
+  coupon: CouponPreview | null;
+  onApplied: (c: CouponPreview | null) => void;
+}) {
+  const [code, setCode] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  const apply = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!code.trim()) return;
+    setBusy(true);
+    setError(null);
+    try {
+      onApplied(await previewCoupon(code.trim(), currency, items));
+      setCode('');
+    } catch (err) {
+      // The server's wording explains exactly why, so show it verbatim.
+      setError(err instanceof Error ? err.message : "That code isn't valid");
+      onApplied(null);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  if (coupon) {
+    return (
+      <div className="mt-8 flex items-center gap-3 rounded-2xl bg-green-50 px-5 py-3 text-sm font-bold text-green-700">
+        <Tag className="w-4 h-4 shrink-0" />
+        <span className="flex-1">
+          {coupon.code} applied
+          {coupon.description && <span className="font-semibold"> · {coupon.description}</span>}
+        </span>
+        <button
+          onClick={() => onApplied(null)}
+          className="text-green-700/60 hover:text-green-700 p-1 -m-1"
+          aria-label="Remove discount code"
+        >
+          <X className="w-4 h-4" />
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={apply} className="mt-8">
+      <div className="flex gap-2 flex-wrap">
+        <input
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+          placeholder="Discount code"
+          aria-label="Discount code"
+          className="flex-1 min-w-40 px-5 py-3 rounded-2xl border-2 border-gray-200 focus:border-[#F97316] outline-none font-semibold uppercase"
+        />
+        <button
+          type="submit"
+          disabled={busy || !code.trim()}
+          className="px-7 py-3 rounded-full border-2 border-[#2D0A6B] text-[#2D0A6B] font-extrabold disabled:opacity-40"
+          style={{ fontFamily: baloo }}
+        >
+          {busy ? 'Checking…' : 'Apply'}
+        </button>
+      </div>
+      {error && <p className="text-red-600 font-bold text-sm mt-2">{error}</p>}
+    </form>
   );
 }
