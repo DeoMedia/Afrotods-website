@@ -77,12 +77,13 @@ export interface ProductCreate {
   category: string;
   vat_rate: number;
   shipping_class: 'large_letter' | 'small_parcel';
+  weight_grams: number;
   active: boolean;
   images: { url: string; alt: string; sort_order?: number }[];
   variants: VariantIn[];
 }
 
-export type AdminOrder = Order & { source: string };
+export type AdminOrder = Order & { source: string; clickdrop_order_id: number | null };
 
 export interface StaffMember {
   id: number;
@@ -213,7 +214,7 @@ export const adminApi = {
     request<Product>('/api/admin/catalog/products', { method: 'POST', body: JSON.stringify(p) }),
   updateProduct: (
     id: number,
-    patch: Partial<Pick<ProductCreate, 'name' | 'description' | 'category' | 'vat_rate' | 'shipping_class' | 'active'>>,
+    patch: Partial<Pick<ProductCreate, 'name' | 'description' | 'category' | 'vat_rate' | 'shipping_class' | 'weight_grams' | 'active'>>,
   ) =>
     request<Product>(`/api/admin/catalog/products/${id}`, { method: 'PATCH', body: JSON.stringify(patch) }),
   deleteProduct: (id: number) => request<void>(`/api/admin/catalog/products/${id}`, { method: 'DELETE' }),
@@ -242,6 +243,14 @@ export const adminApi = {
     }),
   updateShipping: (reference: string, s: { carrier: string; tracking_number: string; tracking_url: string }) =>
     request<AdminOrder>(`/api/admin/orders/${reference}/shipping`, { method: 'PATCH', body: JSON.stringify(s) }),
+  /** Pulls tracking numbers back for every order still waiting on one. */
+  syncRoyalMail: () =>
+    request<{ checked: number; tracking_found: number; marked_shipped: number }>(
+      '/api/admin/orders/sync-royal-mail',
+      { method: 'POST' },
+    ),
+  sendToRoyalMail: (reference: string) =>
+    request<AdminOrder>(`/api/admin/orders/${reference}/send-to-royal-mail`, { method: 'POST' }),
   manualOrder: (payload: unknown) =>
     request<AdminOrder>('/api/admin/orders/manual', { method: 'POST', body: JSON.stringify(payload) }),
 };

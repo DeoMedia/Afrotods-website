@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { Check, Pencil } from 'lucide-react';
+import { Check, Pencil, RefreshCw, Truck } from 'lucide-react';
 import { adminApi, type AdminOrder } from './api';
 import { formatMoney, type Currency } from '../shop/api';
 
@@ -23,6 +23,8 @@ export function OrdersTab({ onUnauthorized }: { onUnauthorized: () => void }) {
   const [error, setError] = useState<string | null>(null);
   const [showManual, setShowManual] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [syncing, setSyncing] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
 
   const load = (f = filter) =>
     adminApi
@@ -35,19 +37,51 @@ export function OrdersTab({ onUnauthorized }: { onUnauthorized: () => void }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter]);
 
+  const syncRoyalMail = async () => {
+    setSyncing(true);
+    setError(null);
+    setNotice(null);
+    try {
+      const r = await adminApi.syncRoyalMail();
+      setNotice(
+        r.tracking_found === 0
+          ? `Checked ${r.checked} order${r.checked === 1 ? '' : 's'}. No new labels bought yet.`
+          : `Picked up ${r.tracking_found} tracking number${r.tracking_found === 1 ? '' : 's'}, ` +
+            `${r.marked_shipped} marked shipped and the customers emailed.`,
+      );
+      load(filter);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Could not reach Royal Mail');
+    } finally {
+      setSyncing(false);
+    }
+  };
+
   return (
     <div>
       <div className="flex items-center justify-between gap-4 flex-wrap mb-6">
         <h2 className="text-2xl font-black text-[#2D0A6B]" style={{ fontFamily: baloo }}>
           Orders
         </h2>
-        <button
-          onClick={() => setShowManual(!showManual)}
-          className="px-6 py-2.5 bg-gradient-to-r from-[#F97316] to-[#FBBF24] text-[#2D0A6B] rounded-full font-extrabold text-sm"
-          style={{ fontFamily: baloo }}
-        >
-          {showManual ? 'Close' : '+ New manual order'}
-        </button>
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            onClick={syncRoyalMail}
+            disabled={syncing}
+            title="Fetch tracking numbers for any order whose label has been bought in Click & Drop"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-extrabold text-sm border-2 border-[#2D0A6B] text-[#2D0A6B] hover:bg-[#2D0A6B] hover:text-white disabled:opacity-40"
+            style={{ fontFamily: baloo }}
+          >
+            <RefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
+            {syncing ? 'Checking…' : 'Sync Royal Mail'}
+          </button>
+          <button
+            onClick={() => setShowManual(!showManual)}
+            className="px-6 py-2.5 bg-gradient-to-r from-[#F97316] to-[#FBBF24] text-[#2D0A6B] rounded-full font-extrabold text-sm"
+            style={{ fontFamily: baloo }}
+          >
+            {showManual ? 'Close' : '+ New manual order'}
+          </button>
+        </div>
       </div>
 
       {showManual && (
@@ -73,6 +107,7 @@ export function OrdersTab({ onUnauthorized }: { onUnauthorized: () => void }) {
         ))}
       </div>
 
+      {notice && <p className="text-green-600 font-bold mb-4">{notice}</p>}
       {error && <p className="text-red-600 font-bold mb-4">{error}</p>}
       {orders === null && <div className="h-40 rounded-3xl bg-white animate-pulse" />}
       {orders?.length === 0 && <p className="text-gray-400 font-semibold">No orders here yet.</p>}
@@ -93,6 +128,15 @@ export function OrdersTab({ onUnauthorized }: { onUnauthorized: () => void }) {
               <div className="flex items-center gap-4">
                 {o.source === 'manual' && (
                   <span className="text-xs font-extrabold text-purple-500 bg-purple-50 px-2 py-1 rounded-full">manual</span>
+                )}
+                {o.clickdrop_order_id !== null && (
+                  <span
+                    title={`In Royal Mail Click & Drop as order ${o.clickdrop_order_id}`}
+                    className="inline-flex items-center gap-1 text-xs font-extrabold text-[#2D0A6B] bg-[#FFF8F0] px-2 py-1 rounded-full"
+                  >
+                    <Truck className="w-3 h-3" />
+                    Royal Mail
+                  </span>
                 )}
                 <span className="text-xs font-extrabold uppercase text-gray-400">{o.status.replace('_', ' ')}</span>
                 <span className="font-black text-gray-800">{formatMoney(o.total_minor, o.currency)}</span>
@@ -132,6 +176,19 @@ function OrderDetail({ order, onChanged }: { order: AdminOrder; onChanged: () =>
       onChanged();
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const sendToRoyalMail = async () => {
+    setBusy(true);
+    setError(null);
+    try {
+      await adminApi.sendToRoyalMail(order.reference);
+      onChanged();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Royal Mail would not accept the order');
     } finally {
       setBusy(false);
     }
@@ -206,6 +263,17 @@ function OrderDetail({ order, onChanged }: { order: AdminOrder; onChanged: () =>
             </button>
           ))}
         </div>
+
+        {order.clickdrop_order_id === null && order.status !== 'cancelled' && (
+          <button
+            onClick={sendToRoyalMail}
+            disabled={busy}
+            className="mb-3 inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-extrabold border-2 border-gray-200 text-gray-500 hover:border-[#2D0A6B] hover:text-[#2D0A6B] disabled:opacity-40"
+          >
+            <Truck className="w-3.5 h-3.5" />
+            Send to Royal Mail
+          </button>
+        )}
 
         {!editing ? (
           <div className="rounded-2xl border-2 border-gray-100 p-4">

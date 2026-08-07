@@ -32,6 +32,8 @@ export interface Product {
   vat_rate: number;
   /** Which Royal Mail format it posts as, which is what sets the postage. */
   shipping_class: 'large_letter' | 'small_parcel';
+  /** Royal Mail will not accept a shipment without one. */
+  weight_grams: number;
   active: boolean;
   rating_average: number | null;
   rating_count: number;

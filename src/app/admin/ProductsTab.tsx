@@ -108,6 +108,16 @@ export function ProductsTab({ onUnauthorized }: { onUnauthorized: () => void }) 
     }
   };
 
+  const setWeight = async (p: Product, weight_grams: number) => {
+    setError(null);
+    try {
+      await adminApi.updateProduct(p.id, { weight_grams });
+      load();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Could not change the weight');
+    }
+  };
+
   const deleteProduct = async (p: Product) => {
     if (!window.confirm(`Permanently delete "${p.name}"? This cannot be undone.`)) return;
     setError(null);
@@ -177,6 +187,19 @@ export function ProductsTab({ onUnauthorized }: { onUnauthorized: () => void }) 
                         <option value="large_letter">Large Letter</option>
                         <option value="small_parcel">Small Parcel</option>
                       </select>
+                      <input
+                        type="number"
+                        min="1"
+                        max="30000"
+                        defaultValue={p.weight_grams}
+                        onBlur={(e) => {
+                          const grams = parseInt(e.target.value, 10);
+                          if (grams > 0 && grams !== p.weight_grams) setWeight(p, grams);
+                        }}
+                        className="w-20 rounded-lg border-2 border-gray-200 px-2 py-0.5 font-bold text-gray-600 focus:border-[#F97316] outline-none"
+                        title="Packed weight in grams, sent to Royal Mail"
+                      />
+                      g
                     </label>
                   </div>
                 </div>
@@ -391,6 +414,7 @@ function NewProductForm({ onCreated }: { onCreated: () => void }) {
     category: 'plush',
     vat_rate: '20',
     shipping_class: 'small_parcel' as 'large_letter' | 'small_parcel',
+    weight_grams: '250',
   });
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [variants, setVariants] = useState<VariantDraft[]>([emptyVariant()]);
@@ -434,6 +458,7 @@ function NewProductForm({ onCreated }: { onCreated: () => void }) {
         category: form.category,
         vat_rate: parseFloat(form.vat_rate) / 100,
         shipping_class: form.shipping_class,
+        weight_grams: parseInt(form.weight_grams, 10) || 250,
         active: true,
         images: imageUrls.map((url, i) => ({ url, alt: form.name, sort_order: i })),
         variants: variants
@@ -509,6 +534,19 @@ function NewProductForm({ onCreated }: { onCreated: () => void }) {
           <option value="large_letter">Large Letter (under 2.5cm thick)</option>
           <option value="small_parcel">Small Parcel</option>
         </select>
+        <div className="relative">
+          <input
+            required
+            type="number"
+            min="1"
+            max="30000"
+            value={form.weight_grams}
+            onChange={set('weight_grams')}
+            className={inputCls}
+            title="Packed weight. Royal Mail will not accept a shipment without one, so weigh it."
+          />
+          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400">grams</span>
+        </div>
         <div className="flex items-center gap-3 flex-wrap">
           <input
             ref={fileInput}
