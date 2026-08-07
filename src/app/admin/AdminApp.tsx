@@ -367,6 +367,67 @@ function ExportPanel() {
   );
 }
 
+function RoyalMailStatus() {
+  const [result, setResult] = useState<Awaited<ReturnType<typeof adminApi.checkRoyalMail>> | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [failed, setFailed] = useState<string | null>(null);
+
+  const check = async () => {
+    setBusy(true);
+    setFailed(null);
+    setResult(null);
+    try {
+      setResult(await adminApi.checkRoyalMail());
+    } catch (e) {
+      setFailed(e instanceof Error ? e.message : 'Could not run the check');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-3xl p-6 shadow-sm mb-8">
+      <div className="flex items-center justify-between gap-4 flex-wrap">
+        <div>
+          <div className="font-black text-[#2D0A6B]" style={{ fontFamily: baloo }}>
+            Royal Mail Click &amp; Drop
+          </div>
+          <p className="text-xs font-semibold text-gray-400 mt-1 max-w-md">
+            Sends a real request to Royal Mail. It reads one order and creates nothing.
+          </p>
+        </div>
+        <button
+          onClick={check}
+          disabled={busy}
+          className="px-6 py-2.5 rounded-full font-extrabold text-sm border-2 border-[#2D0A6B] text-[#2D0A6B] hover:bg-[#2D0A6B] hover:text-white disabled:opacity-40"
+          style={{ fontFamily: baloo }}
+        >
+          {busy ? 'Checking…' : 'Check connection'}
+        </button>
+      </div>
+
+      {failed && <p className="text-red-600 font-bold text-sm mt-4">{failed}</p>}
+      {result && (
+        <div
+          className={`mt-4 rounded-2xl px-5 py-3 text-sm font-bold ${
+            result.connected ? 'bg-green-50 text-green-700' : 'bg-orange-50 text-orange-700'
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            <span className={`w-2.5 h-2.5 rounded-full ${result.connected ? 'bg-green-500' : 'bg-orange-500'}`} />
+            {result.connected ? 'Connected' : 'Not connected'}
+            {result.service && <span className="font-semibold">· service {result.service}</span>}
+          </div>
+          {(result.detail || result.reason) && (
+            <p className="font-semibold mt-1">{result.detail ?? result.reason}</p>
+          )}
+          {result.hint && <p className="font-semibold opacity-80 mt-1">{result.hint}</p>}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function DashboardTab({ onUnauthorized }: { onUnauthorized: () => void }) {
   const [stats, setStats] = useState<Stats | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -390,6 +451,7 @@ function DashboardTab({ onUnauthorized }: { onUnauthorized: () => void }) {
 
   return (
     <div>
+      <RoyalMailStatus />
       <ExportPanel />
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">

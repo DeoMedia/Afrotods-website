@@ -234,6 +234,12 @@ export const adminApi = {
   updateCoupon: (id: number, patch: Partial<Pick<Coupon, 'active' | 'max_uses' | 'expires_at' | 'description'>>) =>
     request<Coupon>(`/api/admin/coupons/${id}`, { method: 'PATCH', body: JSON.stringify(patch) }),
   deleteCoupon: (id: number) => request<void>(`/api/admin/coupons/${id}`, { method: 'DELETE' }),
+  /** Actually calls Royal Mail, rather than reporting that a key is present:
+   *  a wrong key looks identical to a working one from the outside. */
+  checkRoyalMail: () =>
+    request<{ connected: boolean; reason?: string; hint?: string; detail?: string; service?: string }>(
+      '/api/admin/diagnostics/royal-mail',
+    ),
   stats: () => request<Stats>('/api/admin/orders/stats'),
   listProducts: () => request<Product[]>('/api/admin/catalog/products'),
   createProduct: (p: ProductCreate) =>

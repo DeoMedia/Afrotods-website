@@ -9,21 +9,39 @@ import { RatingSummary } from '../shop/Rating';
 
 const baloo = "'Baloo 2', cursive";
 
-function productPriceLabel(product: Product, currency: ReturnType<typeof useCart>['currency']): string | null {
+/** Both figures for a card: what it costs now, and the price it was before a
+ *  sale. `was` is only ever set when the two genuinely differ. */
+function productPriceLabel(
+  product: Product,
+  currency: ReturnType<typeof useCart>['currency'],
+): { now: string; was: string | null } | null {
   const priced = product.variants
     .filter((v) => v.active)
     .map((v) => priceFor(v, currency))
-    .filter((p): p is NonNullable<typeof p> => p != null)
-    .map((p) => payable(p));
+    .filter((p): p is NonNullable<typeof p> => p != null);
   if (priced.length === 0) return null;
-  const min = Math.min(...priced);
-  return priced.length > 1 && Math.max(...priced) !== min
-    ? `From ${formatMoney(min, currency)}`
-    : formatMoney(min, currency);
+
+  // Compare on the payable amount so the cheapest option is the one shown,
+  // then take its list price for the struck-through figure.
+  const cheapest = priced.reduce((a, b) => (payable(a) <= payable(b) ? a : b));
+  const amounts = priced.map(payable);
+  const min = Math.min(...amounts);
+  const varies = priced.length > 1 && Math.max(...amounts) !== min;
+
+  return {
+    now: varies ? `From ${formatMoney(min, currency)}` : formatMoney(min, currency),
+    was:
+      cheapest.sale_amount_minor != null && !varies
+        ? formatMoney(cheapest.amount_minor, currency)
+        : null,
+  };
 }
+
+const SALE = 'sale';
 
 const CATEGORY_LABELS: Record<string, string> = {
   all: 'All',
+  [SALE]: 'On sale',
   toy: 'Toys',
   plush: 'Plush Toys',
   book: 'Books',
@@ -88,7 +106,13 @@ export function Shop() {
           {!error && products !== null && products.length > 0 && (
             <>
             <div className="flex gap-2 flex-wrap justify-center mb-10">
-              {['all', ...new Set(products.map((p) => p.category))].map((c) => (
+              {[
+                'all',
+                // Only offered when there is a sale on, so the shop never
+                // advertises a filter that lands on an empty page.
+                ...(products.some((p) => p.sale_percent > 0) ? [SALE] : []),
+                ...new Set(products.map((p) => p.category)),
+              ].map((c) => (
                 <button
                   key={c}
                   onClick={() => setCategory(c)}
@@ -104,7 +128,15 @@ export function Shop() {
               ))}
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {products.filter((p) => category === 'all' || p.category === category).map((product) => {
+              {products
+                .filter((p) =>
+                  category === 'all'
+                    ? true
+                    : category === SALE
+                      ? p.sale_percent > 0
+                      : p.category === category,
+                )
+                .map((product) => {
                 const price = productPriceLabel(product, currency);
                 const cover = product.images[0];
                 const soldOut = product.variants.filter((v) => v.active).every((v) => v.stock_qty === 0);
@@ -131,6 +163,13 @@ export function Shop() {
                           Out of stock
                         </span>
                       )}
+                      {/* Sits on the right so it never collides with the
+                          out-of-stock badge on a product that is both. */}
+                      {product.sale_percent > 0 && (
+                        <span className="absolute top-3 right-3 bg-[#F97316] text-white text-xs font-extrabold px-3 py-1.5 rounded-full shadow">
+                          {product.sale_percent}% off
+                        </span>
+                      )}
                     </div>
                     <div className="p-6">
                       <div className="text-xs font-extrabold uppercase tracking-wide text-[#F97316] mb-1">
@@ -142,8 +181,17 @@ export function Shop() {
                       <div className="mb-2">
                         <RatingSummary average={product.rating_average} count={product.rating_count} />
                       </div>
-                      <div className="font-extrabold text-gray-800">
-                        {price ?? <span className="text-gray-400 text-sm">Not available in {currency}</span>}
+                      <div className="font-extrabold text-gray-800 flex items-baseline gap-2 flex-wrap">
+                        {price ? (
+                          <>
+                            <span className={price.was ? 'text-[#F97316]' : ''}>{price.now}</span>
+                            {price.was && (
+                              <span className="text-sm font-bold text-gray-400 line-through">{price.was}</span>
+                            )}
+                          </>
+                        ) : (
+                          <span className="text-gray-400 text-sm">Not available in {currency}</span>
+                        )}
                       </div>
                     </div>
                   </Link>

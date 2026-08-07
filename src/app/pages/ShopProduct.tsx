@@ -228,7 +228,13 @@ export function ShopProduct() {
                   .map((v) => priceFor(v, currency))
                   .filter((pr): pr is NonNullable<typeof pr> => pr != null)
                   .map((pr) => payable(pr));
+                const listPrices = rel.variants
+                  .filter((v) => v.active)
+                  .map((v) => priceFor(v, currency))
+                  .filter((pr): pr is NonNullable<typeof pr> => pr != null)
+                  .map((pr) => pr.amount_minor);
                 const min = prices.length ? Math.min(...prices) : null;
+                const wasMin = listPrices.length ? Math.min(...listPrices) : null;
                 const cover = rel.images[0];
                 return (
                   <Link
@@ -236,7 +242,7 @@ export function ShopProduct() {
                     to={`/shop/${rel.slug}`}
                     className="group rounded-3xl bg-white border border-gray-100 overflow-hidden shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
                   >
-                    <div className="aspect-square bg-white flex items-center justify-center overflow-hidden">
+                    <div className="relative aspect-square bg-white flex items-center justify-center overflow-hidden">
                       {cover ? (
                         <img
                           src={imageSrc(cover.url)}
@@ -246,6 +252,11 @@ export function ShopProduct() {
                       ) : (
                         <span className="text-7xl">🧸</span>
                       )}
+                      {rel.sale_percent > 0 && (
+                        <span className="absolute top-3 right-3 bg-[#F97316] text-white text-xs font-extrabold px-3 py-1.5 rounded-full shadow">
+                          {rel.sale_percent}% off
+                        </span>
+                      )}
                     </div>
                     <div className="p-5">
                       <div className="text-xs font-extrabold uppercase tracking-wide text-[#F97316] mb-1">
@@ -254,8 +265,17 @@ export function ShopProduct() {
                       <h3 className="text-lg font-black text-[#2D0A6B] mb-1" style={{ fontFamily: baloo }}>
                         {rel.name}
                       </h3>
-                      <div className="font-extrabold text-gray-800 text-sm">
-                        {min !== null ? formatMoney(min, currency) : ''}
+                      <div className="font-extrabold text-gray-800 text-sm flex items-baseline gap-2">
+                        {min !== null && (
+                          <span className={rel.sale_percent > 0 ? 'text-[#F97316]' : ''}>
+                            {formatMoney(min, currency)}
+                          </span>
+                        )}
+                        {rel.sale_percent > 0 && wasMin !== null && wasMin !== min && (
+                          <span className="text-xs font-bold text-gray-400 line-through">
+                            {formatMoney(wasMin, currency)}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </Link>
