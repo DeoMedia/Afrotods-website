@@ -408,7 +408,7 @@ export function Home() {
               </div>
 
               <div className="text-sm font-bold text-white/75 mb-5 mt-2" style={{ fontFamily: baloo }}>
-                First 45 Days After Download
+                Pay Within 45 Days Of Downloading
               </div>
 
               {/* Price */}
@@ -425,7 +425,7 @@ export function Home() {
                 one-time payment
               </div>
               <div className="text-base font-bold text-white/65 mb-8" style={{ fontFamily: baloo }}>
-                {currency.symbol}{currency.regular} after the first 45 days
+                Leave it longer and it is {currency.symbol}{currency.regular}
               </div>
 
               {/* CTA */}
