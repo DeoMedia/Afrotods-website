@@ -82,6 +82,9 @@ export function VideoModal({
           autoPlay
           playsInline
           controlsList="nodownload"
+          // Once the episode finishes, close on its own rather than leaving a
+          // black frame the viewer has to dismiss.
+          onEnded={onClose}
           className="w-full max-h-[68vh] rounded-2xl bg-black shadow-2xl block"
         >
           Your browser can't play this video.{' '}
