@@ -58,46 +58,49 @@ export function VideoModal({
       aria-modal="true"
       aria-label={title}
       onClick={onClose}
-      className="fixed inset-0 z-[100] bg-black/85 flex items-center justify-center p-4 sm:p-6"
+      // Above the site header, which sits at z-[1000]. Anything lower and the
+      // close button hides behind the nav bar.
+      className="fixed inset-0 z-[2000] bg-black/90 overflow-y-auto flex items-center justify-center p-3 sm:p-6"
     >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-[900px]"
-      >
-        <div className="flex items-center justify-between gap-4 mb-3">
-          <h2 className="text-white text-lg sm:text-xl font-black" style={{ fontFamily: baloo }}>
-            {title}
-          </h2>
-          <button
-            ref={closeRef}
-            onClick={onClose}
-            aria-label="Close the video"
-            className="text-white/70 hover:text-white p-2 -m-2 rounded-full focus:outline-none focus:ring-2 focus:ring-[#F97316]"
-          >
-            <X className="w-6 h-6" />
-          </button>
-        </div>
+      <div onClick={(e) => e.stopPropagation()} className="relative w-full max-w-[1000px] my-auto">
+        {/* Anchored to the video's own corner rather than a row above it, so no
+            amount of surrounding layout can push it off screen or behind
+            something else. */}
+        <button
+          ref={closeRef}
+          onClick={onClose}
+          aria-label="Close the video"
+          className="absolute top-2 right-2 z-10 w-11 h-11 inline-flex items-center justify-center rounded-full bg-black/75 text-white backdrop-blur-sm hover:bg-black focus:outline-none focus:ring-2 focus:ring-[#F97316] transition-colors"
+        >
+          <X className="w-6 h-6" />
+        </button>
 
-        <div className="rounded-2xl overflow-hidden bg-black shadow-2xl">
-          <video
-            ref={videoRef}
-            src={src}
-            controls
-            autoPlay
-            playsInline
-            controlsList="nodownload"
-            className="w-full max-h-[70vh] bg-black"
-          >
-            Your browser can't play this video.{' '}
-            <a href={src} className="underline">
-              Open it directly
-            </a>
-            .
-          </video>
-        </div>
+        <video
+          ref={videoRef}
+          src={src}
+          controls
+          autoPlay
+          playsInline
+          controlsList="nodownload"
+          className="w-full max-h-[68vh] rounded-2xl bg-black shadow-2xl block"
+        >
+          Your browser can't play this video.{' '}
+          <a href={src} className="underline">
+            Open it directly
+          </a>
+          .
+        </video>
 
+        <h2
+          className="text-white text-base sm:text-xl font-black mt-4 text-center px-2"
+          style={{ fontFamily: baloo }}
+        >
+          {title}
+        </h2>
         {footnote && (
-          <p className="text-white/70 text-sm font-semibold text-center mt-3">{footnote}</p>
+          <p className="text-white/70 text-xs sm:text-sm font-semibold text-center mt-1 px-2">
+            {footnote}
+          </p>
         )}
       </div>
     </div>
