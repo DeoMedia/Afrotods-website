@@ -71,7 +71,7 @@ export const HeroVideo = forwardRef<HeroVideoHandle, {
           type="button"
           onClick={start}
           aria-label="Play The Afrotods Festival Time, Part 1"
-          className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-b from-[#2D0A6B]/40 to-[#2D0A6B]/70 hover:from-[#2D0A6B]/30 hover:to-[#2D0A6B]/60 transition-colors group"
+          className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-b from-transparent via-[#2D0A6B]/20 to-[#2D0A6B]/60 hover:via-[#2D0A6B]/10 hover:to-[#2D0A6B]/50 transition-colors group"
         >
           <span className="w-14 h-14 @md:w-20 @md:h-20 rounded-full bg-white/95 flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
             <Play className="w-6 h-6 @md:w-9 @md:h-9 text-[#F97316] ml-1" fill="currentColor" />

@@ -12,6 +12,7 @@ import coverPhoto from '../../imports/landing-page-cover-photo-b-scaled.png';
 import { HeroVideo, type HeroVideoHandle } from '../components/HeroVideo';
 
 const PART_1_VIDEO = '/video/festival-time-part-1.mp4';
+const PART_1_POSTER = '/video/festival-time-part-1-poster.jpg';
 const PLAY_STORE = 'https://play.google.com/store/apps/details?id=com.afrotods.app';
 
 const CHARACTERS = [
@@ -180,7 +181,12 @@ export function Home() {
 
           {/* Right: Part 1, playing here rather than a still of the app */}
           <div className="scroll-reveal opacity-0 translate-y-9 transition-all duration-[650ms] [transition-delay:200ms] flex justify-center items-center">
-            <HeroVideo ref={heroVideo} src={PART_1_VIDEO} playStoreUrl={PLAY_STORE} />
+            <HeroVideo
+              ref={heroVideo}
+              src={PART_1_VIDEO}
+              poster={PART_1_POSTER}
+              playStoreUrl={PLAY_STORE}
+            />
           </div>
         </div>
       </section>
