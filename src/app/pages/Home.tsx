@@ -1,6 +1,5 @@
 import { Ban, BookOpen, Clapperboard, Gamepad2, Globe2, Lock, Music, PartyPopper } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import heroPhoneHand from '../../imports/ChatGPT_Image_Apr_17,_2026,_11_27_52_AM_(1).png';
+import { useState, useEffect, useRef } from 'react';
 import kelaniImg from '../../imports/kelani-1.png';
 import folaImg from '../../imports/Fola.png';
 import sisiImg from '../../imports/Sisi.png';
@@ -10,9 +9,10 @@ import mamaImg from '../../imports/Mama.png';
 import grandmaImg from '../../imports/Grandma.png';
 import grandpaImg from '../../imports/Grandpa.png';
 import coverPhoto from '../../imports/landing-page-cover-photo-b-scaled.png';
-import { VideoModal } from '../components/VideoModal';
+import { HeroVideo, type HeroVideoHandle } from '../components/HeroVideo';
 
 const PART_1_VIDEO = '/video/festival-time-part-1.mp4';
+const PLAY_STORE = 'https://play.google.com/store/apps/details?id=com.afrotods.app';
 
 const CHARACTERS = [
   { name: 'Kelani', image: kelaniImg, role: 'The Music Kid', gradient: 'from-orange-500 to-yellow-400' },
@@ -40,7 +40,7 @@ const CURRENCIES = [
 ];
 
 export function Home() {
-  const [watching, setWatching] = useState(false);
+  const heroVideo = useRef<HeroVideoHandle>(null);
   const [currency, setCurrency] = useState(CURRENCIES[0]);
   const [detecting, setDetecting] = useState(true);
   const baloo = "'Baloo 2', cursive";
@@ -83,13 +83,6 @@ export function Home() {
 
   return (
     <>
-      <VideoModal
-        open={watching}
-        onClose={() => setWatching(false)}
-        src={PART_1_VIDEO}
-        title="The Afrotods Festival Time, Part 1"
-        footnote="Part 1 is free to watch. The rest of the series is in the app."
-      />
     <br></br><br></br><br></br>
       {/* ── COVER PHOTO ── */}
       <section className="relative overflow-hidden">
@@ -141,7 +134,7 @@ export function Home() {
             <div className="scroll-reveal opacity-0 translate-y-9 transition-all duration-[650ms] [transition-delay:300ms] flex flex-wrap gap-3 mb-8">
               <button
                 type="button"
-                onClick={() => setWatching(true)}
+                onClick={() => heroVideo.current?.play()}
                 className="inline-flex items-center gap-2 px-7 py-3.5 bg-[#F97316] text-white rounded-full font-extrabold text-base shadow-[0_6px_24px_rgba(249,115,22,0.4)] hover:shadow-[0_10px_36px_rgba(249,115,22,0.6)] hover:-translate-y-1 hover:scale-105 active:scale-95 transition-all duration-200"
                 style={{ fontFamily: baloo }}
               >
@@ -185,13 +178,9 @@ export function Home() {
             </div>
           </div>
 
-          {/* Right: Phone hand image */}
+          {/* Right: Part 1, playing here rather than a still of the app */}
           <div className="scroll-reveal opacity-0 translate-y-9 transition-all duration-[650ms] [transition-delay:200ms] flex justify-center items-center">
-            <img
-              src={heroPhoneHand}
-              alt="The Afrotods App on phone"
-              className="max-w-full h-auto max-h-[520px] object-contain drop-shadow-2xl"
-            />
+            <HeroVideo ref={heroVideo} src={PART_1_VIDEO} playStoreUrl={PLAY_STORE} />
           </div>
         </div>
       </section>
