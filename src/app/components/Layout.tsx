@@ -78,7 +78,7 @@ export function Layout() {
               className="inline-flex items-center gap-2.5 px-6 py-2.5 bg-gradient-to-r from-[#F97316] to-[#FBBF24] text-[#2D0A6B] rounded-full font-extrabold text-sm shadow-[0_8px_32px_rgba(249,115,22,0.45)] hover:shadow-[0_12px_44px_rgba(249,115,22,0.65)] hover:-translate-y-0.5 active:scale-95 transition-all duration-200"
               style={{ fontFamily: baloo }}
             >
-              Download Free
+              Google Play Download
             </a>
 
             {/* Mobile Menu Button */}

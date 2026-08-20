@@ -19,7 +19,7 @@
   Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(self)"
 
   # Hashed asset filenames change on every deploy, so they can cache forever.
-  <FilesMatch "\.(js|css|woff2?|png|jpe?g|webp|gif|svg|ico)$">
+  <FilesMatch "\.(js|css|woff2?|png|jpe?g|webp|gif|svg|ico|mp4|webm)$">
     Header set Cache-Control "public, max-age=31536000, immutable"
   </FilesMatch>
 

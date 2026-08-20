@@ -10,6 +10,9 @@ import mamaImg from '../../imports/Mama.png';
 import grandmaImg from '../../imports/Grandma.png';
 import grandpaImg from '../../imports/Grandpa.png';
 import coverPhoto from '../../imports/landing-page-cover-photo-b-scaled.png';
+import { VideoModal } from '../components/VideoModal';
+
+const PART_1_VIDEO = '/video/festival-time-part-1.mp4';
 
 const CHARACTERS = [
   { name: 'Kelani', image: kelaniImg, role: 'The Music Kid', gradient: 'from-orange-500 to-yellow-400' },
@@ -37,6 +40,7 @@ const CURRENCIES = [
 ];
 
 export function Home() {
+  const [watching, setWatching] = useState(false);
   const [currency, setCurrency] = useState(CURRENCIES[0]);
   const [detecting, setDetecting] = useState(true);
   const baloo = "'Baloo 2', cursive";
@@ -79,6 +83,13 @@ export function Home() {
 
   return (
     <>
+      <VideoModal
+        open={watching}
+        onClose={() => setWatching(false)}
+        src={PART_1_VIDEO}
+        title="The Afrotods Festival Time, Part 1"
+        footnote="Part 1 is free to watch. The rest of the series is in the app."
+      />
     <br></br><br></br><br></br>
       {/* ── COVER PHOTO ── */}
       <section className="relative overflow-hidden">
@@ -128,15 +139,14 @@ export function Home() {
 
             {/* Buttons */}
             <div className="scroll-reveal opacity-0 translate-y-9 transition-all duration-[650ms] [transition-delay:300ms] flex flex-wrap gap-3 mb-8">
-              <a
-                href="https://play.google.com/store/apps/details?id=com.afrotods.app"
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                type="button"
+                onClick={() => setWatching(true)}
                 className="inline-flex items-center gap-2 px-7 py-3.5 bg-[#F97316] text-white rounded-full font-extrabold text-base shadow-[0_6px_24px_rgba(249,115,22,0.4)] hover:shadow-[0_10px_36px_rgba(249,115,22,0.6)] hover:-translate-y-1 hover:scale-105 active:scale-95 transition-all duration-200"
                 style={{ fontFamily: baloo }}
               >
-                ▶&nbsp; Start Watching Free
-              </a>
+                ▶&nbsp; Watch Part 1 for Free
+              </button>
               <a
                 href="https://play.google.com/store/apps/details?id=com.afrotods.app"
                 target="_blank"
@@ -150,6 +160,17 @@ export function Home() {
                 Google Play
               </a>
             </div>
+
+            {/* Right under the buttons, because this is where someone decides
+                whether to press one. Burying it in the pricing section lower
+                down would be a surprise, not an offer. */}
+            <p
+              className="scroll-reveal opacity-0 translate-y-9 transition-all duration-[650ms] [transition-delay:350ms] text-sm text-[#6B46A0] font-bold mb-8 max-w-[440px]"
+              style={{ fontFamily: nunito }}
+            >
+              Part 1 is free to watch, right here, with no app and no account. The full series lives in
+              the app, which is free to download and needs a paid plan to unlock.
+            </p>
 
             {/* Trust bar */}
             <div
