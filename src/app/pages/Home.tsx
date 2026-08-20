@@ -169,7 +169,7 @@ export function Home() {
               style={{ fontFamily: nunito }}
             >
               Part 1 is free to watch, right here, with no app and no account. The full series lives in
-              the app, which is free to download and needs a paid plan to unlock.
+              the app, which is free to download and unlocks with a single payment.
             </p>
 
             {/* Trust bar */}
@@ -362,11 +362,11 @@ export function Home() {
               Simple, Fair Pricing
             </div>
             <h2 className="text-3xl md:text-4xl text-[#1E0A3C] mb-2.5" style={{ fontFamily: baloo }}>
-              One Subscription.{' '}
+              One Payment.{' '}
               <span className="text-[#7B2FBE]">Unlimited Stories.</span>
             </h2>
             <p className="text-sm text-[#6B46A0]" style={{ fontFamily: nunito }}>
-              Start at an introductory rate. Cancel anytime. No hidden fees.
+              Pay once and it is yours to keep. No subscription, nothing to cancel, no hidden fees.
             </p>
           </div>
 
@@ -421,8 +421,11 @@ export function Home() {
                 </span>
               </div>
 
+              <div className="text-sm font-extrabold text-white/90 mb-1" style={{ fontFamily: baloo }}>
+                one-time payment
+              </div>
               <div className="text-base font-bold text-white/65 mb-8" style={{ fontFamily: baloo }}>
-                Then {currency.symbol}{currency.regular}
+                {currency.symbol}{currency.regular} after the first 45 days
               </div>
 
               {/* CTA */}
@@ -443,7 +446,7 @@ export function Home() {
             className="scroll-reveal opacity-0 translate-y-9 transition-all duration-[650ms] [transition-delay:300ms] text-center max-w-[600px] mx-auto text-xs text-[#9CA3AF] leading-relaxed p-4 bg-white/60 rounded-2xl border border-[#A855F7]/10"
             style={{ fontFamily: nunito }}
           >
-            <strong className="text-[#6B46A0]">Pricing note:</strong> Prices are displayed based on your detected region and are approximate. Final pricing is confirmed at checkout via Google Play. Subscriptions renew automatically; you can cancel at any time through your Google Play account settings. All transactions are processed securely by Google.
+            <strong className="text-[#6B46A0]">Pricing note:</strong> This is a one-time payment, not a subscription. Nothing renews and there is nothing to cancel. The introductory price applies if you pay within 45 days of downloading the app; after that the standard price applies. Prices are shown for your detected region and are approximate, with the final amount confirmed at checkout in Google Play, which processes the payment. The printed book in our shop is a separate purchase.
           </div>
         </div>
       </section>
